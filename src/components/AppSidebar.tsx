@@ -7,6 +7,7 @@ import {
   Image,
   ListChecks,
   Film,
+  Video,
   Music,
   Settings,
   ChevronLeft,
@@ -20,6 +21,7 @@ const navItems = [
   { icon: Image, label: "Storyboard", path: "/storyboard" },
   { icon: ListChecks, label: "Shot List", path: "/shots" },
   { icon: Film, label: "Editor", path: "/editor" },
+  { icon: Video, label: "Veo 3", path: "/veo3" },
   { icon: Music, label: "AI Music", path: "/music" },
   { icon: Settings, label: "Settings", path: "/settings" },
 ];

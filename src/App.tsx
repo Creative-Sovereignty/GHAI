@@ -9,6 +9,7 @@ import Storyboard from "./pages/Storyboard";
 import ShotList from "./pages/ShotList";
 import VideoEditor from "./pages/VideoEditor";
 import AIMusic from "./pages/AIMusic";
+import Veo3 from "./pages/Veo3";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/storyboard" element={<Storyboard />} />
           <Route path="/shots" element={<ShotList />} />
           <Route path="/editor" element={<VideoEditor />} />
+          <Route path="/veo3" element={<Veo3 />} />
           <Route path="/music" element={<AIMusic />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
