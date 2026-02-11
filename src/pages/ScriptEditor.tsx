@@ -48,7 +48,7 @@ Alex bursts through the apartment door into the rain-soaked street. Neon signs r
             <p className="text-sm text-muted-foreground mt-1">Last edited 2 hours ago</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="cinema" size="sm">
+            <Button className="border border-blue/30 text-blue hover:bg-blue/10 hover:border-blue/60 bg-transparent" size="sm">
               <Wand2 className="w-4 h-4" /> AI Assist
             </Button>
             <Button variant="ghost" size="sm">
@@ -60,7 +60,7 @@ Alex bursts through the apartment door into the rain-soaked street. Neon signs r
             <Button variant="ghost" size="sm">
               <Download className="w-4 h-4" />
             </Button>
-            <Button variant="glow" size="sm">
+            <Button className="bg-blue text-blue-foreground hover:bg-blue/90 shadow-[0_0_20px_hsl(217_91%_60%/0.3)] hover:shadow-[0_0_30px_hsl(217_91%_60%/0.5)] transition-shadow" size="sm">
               <Save className="w-4 h-4" /> Save
             </Button>
           </div>
@@ -77,7 +77,7 @@ Alex bursts through the apartment door into the rain-soaked street. Neon signs r
           <div className="flex-1 card-gradient rounded-xl border border-border overflow-hidden">
             <div className="border-b border-border px-4 py-2 flex items-center gap-4">
               <span className="text-xs text-muted-foreground">Screenplay Format</span>
-              <span className="text-xs text-primary">Words: {script.split(/\s+/).length}</span>
+              <span className="text-xs text-blue">Words: {script.split(/\s+/).length}</span>
               <span className="text-xs text-muted-foreground">Lines: {script.split("\n").length}</span>
             </div>
             <textarea
@@ -107,7 +107,7 @@ Alex bursts through the apartment door into the rain-soaked street. Neon signs r
               <h3 className="font-display font-semibold text-sm mb-3">Characters</h3>
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">A</div>
+                  <div className="w-6 h-6 rounded-full bg-blue/20 flex items-center justify-center text-blue font-bold">A</div>
                   Alex (30s)
                 </div>
               </div>

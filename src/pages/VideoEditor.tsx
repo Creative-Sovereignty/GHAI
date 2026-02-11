@@ -35,8 +35,8 @@ const VideoEditor = () => {
         >
           <h1 className="font-display font-semibold">Video Editor</h1>
           <div className="flex items-center gap-2">
-            <Button variant="cinema" size="sm"><Wand2 className="w-4 h-4" /> AI Edit</Button>
-            <Button variant="glow" size="sm">Export</Button>
+            <Button className="border border-blue/30 text-blue hover:bg-blue/10 hover:border-blue/60 bg-transparent" size="sm"><Wand2 className="w-4 h-4" /> AI Edit</Button>
+            <Button className="bg-blue text-blue-foreground hover:bg-blue/90 shadow-[0_0_20px_hsl(217_91%_60%/0.3)] hover:shadow-[0_0_30px_hsl(217_91%_60%/0.5)] transition-shadow" size="sm">Export</Button>
           </div>
         </motion.div>
 

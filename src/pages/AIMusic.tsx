@@ -39,7 +39,7 @@ const AIMusic = () => {
           className="card-gradient rounded-2xl border border-border p-6"
         >
           <div className="flex items-center gap-2 mb-4">
-            <Sparkles className="w-5 h-5 text-primary" />
+            <Sparkles className="w-5 h-5 text-purple" />
             <h2 className="font-display font-semibold">Create a Track</h2>
           </div>
 
@@ -48,7 +48,7 @@ const AIMusic = () => {
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             placeholder="Describe the music you need... e.g., 'Dark, pulsing electronic beat for a cyberpunk chase scene, building tension with synth layers'"
-            className="w-full h-24 p-4 rounded-xl bg-secondary/50 border border-border text-foreground text-sm placeholder:text-muted-foreground outline-none focus:border-primary/50 transition-colors resize-none"
+            className="w-full h-24 p-4 rounded-xl bg-secondary/50 border border-border text-foreground text-sm placeholder:text-muted-foreground outline-none focus:border-purple/50 transition-colors resize-none"
           />
 
           {/* Genre selection */}
@@ -61,8 +61,8 @@ const AIMusic = () => {
                   onClick={() => setSelectedGenre(g)}
                   className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
                     selectedGenre === g
-                      ? "bg-primary/10 text-primary border-primary/40"
-                      : "bg-secondary text-muted-foreground border-border hover:border-primary/20"
+                      ? "bg-purple/10 text-purple border-purple/40"
+                      : "bg-secondary text-muted-foreground border-border hover:border-purple/20"
                   }`}
                 >
                   {g}
@@ -81,8 +81,8 @@ const AIMusic = () => {
                   onClick={() => setSelectedMood(m)}
                   className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
                     selectedMood === m
-                      ? "bg-primary/10 text-primary border-primary/40"
-                      : "bg-secondary text-muted-foreground border-border hover:border-primary/20"
+                      ? "bg-purple/10 text-purple border-purple/40"
+                      : "bg-secondary text-muted-foreground border-border hover:border-purple/20"
                   }`}
                 >
                   {m}
@@ -112,7 +112,7 @@ const AIMusic = () => {
                 />
               </div>
             </div>
-            <Button variant="glow" size="lg">
+            <Button className="bg-purple text-purple-foreground hover:bg-purple/90 shadow-[0_0_20px_hsl(271_76%_53%/0.3)] hover:shadow-[0_0_30px_hsl(271_76%_53%/0.5)] transition-shadow" size="lg">
               <Wand2 className="w-4 h-4" /> Generate Track
             </Button>
           </div>
@@ -128,17 +128,17 @@ const AIMusic = () => {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="card-gradient rounded-xl border border-border p-4 flex items-center gap-4 hover:border-primary/20 transition-all group"
+                className="card-gradient rounded-xl border border-border p-4 flex items-center gap-4 hover:border-purple/20 transition-all group"
               >
                 {/* Play button */}
                 <button
                   onClick={() => setPlayingId(playingId === track.id ? null : track.id)}
-                  className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors"
+                  className="w-10 h-10 rounded-full bg-purple/10 flex items-center justify-center shrink-0 group-hover:bg-purple/20 transition-colors"
                 >
                   {playingId === track.id ? (
-                    <Pause className="w-4 h-4 text-primary" />
+                    <Pause className="w-4 h-4 text-purple" />
                   ) : (
-                    <Play className="w-4 h-4 text-primary ml-0.5" />
+                    <Play className="w-4 h-4 text-purple ml-0.5" />
                   )}
                 </button>
 
@@ -146,7 +146,7 @@ const AIMusic = () => {
                 <div className="flex-1 min-w-0">
                   <h3 className="font-medium text-sm">{track.name}</h3>
                   <div className="flex items-center gap-3 mt-1">
-                    <span className="text-xs text-primary/70">{track.genre}</span>
+                    <span className="text-xs text-purple/70">{track.genre}</span>
                     <span className="text-xs text-muted-foreground">{track.mood}</span>
                   </div>
                 </div>
@@ -157,7 +157,7 @@ const AIMusic = () => {
                     <div
                       key={i}
                       className={`w-1 rounded-full transition-all ${
-                        playingId === track.id ? "bg-primary/60" : "bg-muted-foreground/20"
+                        playingId === track.id ? "bg-purple/60" : "bg-muted-foreground/20"
                       }`}
                       style={{
                         height: `${Math.random() * 80 + 20}%`,

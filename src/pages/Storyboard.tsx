@@ -29,10 +29,10 @@ const Storyboard = () => {
             <p className="text-sm text-muted-foreground mt-1">Neon Dreams - {frames.length} frames</p>
           </div>
           <div className="flex gap-2">
-            <Button variant="cinema" size="sm">
+            <Button className="border border-teal/30 text-teal hover:bg-teal/10 hover:border-teal/60 bg-transparent" size="sm">
               <Wand2 className="w-4 h-4" /> AI Generate
             </Button>
-            <Button variant="glow" size="sm">
+            <Button className="bg-teal text-teal-foreground hover:bg-teal/90 shadow-[0_0_20px_hsl(174_72%_46%/0.3)] hover:shadow-[0_0_30px_hsl(174_72%_46%/0.5)] transition-shadow" size="sm">
               <Plus className="w-4 h-4" /> Add Frame
             </Button>
           </div>
@@ -46,7 +46,7 @@ const Storyboard = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
               whileHover={{ y: -2 }}
-              className="card-gradient rounded-xl border border-border overflow-hidden group cursor-pointer hover:border-primary/30 transition-all"
+              className="card-gradient rounded-xl border border-border overflow-hidden group cursor-pointer hover:border-teal/30 transition-all"
             >
               {/* Frame placeholder */}
               <div className="aspect-video bg-secondary/50 flex items-center justify-center relative">
@@ -59,7 +59,7 @@ const Storyboard = () => {
                 </div>
               </div>
               <div className="p-4">
-                <p className="text-xs text-primary/80 font-mono mb-1">{frame.scene}</p>
+                <p className="text-xs text-teal/80 font-mono mb-1">{frame.scene}</p>
                 <p className="text-sm font-medium mb-2">{frame.description}</p>
                 <p className="text-xs text-muted-foreground">{frame.notes}</p>
               </div>
