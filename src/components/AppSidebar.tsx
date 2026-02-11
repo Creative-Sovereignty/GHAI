@@ -16,15 +16,23 @@ import {
 } from "lucide-react";
 
 const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/" },
-  { icon: FileText, label: "Script", path: "/script" },
-  { icon: Image, label: "Storyboard", path: "/storyboard" },
-  { icon: ListChecks, label: "Shot List", path: "/shots" },
-  { icon: Film, label: "Editor", path: "/editor" },
-  { icon: Video, label: "Veo 3", path: "/veo3" },
-  { icon: Music, label: "AI Music", path: "/music" },
-  { icon: Settings, label: "Settings", path: "/settings" },
+  { icon: LayoutDashboard, label: "Dashboard", path: "/", color: "primary" },
+  { icon: FileText, label: "Script", path: "/script", color: "blue" },
+  { icon: Image, label: "Storyboard", path: "/storyboard", color: "teal" },
+  { icon: ListChecks, label: "Shot List", path: "/shots", color: "pink" },
+  { icon: Film, label: "Editor", path: "/editor", color: "blue" },
+  { icon: Video, label: "Veo 3", path: "/veo3", color: "teal" },
+  { icon: Music, label: "AI Music", path: "/music", color: "purple" },
+  { icon: Settings, label: "Settings", path: "/settings", color: "primary" },
 ];
+
+const colorClasses: Record<string, { bg: string; text: string; bar: string }> = {
+  primary: { bg: "bg-primary/10", text: "text-primary", bar: "bg-primary" },
+  teal: { bg: "bg-teal/10", text: "text-teal", bar: "bg-teal" },
+  blue: { bg: "bg-blue/10", text: "text-blue", bar: "bg-blue" },
+  purple: { bg: "bg-purple/10", text: "text-purple", bar: "bg-purple" },
+  pink: { bg: "bg-pink/10", text: "text-pink", bar: "bg-pink" },
+};
 
 const AppSidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -56,23 +64,24 @@ const AppSidebar = () => {
       <nav className="flex-1 py-4 px-2 space-y-1">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
+          const colors = colorClasses[item.color];
           return (
             <Link
               key={item.path}
               to={item.path}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 group relative ${
                 isActive
-                  ? "bg-primary/10 text-primary"
+                  ? `${colors.bg} ${colors.text}`
                   : "text-muted-foreground hover:text-foreground hover:bg-secondary"
               }`}
             >
               {isActive && (
                 <motion.div
                   layoutId="activeNav"
-                  className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-primary rounded-r-full"
+                  className={`absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 ${colors.bar} rounded-r-full`}
                 />
               )}
-              <item.icon className={`w-5 h-5 shrink-0 ${isActive ? "text-primary" : ""}`} />
+              <item.icon className={`w-5 h-5 shrink-0 ${isActive ? colors.text : ""}`} />
               {!collapsed && (
                 <motion.span
                   initial={{ opacity: 0 }}

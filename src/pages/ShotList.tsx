@@ -31,7 +31,7 @@ const ShotList = () => {
               {completed}/{shots.length} completed
             </p>
           </div>
-          <Button variant="glow" size="sm">
+          <Button className="bg-pink text-pink-foreground hover:bg-pink/90 shadow-[0_0_20px_hsl(330_81%_60%/0.3)] hover:shadow-[0_0_30px_hsl(330_81%_60%/0.5)] transition-shadow" size="sm">
             <Plus className="w-4 h-4" /> Add Shot
           </Button>
         </motion.div>
@@ -42,7 +42,7 @@ const ShotList = () => {
             initial={{ width: 0 }}
             animate={{ width: `${(completed / shots.length) * 100}%` }}
             transition={{ duration: 1, ease: "easeOut" }}
-            className="h-full rounded-full bg-primary"
+            className="h-full rounded-full bg-pink"
           />
         </div>
 
@@ -78,12 +78,12 @@ const ShotList = () => {
                 >
                   <td className="p-4">
                     {shot.done ? (
-                      <CheckCircle2 className="w-4 h-4 text-primary" />
+                      <CheckCircle2 className="w-4 h-4 text-pink" />
                     ) : (
                       <Circle className="w-4 h-4 text-muted-foreground" />
                     )}
                   </td>
-                  <td className="p-4 font-mono font-medium text-primary">{shot.shot}</td>
+                  <td className="p-4 font-mono font-medium text-pink">{shot.shot}</td>
                   <td className="p-4">
                     <span className="inline-flex items-center gap-1">
                       <Camera className="w-3 h-3 text-muted-foreground" />

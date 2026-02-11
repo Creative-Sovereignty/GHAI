@@ -30,7 +30,7 @@ const Veo3 = () => {
         >
           <div className="flex items-center gap-3">
             <h1 className="font-display text-2xl font-bold">Veo 3</h1>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/30 font-medium">
+            <span className="text-xs px-2 py-0.5 rounded-full bg-teal/10 text-teal border border-teal/30 font-medium">
               AI Video
             </span>
           </div>
@@ -45,7 +45,7 @@ const Veo3 = () => {
           className="card-gradient rounded-2xl border border-border p-6"
         >
           <div className="flex items-center gap-2 mb-4">
-            <Sparkles className="w-5 h-5 text-primary" />
+            <Sparkles className="w-5 h-5 text-teal" />
             <h2 className="font-display font-semibold">Generate Video</h2>
           </div>
 
@@ -54,12 +54,12 @@ const Veo3 = () => {
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             placeholder="Describe the video you want to create... e.g., 'A sweeping aerial shot over a neon-lit cyberpunk city at night, rain reflections on wet streets, flying cars in the distance'"
-            className="w-full h-28 p-4 rounded-xl bg-secondary/50 border border-border text-foreground text-sm placeholder:text-muted-foreground outline-none focus:border-primary/50 transition-colors resize-none"
+            className="w-full h-28 p-4 rounded-xl bg-secondary/50 border border-border text-foreground text-sm placeholder:text-muted-foreground outline-none focus:border-teal/50 transition-colors resize-none"
           />
 
           {/* Reference Image Upload */}
           <div className="mt-4">
-            <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-dashed border-border hover:border-primary/40 text-muted-foreground hover:text-foreground transition-all text-sm">
+            <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-dashed border-border hover:border-teal/40 text-muted-foreground hover:text-foreground transition-all text-sm">
               <ImagePlus className="w-4 h-4" />
               Upload reference image (optional)
             </button>
@@ -75,8 +75,8 @@ const Veo3 = () => {
                   onClick={() => setSelectedStyle(s)}
                   className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
                     selectedStyle === s
-                      ? "bg-primary/10 text-primary border-primary/40"
-                      : "bg-secondary text-muted-foreground border-border hover:border-primary/20"
+                      ? "bg-teal/10 text-teal border-teal/40"
+                      : "bg-secondary text-muted-foreground border-border hover:border-teal/20"
                   }`}
                 >
                   {s}
@@ -96,8 +96,8 @@ const Veo3 = () => {
                     onClick={() => setSelectedAspect(a)}
                     className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
                       selectedAspect === a
-                        ? "bg-primary/10 text-primary border-primary/40"
-                        : "bg-secondary text-muted-foreground border-border hover:border-primary/20"
+                        ? "bg-teal/10 text-teal border-teal/40"
+                        : "bg-secondary text-muted-foreground border-border hover:border-teal/20"
                     }`}
                   >
                     {a}
@@ -114,8 +114,8 @@ const Veo3 = () => {
                     onClick={() => setSelectedDuration(d)}
                     className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
                       selectedDuration === d
-                        ? "bg-primary/10 text-primary border-primary/40"
-                        : "bg-secondary text-muted-foreground border-border hover:border-primary/20"
+                        ? "bg-teal/10 text-teal border-teal/40"
+                        : "bg-secondary text-muted-foreground border-border hover:border-teal/20"
                     }`}
                   >
                     {d}
@@ -131,7 +131,7 @@ const Veo3 = () => {
               <Settings2 className="w-4 h-4" />
               Advanced Settings
             </button>
-            <Button variant="glow" size="lg">
+            <Button className="bg-teal text-teal-foreground hover:bg-teal/90 shadow-[0_0_20px_hsl(174_72%_46%/0.3)] hover:shadow-[0_0_30px_hsl(174_72%_46%/0.5)] transition-shadow" size="lg">
               <Wand2 className="w-4 h-4" /> Generate Video
             </Button>
           </div>
@@ -147,7 +147,7 @@ const Veo3 = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="card-gradient rounded-xl border border-border overflow-hidden hover:border-primary/20 transition-all group"
+                className="card-gradient rounded-xl border border-border overflow-hidden hover:border-teal/20 transition-all group"
               >
                 {/* Video Preview Area */}
                 <div className="aspect-video bg-secondary/50 relative flex items-center justify-center">
@@ -158,19 +158,19 @@ const Veo3 = () => {
                         animate={{ rotate: 360 }}
                         transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                       >
-                        <RefreshCw className="w-6 h-6 text-primary" />
+                        <RefreshCw className="w-6 h-6 text-teal" />
                       </motion.div>
-                      <span className="text-xs text-primary">Generating...</span>
+                      <span className="text-xs text-teal">Generating...</span>
                     </div>
                   ) : (
                     <button
                       onClick={() => setPlayingId(playingId === video.id ? null : video.id)}
-                      className="w-12 h-12 rounded-full bg-primary/20 backdrop-blur-sm flex items-center justify-center z-10 group-hover:bg-primary/30 transition-colors"
+                      className="w-12 h-12 rounded-full bg-teal/20 backdrop-blur-sm flex items-center justify-center z-10 group-hover:bg-teal/30 transition-colors"
                     >
                       {playingId === video.id ? (
-                        <Pause className="w-5 h-5 text-primary" />
+                        <Pause className="w-5 h-5 text-teal" />
                       ) : (
-                        <Play className="w-5 h-5 text-primary ml-0.5" />
+                        <Play className="w-5 h-5 text-teal ml-0.5" />
                       )}
                     </button>
                   )}
@@ -181,7 +181,7 @@ const Veo3 = () => {
                 <div className="p-4">
                   <h3 className="font-medium text-sm">{video.title}</h3>
                   <div className="flex items-center gap-3 mt-1.5">
-                    <span className="text-xs text-primary/70">{video.style}</span>
+                    <span className="text-xs text-teal/70">{video.style}</span>
                     <span className="text-xs text-muted-foreground">{video.aspect}</span>
                     <span className="text-xs text-muted-foreground flex items-center gap-1">
                       <Clock className="w-3 h-3" /> {video.duration}
@@ -192,7 +192,7 @@ const Veo3 = () => {
                       <Button variant="ghost" size="sm" className="flex-1 text-xs">
                         <RefreshCw className="w-3 h-3" /> Regenerate
                       </Button>
-                      <Button variant="cinema" size="sm" className="flex-1 text-xs">
+                      <Button className="flex-1 text-xs border border-teal/30 text-teal hover:bg-teal/10 hover:border-teal/60 bg-transparent" size="sm">
                         <Download className="w-3 h-3" /> Download
                       </Button>
                     </div>
