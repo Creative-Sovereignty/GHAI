@@ -13,7 +13,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Clapperboard,
+  LogOut,
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/", color: "primary" },
@@ -36,6 +38,7 @@ const colorClasses: Record<string, { bg: string; text: string; bar: string }> = 
 
 const AppSidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const { signOut } = useAuth();
   const location = useLocation();
 
   return (
@@ -96,13 +99,22 @@ const AppSidebar = () => {
         })}
       </nav>
 
-      {/* Collapse toggle */}
-      <button
-        onClick={() => setCollapsed(!collapsed)}
-        className="mx-2 mb-4 p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors flex items-center justify-center"
-      >
-        {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-      </button>
+      {/* Bottom actions */}
+      <div className="px-2 mb-4 space-y-1">
+        <button
+          onClick={signOut}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+        >
+          <LogOut className="w-5 h-5 shrink-0" />
+          {!collapsed && <span className="truncate">Sign Out</span>}
+        </button>
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="w-full p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors flex items-center justify-center"
+        >
+          {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+        </button>
+      </div>
     </motion.aside>
   );
 };
