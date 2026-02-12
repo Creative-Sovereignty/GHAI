@@ -43,7 +43,7 @@ const Dashboard = () => {
             alt="CineForge banner"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-purple/80 via-pink/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-purple/30" />
           <div className="absolute inset-0 flex items-center px-8">
             <div>
               <h1 className="font-display text-3xl lg:text-4xl font-bold mb-2">
