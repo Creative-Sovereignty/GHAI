@@ -1,24 +1,20 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
-import { Plus, Play, Clock, Film, Music, FileText, TrendingUp, Trash2, Loader2 } from "lucide-react";
+import { Plus, Play, Clock, Film, Music, FileText, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import AppLayout from "@/components/AppLayout";
 import heroBanner from "@/assets/hero-banner.jpg";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import type { Tables } from "@/integrations/supabase/types";
 
-type Project = Tables<"projects">;
+const projects = [
+  { id: 1, title: "Neon Dreams", status: "In Progress", scenes: 12, duration: "2:30", genre: "Sci-Fi" },
+  { id: 2, title: "Midnight Echo", status: "Pre-Production", scenes: 8, duration: "1:45", genre: "Thriller" },
+  { id: 3, title: "Golden Hour", status: "Post-Production", scenes: 15, duration: "3:00", genre: "Drama" },
+];
 
 const stats = [
-  { label: "Active Projects", icon: Film, key: "projects" as const },
-  { label: "Scripts Written", icon: FileText, key: "scripts" as const },
-  { label: "Music Tracks", icon: Music, key: "music" as const },
-  { label: "Hours Edited", icon: Clock, key: "hours" as const },
+  { label: "Active Projects", value: "3", icon: Film, change: "+1 this week" },
+  { label: "Scripts Written", value: "7", icon: FileText, change: "2 drafts" },
+  { label: "Music Tracks", value: "12", icon: Music, change: "4 generated" },
+  { label: "Hours Edited", value: "24", icon: Clock, change: "+6 today" },
 ];
 
 const container = {
@@ -32,62 +28,6 @@ const item = {
 };
 
 const Dashboard = () => {
-  const { user } = useAuth();
-  const queryClient = useQueryClient();
-  const [newTitle, setNewTitle] = useState("");
-  const [newDescription, setNewDescription] = useState("");
-  const [dialogOpen, setDialogOpen] = useState(false);
-
-  const { data: projects = [], isLoading } = useQuery({
-    queryKey: ["projects"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("projects")
-        .select("*")
-        .order("updated_at", { ascending: false });
-      if (error) throw error;
-      return data as Project[];
-    },
-  });
-
-  const createProject = useMutation({
-    mutationFn: async () => {
-      const { error } = await supabase.from("projects").insert({
-        title: newTitle,
-        description: newDescription || null,
-        user_id: user!.id,
-      });
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["projects"] });
-      setNewTitle("");
-      setNewDescription("");
-      setDialogOpen(false);
-      toast.success("Project created!");
-    },
-    onError: (e) => toast.error(e.message),
-  });
-
-  const deleteProject = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from("projects").delete().eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["projects"] });
-      toast.success("Project deleted");
-    },
-    onError: (e) => toast.error(e.message),
-  });
-
-  const statValues = {
-    projects: projects.length.toString(),
-    scripts: "0",
-    music: "0",
-    hours: "0",
-  };
-
   return (
     <AppLayout>
       <div className="p-6 lg:p-8 space-y-8">
@@ -98,7 +38,11 @@ const Dashboard = () => {
           transition={{ duration: 0.6 }}
           className="relative rounded-2xl overflow-hidden h-48 lg:h-56"
         >
-          <img src={heroBanner} alt="CineForge banner" className="w-full h-full object-cover" />
+          <img
+            src={heroBanner}
+            alt="CineForge banner"
+            className="w-full h-full object-cover"
+          />
           <div className="absolute inset-0 bg-gradient-to-r from-purple/80 via-pink/40 to-transparent" />
           <div className="absolute inset-0 flex items-center px-8">
             <div>
@@ -108,46 +52,20 @@ const Dashboard = () => {
               <p className="text-muted-foreground text-sm lg:text-base max-w-md">
                 Your AI-powered filmmaking studio. Create stunning shorts from script to screen.
               </p>
-              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button variant="glow" className="mt-4" size="lg">
-                    <Plus className="w-4 h-4" /> New Project
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle className="font-display">Create New Project</DialogTitle>
-                  </DialogHeader>
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      if (newTitle.trim()) createProject.mutate();
-                    }}
-                    className="space-y-4 mt-2"
-                  >
-                    <Input
-                      placeholder="Project title"
-                      value={newTitle}
-                      onChange={(e) => setNewTitle(e.target.value)}
-                      required
-                    />
-                    <Input
-                      placeholder="Description (optional)"
-                      value={newDescription}
-                      onChange={(e) => setNewDescription(e.target.value)}
-                    />
-                    <Button type="submit" variant="glow" className="w-full" disabled={createProject.isPending}>
-                      {createProject.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Create Project"}
-                    </Button>
-                  </form>
-                </DialogContent>
-              </Dialog>
+              <Button variant="glow" className="mt-4" size="lg">
+                <Plus className="w-4 h-4" /> New Project
+              </Button>
             </div>
           </div>
         </motion.div>
 
         {/* Stats */}
-        <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="grid grid-cols-2 lg:grid-cols-4 gap-4"
+        >
           {stats.map((stat) => (
             <motion.div
               key={stat.label}
@@ -158,8 +76,9 @@ const Dashboard = () => {
                 <stat.icon className="w-5 h-5 text-primary" />
                 <TrendingUp className="w-3 h-3 text-muted-foreground" />
               </div>
-              <p className="font-display text-2xl font-bold">{statValues[stat.key]}</p>
+              <p className="font-display text-2xl font-bold">{stat.value}</p>
               <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
+              <p className="text-xs text-primary/70 mt-0.5">{stat.change}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -168,77 +87,69 @@ const Dashboard = () => {
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-display text-xl font-semibold">Recent Projects</h2>
+            <Button variant="cinema" size="sm">View All</Button>
           </div>
-
-          {isLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="w-6 h-6 animate-spin text-primary" />
-            </div>
-          ) : (
-            <motion.div variants={container} initial="hidden" animate="show" className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {projects.map((project) => (
-                <motion.div
-                  key={project.id}
-                  variants={item}
-                  whileHover={{ y: -4 }}
-                  className="card-gradient rounded-xl border border-border p-5 hover:border-primary/30 transition-all cursor-pointer group"
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="min-w-0 flex-1">
-                      <h3 className="font-display font-semibold text-lg truncate">{project.title}</h3>
-                      {project.description && (
-                        <span className="text-xs text-muted-foreground line-clamp-1">{project.description}</span>
-                      )}
-                    </div>
-                    <span className={`text-xs px-2.5 py-1 rounded-full border shrink-0 ml-2 ${
-                      project.status === "in_progress"
-                        ? "text-primary border-primary/30 bg-primary/10"
-                        : project.status === "completed"
-                        ? "text-green-400 border-green-400/30 bg-green-400/10"
-                        : "text-muted-foreground border-border bg-secondary"
-                    }`}>
-                      {project.status.replace("_", " ")}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Clock className="w-3.5 h-3.5" />
-                    {new Date(project.updated_at).toLocaleDateString()}
-                  </div>
-                  <div className="mt-4 flex gap-2">
-                    <Button variant="ghost" size="sm" className="flex-1 text-xs">
-                      <Play className="w-3 h-3" /> Open
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-xs text-destructive hover:text-destructive"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        deleteProject.mutate(project.id);
-                      }}
-                    >
-                      <Trash2 className="w-3 h-3" />
-                    </Button>
-                  </div>
-                </motion.div>
-              ))}
-
-              {/* New Project Card */}
+          <motion.div
+            variants={container}
+            initial="hidden"
+            animate="show"
+            className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+          >
+            {projects.map((project) => (
               <motion.div
+                key={project.id}
                 variants={item}
                 whileHover={{ y: -4 }}
-                onClick={() => setDialogOpen(true)}
-                className="rounded-xl border border-dashed border-border p-5 flex flex-col items-center justify-center min-h-[180px] cursor-pointer hover:border-primary/40 transition-colors group"
+                className="card-gradient rounded-xl border border-border p-5 hover:border-primary/30 transition-all cursor-pointer group"
               >
-                <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                  <Plus className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                <div className="flex items-start justify-between mb-4">
+                  <div>
+                    <h3 className="font-display font-semibold text-lg">{project.title}</h3>
+                    <span className="text-xs text-muted-foreground">{project.genre}</span>
+                  </div>
+                  <span className={`text-xs px-2.5 py-1 rounded-full border ${
+                    project.status === "In Progress"
+                      ? "text-primary border-primary/30 bg-primary/10"
+                      : project.status === "Post-Production"
+                      ? "text-green-400 border-green-400/30 bg-green-400/10"
+                      : "text-muted-foreground border-border bg-secondary"
+                  }`}>
+                    {project.status}
+                  </span>
                 </div>
-                <p className="mt-3 text-sm text-muted-foreground group-hover:text-foreground transition-colors">
-                  Create New Short
-                </p>
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <span className="flex items-center gap-1">
+                    <Film className="w-3.5 h-3.5" /> {project.scenes} scenes
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-3.5 h-3.5" /> {project.duration}
+                  </span>
+                </div>
+                <div className="mt-4 flex gap-2">
+                  <Button variant="ghost" size="sm" className="flex-1 text-xs">
+                    <Play className="w-3 h-3" /> Preview
+                  </Button>
+                  <Button variant="cinema" size="sm" className="flex-1 text-xs">
+                    Continue
+                  </Button>
+                </div>
               </motion.div>
+            ))}
+
+            {/* New Project Card */}
+            <motion.div
+              variants={item}
+              whileHover={{ y: -4 }}
+              className="rounded-xl border border-dashed border-border p-5 flex flex-col items-center justify-center min-h-[180px] cursor-pointer hover:border-primary/40 transition-colors group"
+            >
+              <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                <Plus className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+              </div>
+              <p className="mt-3 text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+                Create New Short
+              </p>
             </motion.div>
-          )}
+          </motion.div>
         </div>
       </div>
     </AppLayout>
