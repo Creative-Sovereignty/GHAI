@@ -55,7 +55,7 @@ const AppSidebar = () => {
             animate={{ opacity: 1 }}
             className="font-display font-bold text-lg text-foreground truncate"
           >
-            CineForge
+            AShort AI
           </motion.span>
         )}
       </div>
