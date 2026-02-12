@@ -89,7 +89,28 @@
 @layer utilities {
   .text-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: var(--gradient-primary);
+    background-image: linear-gradient(
+      90deg,
+      hsl(43 55% 50%) 0%,
+      hsl(43 70% 70%) 25%,
+      hsl(40 90% 80%) 50%,
+      hsl(43 70% 70%) 75%,
+      hsl(43 55% 50%) 100%
+    );
+    background-size: 200% auto;
+  }
+
+  .text-gradient-shimmer {
+    @apply bg-clip-text text-transparent animate-shimmer;
+    background-image: linear-gradient(
+      90deg,
+      hsl(43 55% 50%) 0%,
+      hsl(43 70% 70%) 25%,
+      hsl(40 90% 80%) 50%,
+      hsl(43 70% 70%) 75%,
+      hsl(43 55% 50%) 100%
+    );
+    background-size: 200% auto;
   }
 
   .glow {
