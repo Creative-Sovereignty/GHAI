@@ -20,8 +20,8 @@ const navItems = [
   { icon: FileText, label: "Script", path: "/script", color: "blue" },
   { icon: Image, label: "Storyboard", path: "/storyboard", color: "teal" },
   { icon: ListChecks, label: "Shot List", path: "/shots", color: "pink" },
-  { icon: Film, label: "Editor", path: "/editor", color: "blue" },
   { icon: Video, label: "Veo 3", path: "/veo3", color: "teal" },
+  { icon: Film, label: "Editor", path: "/editor", color: "blue" },
   { icon: Music, label: "AI Music", path: "/music", color: "purple" },
   { icon: Settings, label: "Settings", path: "/settings", color: "primary" },
 ];
