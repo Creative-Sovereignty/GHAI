@@ -35,11 +35,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signUp = async (email: string, password: string, displayName?: string) => {
+    const redirectTo = window.location.origin.includes('lovable.app')
+      ? window.location.origin
+      : 'https://ashortai.lovable.app';
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: redirectTo,
         data: { display_name: displayName },
       },
     });
