@@ -13,6 +13,7 @@ import VideoEditor from "./pages/VideoEditor";
 import AIMusic from "./pages/AIMusic";
 import Veo3 from "./pages/Veo3";
 import Auth from "./pages/Auth";
+import Install from "./pages/Install";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/auth" element={<Auth />} />
+            <Route path="/install" element={<Install />} />
             <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/script" element={<ProtectedRoute><ScriptEditor /></ProtectedRoute>} />
             <Route path="/storyboard" element={<ProtectedRoute><Storyboard /></ProtectedRoute>} />
