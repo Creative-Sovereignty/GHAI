@@ -47,7 +47,7 @@ const Install = () => {
             <img src="/pwa-192x192.png" alt="Golden Hour AI" className="w-full h-full" />
           </div>
           <h1 className="text-3xl font-bold font-display tracking-tight">
-            Install Golden Hour AI
+            Install <span className="text-primary">Golden Hour</span> AI
           </h1>
           <p className="text-muted-foreground">
             Add to your home screen for a native app experience — works offline.
