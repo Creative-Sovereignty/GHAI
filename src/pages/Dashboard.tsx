@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Plus, Play, Clock, Film, Music, FileText, TrendingUp, Trash2, LogOut } from "lucide-react";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Plus, Play, Clock, Film, Music, FileText, TrendingUp, Trash2, LogOut, Download, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -35,6 +35,11 @@ const item = {
   show: { opacity: 1, y: 0 },
 };
 
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+}
+
 const Dashboard = () => {
   const { data: projects, isLoading } = useProjects();
   const createProject = useCreateProject();
@@ -44,6 +49,39 @@ const Dashboard = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [bannerDismissed, setBannerDismissed] = useState(() =>
+    localStorage.getItem("pwa-banner-dismissed") === "true"
+  );
+  const isStandalone = typeof window !== "undefined" && window.matchMedia("(display-mode: standalone)").matches;
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setInstallPrompt(e as BeforeInstallPromptEvent);
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!installPrompt) return;
+    await installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+    if (outcome === "accepted") {
+      setBannerDismissed(true);
+      localStorage.setItem("pwa-banner-dismissed", "true");
+    }
+    setInstallPrompt(null);
+  };
+
+  const dismissBanner = () => {
+    setBannerDismissed(true);
+    localStorage.setItem("pwa-banner-dismissed", "true");
+  };
+
+  const showBanner = !isStandalone && !bannerDismissed;
 
   const dynamicStats = [
     { ...stats[0], value: String(projects?.length ?? 0), change: "" },
@@ -75,6 +113,41 @@ const Dashboard = () => {
   return (
     <AppLayout>
       <div className="p-6 lg:p-8 space-y-8">
+        {/* Install Banner */}
+        <AnimatePresence>
+          {showBanner && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="rounded-xl border border-primary/30 bg-primary/5 p-4 flex items-center justify-between gap-4"
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <Download className="w-5 h-5 text-primary" />
+                </div>
+                <div className="min-w-0">
+                  <p className="font-semibold text-sm">Install Golden Hour AI</p>
+                  <p className="text-xs text-muted-foreground truncate">Add to your home screen for the best experience</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                {installPrompt ? (
+                  <Button variant="glow" size="sm" onClick={handleInstallClick}>
+                    Install
+                  </Button>
+                ) : (
+                  <Button variant="cinema" size="sm" asChild>
+                    <a href="/install">How to Install</a>
+                  </Button>
+                )}
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={dismissBanner}>
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
         {/* Hero Banner */}
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
