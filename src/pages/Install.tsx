@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Download, Smartphone, Monitor, Share, MoreVertical, PlusSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -19,11 +19,7 @@ const Install = () => {
       setDeferredPrompt(e as BeforeInstallPromptEvent);
     };
     window.addEventListener("beforeinstallprompt", handler);
-
-    if (window.matchMedia("(display-mode: standalone)").matches) {
-      setIsInstalled(true);
-    }
-
+    if (window.matchMedia("(display-mode: standalone)").matches) setIsInstalled(true);
     return () => window.removeEventListener("beforeinstallprompt", handler);
   }, []);
 
@@ -43,11 +39,11 @@ const Install = () => {
         className="max-w-lg w-full space-y-8"
       >
         <div className="text-center space-y-3">
-          <div className="w-20 h-20 mx-auto rounded-2xl overflow-hidden shadow-lg">
+          <div className="w-20 h-20 mx-auto rounded-2xl overflow-hidden shadow-[0_0_30px_var(--neon-pink-30)]">
             <img src="/pwa-192x192.png" alt="Golden Hour AI" className="w-full h-full" />
           </div>
           <h1 className="text-3xl font-bold font-display tracking-tight">
-            Install <span className="text-primary">Golden Hour</span> AI
+            Install <span className="rainbow-text">Golden Hour</span> AI
           </h1>
           <p className="text-muted-foreground">
             Add to your home screen for a native app experience — works offline.
@@ -55,75 +51,65 @@ const Install = () => {
         </div>
 
         {isInstalled ? (
-          <Card className="border-primary/30 bg-primary/5">
-            <CardContent className="p-6 text-center">
-              <p className="text-primary font-semibold text-lg">✓ Already installed!</p>
-              <p className="text-muted-foreground text-sm mt-1">
-                Open Golden Hour AI from your home screen or app launcher.
-              </p>
-            </CardContent>
-          </Card>
+          <div className="neo-card rounded-xl border-[var(--neon-green-30)] p-6 text-center">
+            <Badge className="bg-[var(--neon-green-10)] text-[var(--neon-green-raw)] border-[var(--neon-green-30)] shadow-[0_0_10px_var(--neon-green-10)] text-sm mb-2">
+              ✓ Already installed!
+            </Badge>
+            <p className="text-muted-foreground text-sm mt-2">
+              Open Golden Hour AI from your home screen or app launcher.
+            </p>
+          </div>
         ) : deferredPrompt ? (
-          <Button
-            onClick={handleInstall}
-            size="lg"
-            className="w-full text-lg gap-3 py-6"
-          >
+          <Button onClick={handleInstall} variant="glow" size="lg" className="w-full text-lg gap-3 py-6">
             <Download className="w-5 h-5" />
             Install App
           </Button>
         ) : null}
 
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-center">Manual Install</h2>
+          <h2 className="text-lg font-semibold text-center font-display">Manual Install</h2>
 
-          <Card className="bg-card border-border/50">
-            <CardContent className="p-5 space-y-3">
-              <div className="flex items-center gap-3">
-                <Smartphone className="w-5 h-5 text-primary shrink-0" />
-                <span className="font-medium">iPhone / iPad</span>
-              </div>
-              <ol className="text-sm text-muted-foreground space-y-2 ml-8 list-decimal">
-                <li className="flex items-center gap-2">
-                  Tap <Share className="w-4 h-4 inline text-foreground" /> <strong className="text-foreground">Share</strong>
-                </li>
-                <li className="flex items-center gap-2">
-                  Tap <PlusSquare className="w-4 h-4 inline text-foreground" /> <strong className="text-foreground">Add to Home Screen</strong>
-                </li>
-                <li>Tap <strong className="text-foreground">Add</strong></li>
-              </ol>
-            </CardContent>
-          </Card>
+          <div className="neo-card rounded-xl p-5 space-y-3">
+            <div className="flex items-center gap-3">
+              <Smartphone className="w-5 h-5 text-primary shrink-0" />
+              <span className="font-medium">iPhone / iPad</span>
+            </div>
+            <ol className="text-sm text-muted-foreground space-y-2 ml-8 list-decimal">
+              <li className="flex items-center gap-2">
+                Tap <Share className="w-4 h-4 inline text-foreground" /> <strong className="text-foreground">Share</strong>
+              </li>
+              <li className="flex items-center gap-2">
+                Tap <PlusSquare className="w-4 h-4 inline text-foreground" /> <strong className="text-foreground">Add to Home Screen</strong>
+              </li>
+              <li>Tap <strong className="text-foreground">Add</strong></li>
+            </ol>
+          </div>
 
-          <Card className="bg-card border-border/50">
-            <CardContent className="p-5 space-y-3">
-              <div className="flex items-center gap-3">
-                <Smartphone className="w-5 h-5 text-primary shrink-0" />
-                <span className="font-medium">Android</span>
-              </div>
-              <ol className="text-sm text-muted-foreground space-y-2 ml-8 list-decimal">
-                <li className="flex items-center gap-2">
-                  Tap <MoreVertical className="w-4 h-4 inline text-foreground" /> <strong className="text-foreground">Menu</strong> in Chrome
-                </li>
-                <li>
-                  Tap <strong className="text-foreground">Add to Home Screen</strong> or <strong className="text-foreground">Install App</strong>
-                </li>
-              </ol>
-            </CardContent>
-          </Card>
+          <div className="neo-card rounded-xl p-5 space-y-3">
+            <div className="flex items-center gap-3">
+              <Smartphone className="w-5 h-5 text-primary shrink-0" />
+              <span className="font-medium">Android</span>
+            </div>
+            <ol className="text-sm text-muted-foreground space-y-2 ml-8 list-decimal">
+              <li className="flex items-center gap-2">
+                Tap <MoreVertical className="w-4 h-4 inline text-foreground" /> <strong className="text-foreground">Menu</strong> in Chrome
+              </li>
+              <li>
+                Tap <strong className="text-foreground">Add to Home Screen</strong> or <strong className="text-foreground">Install App</strong>
+              </li>
+            </ol>
+          </div>
 
-          <Card className="bg-card border-border/50">
-            <CardContent className="p-5 space-y-3">
-              <div className="flex items-center gap-3">
-                <Monitor className="w-5 h-5 text-primary shrink-0" />
-                <span className="font-medium">Desktop (Chrome / Edge)</span>
-              </div>
-              <ol className="text-sm text-muted-foreground space-y-2 ml-8 list-decimal">
-                <li>Click the install icon in the address bar</li>
-                <li>Click <strong className="text-foreground">Install</strong></li>
-              </ol>
-            </CardContent>
-          </Card>
+          <div className="neo-card rounded-xl p-5 space-y-3">
+            <div className="flex items-center gap-3">
+              <Monitor className="w-5 h-5 text-primary shrink-0" />
+              <span className="font-medium">Desktop (Chrome / Edge)</span>
+            </div>
+            <ol className="text-sm text-muted-foreground space-y-2 ml-8 list-decimal">
+              <li>Click the install icon in the address bar</li>
+              <li>Click <strong className="text-foreground">Install</strong></li>
+            </ol>
+          </div>
         </div>
       </motion.div>
     </div>

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Music, Play, Pause, Download, Wand2, Clock, RefreshCw, Volume2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import AppLayout from "@/components/AppLayout";
 
 const genres = ["Cinematic", "Ambient", "Electronic", "Orchestral", "Lo-Fi", "Suspense", "Action", "Romantic"];
@@ -23,10 +24,7 @@ const AIMusic = () => {
   return (
     <AppLayout>
       <div className="p-6 lg:p-8 space-y-8">
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
           <h1 className="font-display text-2xl font-bold">AI Music Generator</h1>
           <p className="text-sm text-muted-foreground mt-1">Generate custom soundtracks for your shorts</p>
         </motion.div>
@@ -36,19 +34,18 @@ const AIMusic = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="card-gradient rounded-2xl border border-border p-6"
+          className="neo-card rounded-2xl p-6"
         >
           <div className="flex items-center gap-2 mb-4">
-            <Sparkles className="w-5 h-5 text-purple" />
+            <Sparkles className="w-5 h-5 text-[var(--neon-purple)]" />
             <h2 className="font-display font-semibold">Create a Track</h2>
           </div>
 
-          {/* Prompt */}
           <textarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             placeholder="Describe the music you need... e.g., 'Dark, pulsing electronic beat for a cyberpunk chase scene, building tension with synth layers'"
-            className="w-full h-24 p-4 rounded-xl bg-secondary/50 border border-border text-foreground text-sm placeholder:text-muted-foreground outline-none focus:border-purple/50 transition-colors resize-none"
+            className="w-full h-24 p-4 rounded-xl bg-secondary/50 border border-[var(--neo-border)] text-foreground text-sm placeholder:text-muted-foreground outline-none focus:border-[var(--neon-purple-30)] focus:shadow-[0_0_15px_var(--neon-purple-10)] transition-all resize-none"
           />
 
           {/* Genre selection */}
@@ -61,8 +58,8 @@ const AIMusic = () => {
                   onClick={() => setSelectedGenre(g)}
                   className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
                     selectedGenre === g
-                      ? "bg-purple/10 text-purple border-purple/40"
-                      : "bg-secondary text-muted-foreground border-border hover:border-purple/20"
+                      ? "bg-[var(--neon-purple-10)] text-[var(--neon-purple)] border-[var(--neon-purple-30)] shadow-[0_0_8px_var(--neon-purple-10)]"
+                      : "bg-secondary text-muted-foreground border-[var(--neo-border)] hover:border-[var(--neon-purple-30)]"
                   }`}
                 >
                   {g}
@@ -81,8 +78,8 @@ const AIMusic = () => {
                   onClick={() => setSelectedMood(m)}
                   className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
                     selectedMood === m
-                      ? "bg-purple/10 text-purple border-purple/40"
-                      : "bg-secondary text-muted-foreground border-border hover:border-purple/20"
+                      ? "bg-[var(--neon-cyan-10)] text-[var(--neon-cyan)] border-[var(--neon-cyan-30)] shadow-[0_0_8px_var(--neon-cyan-10)]"
+                      : "bg-secondary text-muted-foreground border-[var(--neo-border)] hover:border-[var(--neon-cyan-30)]"
                   }`}
                 >
                   {m}
@@ -96,7 +93,7 @@ const AIMusic = () => {
             <div className="flex items-center gap-4">
               <div>
                 <p className="text-xs text-muted-foreground mb-1">Duration</p>
-                <select className="bg-secondary text-foreground border border-border rounded-lg px-3 py-1.5 text-sm outline-none">
+                <select className="bg-secondary text-foreground border border-[var(--neo-border)] rounded-lg px-3 py-1.5 text-sm outline-none focus:border-[var(--neon-purple-30)]">
                   <option>30 seconds</option>
                   <option>1 minute</option>
                   <option>2 minutes</option>
@@ -108,11 +105,11 @@ const AIMusic = () => {
                 <input
                   type="number"
                   defaultValue={120}
-                  className="w-20 bg-secondary text-foreground border border-border rounded-lg px-3 py-1.5 text-sm outline-none"
+                  className="w-20 bg-secondary text-foreground border border-[var(--neo-border)] rounded-lg px-3 py-1.5 text-sm outline-none focus:border-[var(--neon-purple-30)]"
                 />
               </div>
             </div>
-            <Button className="bg-purple text-purple-foreground hover:bg-purple/90 shadow-[0_0_20px_hsl(271_76%_53%/0.3)] hover:shadow-[0_0_30px_hsl(271_76%_53%/0.5)] transition-shadow" size="lg">
+            <Button variant="glow" size="lg">
               <Wand2 className="w-4 h-4" /> Generate Track
             </Button>
           </div>
@@ -128,26 +125,24 @@ const AIMusic = () => {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="card-gradient rounded-xl border border-border p-4 flex items-center gap-4 hover:border-purple/20 transition-all group"
+                className="neo-card rounded-xl p-4 flex items-center gap-4 hover:border-[var(--neon-purple-30)] hover:shadow-[0_0_20px_var(--neon-purple-10)] transition-all group"
               >
-                {/* Play button */}
                 <button
                   onClick={() => setPlayingId(playingId === track.id ? null : track.id)}
-                  className="w-10 h-10 rounded-full bg-purple/10 flex items-center justify-center shrink-0 group-hover:bg-purple/20 transition-colors"
+                  className="w-10 h-10 rounded-full bg-[var(--neon-purple-10)] flex items-center justify-center shrink-0 group-hover:bg-[var(--neon-purple-30)] group-hover:shadow-[0_0_12px_var(--neon-purple-30)] transition-all"
                 >
                   {playingId === track.id ? (
-                    <Pause className="w-4 h-4 text-purple" />
+                    <Pause className="w-4 h-4 text-[var(--neon-purple)]" />
                   ) : (
-                    <Play className="w-4 h-4 text-purple ml-0.5" />
+                    <Play className="w-4 h-4 text-[var(--neon-purple)] ml-0.5" />
                   )}
                 </button>
 
-                {/* Track info */}
                 <div className="flex-1 min-w-0">
                   <h3 className="font-medium text-sm">{track.name}</h3>
-                  <div className="flex items-center gap-3 mt-1">
-                    <span className="text-xs text-purple/70">{track.genre}</span>
-                    <span className="text-xs text-muted-foreground">{track.mood}</span>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Badge className="bg-[var(--neon-purple-10)] text-[var(--neon-purple)] border-[var(--neon-purple-30)] text-[10px]">{track.genre}</Badge>
+                    <Badge className="bg-[var(--neon-cyan-10)] text-[var(--neon-cyan)] border-[var(--neon-cyan-30)] text-[10px]">{track.mood}</Badge>
                   </div>
                 </div>
 
@@ -157,17 +152,13 @@ const AIMusic = () => {
                     <div
                       key={i}
                       className={`w-1 rounded-full transition-all ${
-                        playingId === track.id ? "bg-purple/60" : "bg-muted-foreground/20"
+                        playingId === track.id ? "bg-[var(--neon-purple)]" : "bg-muted-foreground/20"
                       }`}
-                      style={{
-                        height: `${Math.random() * 80 + 20}%`,
-                        animationDelay: `${i * 50}ms`,
-                      }}
+                      style={{ height: `${Math.random() * 80 + 20}%`, animationDelay: `${i * 50}ms` }}
                     />
                   ))}
                 </div>
 
-                {/* Meta */}
                 <div className="flex items-center gap-4 shrink-0">
                   <span className="text-xs text-muted-foreground flex items-center gap-1">
                     <Clock className="w-3 h-3" /> {track.duration}
@@ -175,12 +166,11 @@ const AIMusic = () => {
                   <span className="text-xs text-muted-foreground">{track.bpm} BPM</span>
                 </div>
 
-                {/* Actions */}
                 <div className="flex items-center gap-1 shrink-0">
-                  <button className="p-2 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors">
+                  <button className="p-2 rounded-lg hover:bg-[var(--neon-purple-10)] text-muted-foreground hover:text-foreground transition-colors">
                     <RefreshCw className="w-4 h-4" />
                   </button>
-                  <button className="p-2 rounded-lg hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors">
+                  <button className="p-2 rounded-lg hover:bg-[var(--neon-purple-10)] text-muted-foreground hover:text-foreground transition-colors">
                     <Download className="w-4 h-4" />
                   </button>
                 </div>

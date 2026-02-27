@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Plus, CheckCircle2, Circle, Camera, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import AppLayout from "@/components/AppLayout";
 
 const initialShots = [
@@ -27,11 +28,13 @@ const ShotList = () => {
         >
           <div>
             <h1 className="font-display text-2xl font-bold">Shot List</h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              {completed}/{shots.length} completed
-            </p>
+            <div className="flex items-center gap-2 mt-1">
+              <Badge className="bg-[var(--neon-pink-10)] text-[var(--neon-pink)] border-[var(--neon-pink-30)] text-[10px]">
+                {completed}/{shots.length} completed
+              </Badge>
+            </div>
           </div>
-          <Button className="bg-pink text-pink-foreground hover:bg-pink/90 shadow-[0_0_20px_hsl(330_81%_60%/0.3)] hover:shadow-[0_0_30px_hsl(330_81%_60%/0.5)] transition-shadow" size="sm">
+          <Button variant="glow" size="sm">
             <Plus className="w-4 h-4" /> Add Shot
           </Button>
         </motion.div>
@@ -42,7 +45,7 @@ const ShotList = () => {
             initial={{ width: 0 }}
             animate={{ width: `${(completed / shots.length) * 100}%` }}
             transition={{ duration: 1, ease: "easeOut" }}
-            className="h-full rounded-full bg-pink"
+            className="h-full rounded-full bg-primary shadow-[0_0_10px_var(--neon-pink-30)]"
           />
         </div>
 
@@ -51,11 +54,11 @@ const ShotList = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="card-gradient rounded-xl border border-border overflow-hidden"
+          className="neo-card rounded-xl overflow-hidden"
         >
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border text-left text-xs text-muted-foreground uppercase tracking-wider">
+              <tr className="border-b border-[var(--neo-border)] text-left text-xs text-muted-foreground uppercase tracking-wider">
                 <th className="p-4 w-10"></th>
                 <th className="p-4">Shot</th>
                 <th className="p-4">Type</th>
@@ -72,23 +75,23 @@ const ShotList = () => {
                   onClick={() =>
                     setShots(shots.map((s) => (s.id === shot.id ? { ...s, done: !s.done } : s)))
                   }
-                  className={`border-b border-border/50 cursor-pointer transition-colors hover:bg-secondary/30 ${
+                  className={`border-b border-[var(--neo-border)]/50 cursor-pointer transition-colors hover:bg-[var(--neon-pink-05)] ${
                     shot.done ? "opacity-50" : ""
                   }`}
                 >
                   <td className="p-4">
                     {shot.done ? (
-                      <CheckCircle2 className="w-4 h-4 text-pink" />
+                      <CheckCircle2 className="w-4 h-4 text-[var(--neon-green-raw)]" />
                     ) : (
                       <Circle className="w-4 h-4 text-muted-foreground" />
                     )}
                   </td>
-                  <td className="p-4 font-mono font-medium text-pink">{shot.shot}</td>
+                  <td className="p-4 font-mono font-medium text-primary">{shot.shot}</td>
                   <td className="p-4">
-                    <span className="inline-flex items-center gap-1">
-                      <Camera className="w-3 h-3 text-muted-foreground" />
+                    <Badge className="bg-[var(--neon-purple-10)] text-[var(--neon-purple)] border-[var(--neon-purple-30)] text-[10px]">
+                      <Camera className="w-3 h-3 mr-1" />
                       {shot.type}
-                    </span>
+                    </Badge>
                   </td>
                   <td className="p-4 hidden md:table-cell text-muted-foreground">{shot.description}</td>
                   <td className="p-4 hidden lg:table-cell text-muted-foreground">{shot.lens}</td>
