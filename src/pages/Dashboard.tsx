@@ -156,13 +156,13 @@ const Dashboard = () => {
           className="relative rounded-2xl overflow-hidden h-48 lg:h-56"
         >
           <img src={heroBanner} alt="Golden Hour AI banner" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-purple/30" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-purple/40" />
           <div className="absolute inset-0 flex items-center justify-between px-8">
             <div>
-              <h1 className="font-display text-3xl lg:text-4xl font-bold mb-2">
-                Welcome to <span className="text-gradient-shimmer">Golden Hour AI</span>
+              <h1 className="font-heading text-3xl lg:text-4xl font-bold mb-2 neon-glow-pink">
+                Welcome to <span className="rainbow-text">Golden Hour AI</span>
               </h1>
-              <p className="text-muted-foreground text-sm lg:text-base max-w-md">
+              <p className="text-muted-foreground text-sm lg:text-base max-w-md neon-glow-cyan" style={{ textShadow: '0 0 8px hsl(var(--accent) / 0.3)' }}>
                 Your AI-powered filmmaking studio. Create stunning shorts from script to screen.
               </p>
               <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
