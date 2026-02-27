@@ -14,6 +14,7 @@ import AIMusic from "./pages/AIMusic";
 import Veo3 from "./pages/Veo3";
 import Auth from "./pages/Auth";
 import Install from "./pages/Install";
+import FAQ from "./pages/FAQ";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
           <Routes>
             <Route path="/auth" element={<Auth />} />
             <Route path="/install" element={<Install />} />
+            <Route path="/faq" element={<FAQ />} />
             <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/script" element={<ProtectedRoute><ScriptEditor /></ProtectedRoute>} />
             <Route path="/storyboard" element={<ProtectedRoute><Storyboard /></ProtectedRoute>} />
