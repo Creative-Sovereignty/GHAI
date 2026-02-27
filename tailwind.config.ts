@@ -13,6 +13,11 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        heading: ['Cinzel', 'serif'],
+        body: ['Inter', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -72,6 +77,18 @@ export default {
         pink: {
           DEFAULT: "hsl(var(--pink))",
           foreground: "hsl(var(--pink-foreground))",
+        },
+        "neon-green": {
+          DEFAULT: "hsl(var(--neon-green))",
+          foreground: "hsl(var(--neon-green-foreground))",
+        },
+        "neon-yellow": {
+          DEFAULT: "hsl(var(--neon-yellow))",
+          foreground: "hsl(var(--neon-yellow-foreground))",
+        },
+        "neon-orange": {
+          DEFAULT: "hsl(var(--neon-orange))",
+          foreground: "hsl(var(--neon-orange-foreground))",
         },
       },
       borderRadius: {
