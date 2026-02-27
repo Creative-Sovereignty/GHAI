@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Save, Wand2, Download, Copy, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import AppLayout from "@/components/AppLayout";
 
 const ScriptEditor = () => {
@@ -48,19 +49,13 @@ Alex bursts through the apartment door into the rain-soaked street. Neon signs r
             <p className="text-sm text-muted-foreground mt-1">Last edited 2 hours ago</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button className="border border-blue/30 text-blue hover:bg-blue/10 hover:border-blue/60 bg-transparent" size="sm">
+            <Button variant="cinema" size="sm">
               <Wand2 className="w-4 h-4" /> AI Assist
             </Button>
-            <Button variant="ghost" size="sm">
-              <RotateCcw className="w-4 h-4" />
-            </Button>
-            <Button variant="ghost" size="sm">
-              <Copy className="w-4 h-4" />
-            </Button>
-            <Button variant="ghost" size="sm">
-              <Download className="w-4 h-4" />
-            </Button>
-            <Button className="bg-blue text-blue-foreground hover:bg-blue/90 shadow-[0_0_20px_hsl(217_91%_60%/0.3)] hover:shadow-[0_0_30px_hsl(217_91%_60%/0.5)] transition-shadow" size="sm">
+            <Button variant="ghost" size="sm"><RotateCcw className="w-4 h-4" /></Button>
+            <Button variant="ghost" size="sm"><Copy className="w-4 h-4" /></Button>
+            <Button variant="ghost" size="sm"><Download className="w-4 h-4" /></Button>
+            <Button variant="glow" size="sm">
               <Save className="w-4 h-4" /> Save
             </Button>
           </div>
@@ -74,10 +69,12 @@ Alex bursts through the apartment door into the rain-soaked street. Neon signs r
           className="flex-1 flex gap-6"
         >
           {/* Main Editor */}
-          <div className="flex-1 card-gradient rounded-xl border border-border overflow-hidden">
-            <div className="border-b border-border px-4 py-2 flex items-center gap-4">
+          <div className="flex-1 neo-card rounded-xl overflow-hidden">
+            <div className="border-b border-[var(--neo-border)] px-4 py-2 flex items-center gap-4">
               <span className="text-xs text-muted-foreground">Screenplay Format</span>
-              <span className="text-xs text-blue">Words: {script.split(/\s+/).length}</span>
+              <Badge className="bg-[var(--neon-cyan-10)] text-[var(--neon-cyan)] border-[var(--neon-cyan-30)] text-[10px]">
+                Words: {script.split(/\s+/).length}
+              </Badge>
               <span className="text-xs text-muted-foreground">Lines: {script.split("\n").length}</span>
             </div>
             <textarea
@@ -90,29 +87,29 @@ Alex bursts through the apartment door into the rain-soaked street. Neon signs r
 
           {/* Side Panel */}
           <div className="w-64 space-y-4 hidden lg:block">
-            <div className="card-gradient rounded-xl border border-border p-4">
+            <div className="neo-card rounded-xl p-4">
               <h3 className="font-display font-semibold text-sm mb-3">Scene Breakdown</h3>
               <div className="space-y-2">
                 {["INT. APARTMENT - NIGHT", "EXT. CITY STREET"].map((scene, i) => (
                   <div
                     key={i}
-                    className="text-xs px-3 py-2 rounded-lg bg-secondary hover:bg-secondary/80 cursor-pointer transition-colors"
+                    className="text-xs px-3 py-2 rounded-lg bg-[var(--neon-purple-05)] border border-[var(--neon-purple-30)] hover:bg-[var(--neon-purple-10)] cursor-pointer transition-colors text-[var(--neon-purple)]"
                   >
                     {scene}
                   </div>
                 ))}
               </div>
             </div>
-            <div className="card-gradient rounded-xl border border-border p-4">
+            <div className="neo-card rounded-xl p-4">
               <h3 className="font-display font-semibold text-sm mb-3">Characters</h3>
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <div className="w-6 h-6 rounded-full bg-blue/20 flex items-center justify-center text-blue font-bold">A</div>
+                  <div className="w-6 h-6 rounded-full bg-[var(--neon-cyan-10)] flex items-center justify-center text-accent font-bold">A</div>
                   Alex (30s)
                 </div>
               </div>
             </div>
-            <div className="card-gradient rounded-xl border border-border p-4">
+            <div className="neo-card rounded-xl p-4">
               <h3 className="font-display font-semibold text-sm mb-3">AI Suggestions</h3>
               <p className="text-xs text-muted-foreground">Click "AI Assist" to generate scene continuations, dialogue, or shot descriptions.</p>
             </div>
