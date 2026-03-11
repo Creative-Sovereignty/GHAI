@@ -234,7 +234,7 @@ const Landing = () => {
             <Link to="/help" className="hover:text-foreground transition-colors">Help</Link>
             <Link to="/install" className="hover:text-foreground transition-colors">Install App</Link>
           </div>
-          <p className="text-xs text-muted-foreground">© 2026 A List Webs. All rights reserved.</p>
+          <p className="text-xs text-muted-foreground">© 2026 Golden Hour AI. All rights reserved.</p>
         </div>
       </footer>
     </div>

@@ -112,7 +112,7 @@ const ChatWidget = () => {
             <div className="px-4 py-3 border-b border-border flex items-center justify-between bg-card">
               <div className="flex items-center gap-2">
                 <Bot className="w-5 h-5 text-primary" />
-                <span className="font-display font-semibold text-sm">A List Webs Support</span>
+                <span className="font-display font-semibold text-sm">Golden Hour AI Support</span>
               </div>
               <button onClick={() => setOpen(false)} className="text-muted-foreground hover:text-foreground">
                 <X className="w-4 h-4" />
