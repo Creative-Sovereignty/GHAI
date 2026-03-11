@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { Clapperboard, Lock } from "lucide-react";
+import { Lock } from "lucide-react";
+import logoImg from "@/assets/logo.png";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
