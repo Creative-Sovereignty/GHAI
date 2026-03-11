@@ -69,7 +69,7 @@ const Landing = () => {
           transition={{ duration: 0.8 }}
           className="max-w-4xl mx-auto text-center relative z-10"
         >
-          <img src={logoImg} alt="A List Webs" className="h-48 mx-auto mb-8 object-contain" />
+          <img src={logoImg} alt="Golden Hour AI" className="h-48 mx-auto mb-8 object-contain" />
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-bold tracking-tight leading-tight mb-6">
             Your AI-Powered <br />
             <span className="inline-block mt-2 px-5 py-2 rounded-lg bg-gradient-to-r from-[var(--gold-dark)] via-[var(--gold)] to-[var(--gold-bright)] text-[var(--w3-void)] font-black tracking-wide shadow-[0_0_30px_var(--gold-30)]">
