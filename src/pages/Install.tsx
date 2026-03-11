@@ -40,7 +40,7 @@ const Install = () => {
       >
         <div className="text-center space-y-3">
           <div className="w-20 h-20 mx-auto rounded-2xl overflow-hidden shadow-[0_0_30px_var(--neon-pink-30)]">
-            <img src="/pwa-192x192.png" alt="Golden Hour AI" className="w-full h-full" />
+            <img src="/pwa-192x192.png" alt="A List Webs" className="w-full h-full" />
           </div>
           <h1 className="text-3xl font-bold font-display tracking-tight">
             Install <span className="rainbow-text">Golden Hour</span> AI
