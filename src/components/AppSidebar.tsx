@@ -44,7 +44,7 @@ const AppSidebar = () => {
             animate={{ opacity: 1 }}
             className="font-display font-bold text-lg text-foreground truncate"
           >
-            Golden Hour AI
+            A List Webs
           </motion.span>
         )}
       </div>

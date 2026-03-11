@@ -103,7 +103,7 @@ const Auth = () => {
             <Clapperboard className="w-6 h-6 text-primary-foreground" />
           </div>
           <span className="font-display font-bold text-2xl text-gradient-shimmer">
-            Golden Hour AI
+            A List Webs
           </span>
         </div>
 

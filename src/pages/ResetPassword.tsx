@@ -103,7 +103,7 @@ const ResetPassword = () => {
           <div className="w-11 h-11 rounded-xl bg-primary flex items-center justify-center">
             <Clapperboard className="w-6 h-6 text-primary-foreground" />
           </div>
-          <span className="font-display font-bold text-2xl text-gradient-shimmer">Golden Hour AI</span>
+          <span className="font-display font-bold text-2xl text-gradient-shimmer">A List Webs</span>
         </div>
         <div className="neo-card p-8">
           <h2 className="font-display text-xl font-semibold text-center mb-6">Set New Password</h2>
