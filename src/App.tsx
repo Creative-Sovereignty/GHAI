@@ -29,6 +29,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/auth" element={<Auth />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/install" element={<Install />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

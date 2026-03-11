@@ -169,7 +169,17 @@ const Auth = () => {
             </Button>
           </form>
 
-          <p className="text-center text-sm text-muted-foreground mt-6">
+          {!isSignUp && (
+            <button
+              type="button"
+              onClick={() => setShowForgot(true)}
+              className="block w-full text-center text-sm text-muted-foreground hover:text-primary mt-3"
+            >
+              Forgot your password?
+            </button>
+          )}
+
+          <p className="text-center text-sm text-muted-foreground mt-4">
             {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
             <button
               type="button"
@@ -179,6 +189,34 @@ const Auth = () => {
               {isSignUp ? "Sign In" : "Sign Up"}
             </button>
           </p>
+
+          {/* Forgot Password Modal */}
+          {showForgot && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-6 p-4 rounded-xl border border-border bg-card"
+            >
+              <h3 className="font-display text-sm font-semibold mb-3">Reset Password</h3>
+              <form onSubmit={handleForgotPassword} className="space-y-3">
+                <Input
+                  type="email"
+                  placeholder="Your email"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  required
+                />
+                <div className="flex gap-2">
+                  <Button type="submit" variant="glow" size="sm" disabled={resetSubmitting}>
+                    {resetSubmitting ? "Sending..." : "Send Reset Link"}
+                  </Button>
+                  <Button type="button" variant="outline" size="sm" onClick={() => setShowForgot(false)}>
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            </motion.div>
+          )}
         </div>
       </motion.div>
     </div>
