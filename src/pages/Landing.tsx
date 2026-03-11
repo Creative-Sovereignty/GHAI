@@ -227,7 +227,7 @@ const Landing = () => {
       <footer className="border-t border-border py-12 px-6">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
-            <img src={logoImg} alt="A List Webs" className="h-8 object-contain" />
+            <img src={logoImg} alt="Golden Hour AI" className="h-8 object-contain" />
           </div>
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
             <Link to="/faq" className="hover:text-foreground transition-colors">FAQ</Link>
