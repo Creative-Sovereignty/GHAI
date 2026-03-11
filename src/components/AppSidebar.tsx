@@ -36,7 +36,7 @@ const AppSidebar = () => {
     >
       {/* Logo */}
       <div className="flex items-center gap-3 px-4 h-16 border-b border-[var(--neo-border)]">
-        <img src={logoImg} alt="A List Webs" className={`shrink-0 object-contain ${collapsed ? 'h-9' : 'h-10'}`} />
+        <img src={logoImg} alt="Golden Hour AI" className={`shrink-0 object-contain ${collapsed ? 'h-9' : 'h-10'}`} />
         {!collapsed && (
           <motion.span
             initial={{ opacity: 0 }}
