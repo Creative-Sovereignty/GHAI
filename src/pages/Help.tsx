@@ -13,7 +13,7 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/helpdesk`;
 
 const Help = () => {
   const [messages, setMessages] = useState<Message[]>([
-    { role: "assistant", content: "Hi! I'm the A List Webs support assistant. I can answer questions about our filmmaking tools, help troubleshoot issues, or create a support ticket. How can I help?" },
+    { role: "assistant", content: "Hi! I'm the Golden Hour AI support assistant. I can answer questions about our filmmaking tools, help troubleshoot issues, or create a support ticket. How can I help?" },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
