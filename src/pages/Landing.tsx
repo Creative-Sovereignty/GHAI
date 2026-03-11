@@ -14,6 +14,18 @@ const features = [
   { icon: Music, title: "AI Music Studio", desc: "Compose original soundtracks with mood and genre control.", neon: "pink" },
 ];
 
+const testimonials = [
+  { name: "Jordan K.", role: "Indie Filmmaker", text: "Golden Hour AI transformed my workflow. I went from script to final cut in a weekend.", avatar: "JK" },
+  { name: "Samira P.", role: "Content Creator", text: "The AI music generator alone is worth it. Every track feels custom-made for my videos.", avatar: "SP" },
+  { name: "Marcus T.", role: "Film Student", text: "I had zero editing experience. Now I'm producing short films that look professional.", avatar: "MT" },
+];
+
+const plans = [
+  { name: "Starter", price: "Free", features: ["3 Projects", "Basic Script Editor", "5 AI Generations/mo", "Community Support"], cta: "Get Started", popular: false },
+  { name: "Pro", price: "$19/mo", features: ["Unlimited Projects", "Full Toolkit Access", "100 AI Generations/mo", "Priority Support", "HD Export"], cta: "Go Pro", popular: true },
+  { name: "Studio", price: "$49/mo", features: ["Everything in Pro", "Unlimited AI Generations", "4K Export", "Team Collaboration", "Dedicated Support"], cta: "Contact Sales", popular: false },
+];
+
 const neonColors: Record<string, string> = {
   pink: "text-[var(--gold)]",
   cyan: "text-[var(--electric-blue)]",
