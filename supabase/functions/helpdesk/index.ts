@@ -7,8 +7,8 @@ const corsHeaders = {
 };
 
 const FAQ_KNOWLEDGE = `
-A List Webs FAQ:
-- A List Webs is an AI-powered filmmaking studio for creating short films from script to screen.
+Golden Hour AI FAQ:
+- Golden Hour AI is an AI-powered filmmaking studio for creating short films from script to screen.
 - No filmmaking experience needed. AI assists with each step.
 - Features: Script Editor, Storyboard Studio, Shot List Tracker, Veo 3 video generation, Timeline Editor, AI Music Studio.
 - All content is private and protected by row-level security.
@@ -19,7 +19,7 @@ A List Webs FAQ:
 - For support issues, you can create a ticket and the team will follow up.
 `;
 
-const SYSTEM_PROMPT = `You are the A List Webs AI support assistant. You help users with questions about the A List Webs filmmaking platform.
+const SYSTEM_PROMPT = `You are the Golden Hour AI support assistant. You help users with questions about the Golden Hour AI filmmaking platform.
 
 ${FAQ_KNOWLEDGE}
 
@@ -29,7 +29,7 @@ Guidelines:
 - If a user describes a bug or issue you cannot resolve, offer to create a support ticket.
 - When creating a ticket, confirm the details with the user and use the create_ticket tool.
 - Format responses with markdown when helpful.
-- Stay on topic - you only help with A List Webs related questions.`;
+- Stay on topic - you only help with Golden Hour AI related questions.`;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
