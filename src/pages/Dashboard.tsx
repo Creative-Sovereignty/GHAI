@@ -162,7 +162,7 @@ const Dashboard = () => {
           <div className="absolute inset-0 flex items-center justify-between px-8">
             <div>
               <h1 className="font-display text-3xl lg:text-4xl font-bold mb-2">
-                Welcome to <span className="rainbow-text">Golden Hour AI</span>
+                Welcome to <span className="rainbow-text">A List Webs</span>
               </h1>
               <p className="text-muted-foreground text-sm lg:text-base max-w-md">
                 Your AI-powered filmmaking studio. Create stunning shorts from script to screen.

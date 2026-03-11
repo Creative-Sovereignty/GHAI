@@ -56,7 +56,7 @@ const Install = () => {
               ✓ Already installed!
             </Badge>
             <p className="text-muted-foreground text-sm mt-2">
-              Open Golden Hour AI from your home screen or app launcher.
+              Open A List Webs from your home screen or app launcher.
             </p>
           </div>
         ) : deferredPrompt ? (
