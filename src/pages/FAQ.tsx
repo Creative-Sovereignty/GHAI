@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Clapperboard } from "lucide-react";
+import logoImg from "@/assets/logo.png";
 import {
   Accordion,
   AccordionContent,
