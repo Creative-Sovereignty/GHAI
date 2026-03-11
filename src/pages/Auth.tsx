@@ -7,7 +7,8 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Clapperboard, Mail, Lock, User } from "lucide-react";
+import { Mail, Lock, User } from "lucide-react";
+import logoImg from "@/assets/logo.png";
 
 const Auth = () => {
   const { user, loading } = useAuth();
@@ -99,9 +100,7 @@ const Auth = () => {
       >
         {/* Logo */}
         <div className="flex items-center justify-center gap-3 mb-8">
-          <div className="w-11 h-11 rounded-xl bg-primary flex items-center justify-center">
-            <Clapperboard className="w-6 h-6 text-primary-foreground" />
-          </div>
+          <img src={logoImg} alt="A List Webs" className="w-11 h-11 rounded-xl object-contain" />
           <span className="font-display font-bold text-2xl text-gradient-shimmer">
             A List Webs
           </span>
