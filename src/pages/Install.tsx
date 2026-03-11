@@ -43,7 +43,7 @@ const Install = () => {
             <img src="/pwa-192x192.png" alt="A List Webs" className="w-full h-full" />
           </div>
           <h1 className="text-3xl font-bold font-display tracking-tight">
-            Install <span className="rainbow-text">Golden Hour</span> AI
+            Install <span className="rainbow-text">A List Webs</span>
           </h1>
           <p className="text-muted-foreground">
             Add to your home screen for a native app experience — works offline.
