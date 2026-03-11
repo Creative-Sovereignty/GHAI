@@ -15,6 +15,7 @@ import Veo3 from "./pages/Veo3";
 import Auth from "./pages/Auth";
 import Install from "./pages/Install";
 import FAQ from "./pages/FAQ";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/auth" element={<Auth />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/install" element={<Install />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
