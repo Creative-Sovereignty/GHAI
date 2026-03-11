@@ -1,8 +1,9 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Film, FileText, Music, Video, Image, ListChecks, Star, ArrowRight, Check, MessageCircle } from "lucide-react";
+import { Film, FileText, Music, Video, Image, ListChecks, Star, ArrowRight, Check, Sparkles, Zap, Shield } from "lucide-react";
 import logoImg from "@/assets/logo.png";
+import { useRef } from "react";
 
 const features = [
   { icon: FileText, title: "AI Script Editor", desc: "Write professional screenplays with AI-powered formatting and suggestions.", neon: "pink" },
@@ -13,29 +14,50 @@ const features = [
   { icon: Music, title: "AI Music Studio", desc: "Compose original soundtracks with mood and genre control.", neon: "pink" },
 ];
 
-const testimonials = [
-  { name: "Jordan K.", role: "Indie Filmmaker", text: "Golden Hour AI transformed my workflow. I went from script to final cut in a weekend.", avatar: "JK" },
-  { name: "Samira P.", role: "Content Creator", text: "The AI music generator alone is worth it. Every track feels custom-made for my videos.", avatar: "SP" },
-  { name: "Marcus T.", role: "Film Student", text: "I had zero editing experience. Now I'm producing short films that look professional.", avatar: "MT" },
-];
-
-const plans = [
-  { name: "Starter", price: "Free", features: ["3 Projects", "Basic Script Editor", "5 AI Generations/mo", "Community Support"], cta: "Get Started", popular: false },
-  { name: "Pro", price: "$19/mo", features: ["Unlimited Projects", "Full Toolkit Access", "100 AI Generations/mo", "Priority Support", "HD Export"], cta: "Go Pro", popular: true },
-  { name: "Studio", price: "$49/mo", features: ["Everything in Pro", "Unlimited AI Generations", "4K Export", "Team Collaboration", "Dedicated Support"], cta: "Contact Sales", popular: false },
-];
-
 const neonColors: Record<string, string> = {
-  pink: "text-[var(--neon-pink)]",
-  cyan: "text-[var(--neon-cyan)]",
-  purple: "text-[var(--neon-purple)]",
+  pink: "text-[var(--gold)]",
+  cyan: "text-[var(--electric-blue)]",
+  purple: "text-[var(--deep-blue-bright)]",
 };
 
+/* Floating orb component */
+const Orb = ({ className, delay = 0 }: { className: string; delay?: number }) => (
+  <motion.div
+    className={`absolute rounded-full blur-3xl pointer-events-none ${className}`}
+    animate={{
+      y: [0, -30, 0],
+      x: [0, 15, 0],
+      scale: [1, 1.1, 1],
+      opacity: [0.3, 0.5, 0.3],
+    }}
+    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay }}
+  />
+);
+
+/* Stat pill */
+const StatPill = ({ value, label, delay }: { value: string; label: string; delay: number }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.6, delay }}
+    className="glass-panel-strong rounded-xl px-5 py-3 text-center"
+  >
+    <p className="text-2xl font-bold text-gold-shimmer font-display">{value}</p>
+    <p className="text-xs text-muted-foreground mt-0.5">{label}</p>
+  </motion.div>
+);
+
 const Landing = () => {
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const logoY = useTransform(scrollYProgress, [0, 1], [0, -60]);
+  const textY = useTransform(scrollYProgress, [0, 1], [0, -30]);
+  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
       {/* Nav */}
-      <nav className="fixed top-0 w-full z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
+      <nav className="fixed top-0 w-full z-50 border-b border-border/30 bg-background/60 backdrop-blur-2xl">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
             <img src={logoImg} alt="Golden Hour AI" className="h-10 object-contain" />
@@ -52,7 +74,7 @@ const Landing = () => {
               <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">Sign In</Button>
             </Link>
             <Link to="/auth">
-              <Button size="sm" className="bg-primary hover:bg-primary/90 shadow-[0_0_20px_var(--neon-pink-30)]">
+              <Button size="sm" className="bg-primary hover:bg-primary/90 shadow-[0_0_20px_var(--gold-30)]">
                 Get Started <ArrowRight className="w-4 h-4 ml-1" />
               </Button>
             </Link>
@@ -60,39 +82,110 @@ const Landing = () => {
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="pt-32 pb-20 px-6 relative">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--neon-pink-10)_0%,transparent_70%)]" />
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="max-w-4xl mx-auto text-center relative z-10"
-        >
-          <img src={logoImg} alt="Golden Hour AI" className="h-48 mx-auto mb-8 object-contain" />
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-bold tracking-tight leading-tight mb-6">
-            Your AI-Powered <br />
-            <span className="inline-block mt-2 px-5 py-2 rounded-lg bg-gradient-to-r from-[var(--gold-dark)] via-[var(--gold)] to-[var(--gold-bright)] text-[var(--w3-void)] font-black tracking-wide shadow-[0_0_30px_var(--gold-30)]">
-              Movie Studio
-            </span>
-          </h1>
-          <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-            From script to screen — write, storyboard, shoot, edit, and score your films
-            with cutting-edge AI tools, all in one place.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/auth">
-              <Button size="lg" className="bg-primary hover:bg-primary/90 text-lg px-8 py-6 shadow-[0_0_30px_var(--neon-pink-30)]">
-                Start Creating Free <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-            </Link>
-            <a href="#features">
-              <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-border hover:border-primary/50">
-                See Features
-              </Button>
-            </a>
-          </div>
+      {/* ══════════ HERO ══════════ */}
+      <section ref={heroRef} className="relative min-h-[100vh] flex items-center justify-center px-6 overflow-hidden">
+        {/* Ambient orbs */}
+        <Orb className="w-[500px] h-[500px] bg-[var(--gold)]/15 -top-32 -left-40" delay={0} />
+        <Orb className="w-[400px] h-[400px] bg-[var(--electric-blue)]/10 top-1/4 -right-32" delay={2} />
+        <Orb className="w-[350px] h-[350px] bg-[var(--amber)]/10 bottom-20 left-1/4" delay={4} />
+
+        {/* Grid overlay */}
+        <div className="absolute inset-0 grid-bg opacity-40" />
+
+        {/* Radial vignette */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_40%,transparent_30%,var(--w3-void)_80%)]" />
+
+        {/* Content */}
+        <motion.div style={{ opacity }} className="relative z-10 max-w-5xl mx-auto text-center">
+          {/* Logo with parallax */}
+          <motion.div style={{ y: logoY }}>
+            <motion.img
+              src={logoImg}
+              alt="Golden Hour AI"
+              className="h-36 sm:h-44 md:h-52 mx-auto mb-6 object-contain drop-shadow-[0_0_40px_var(--gold-30)]"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+            />
+          </motion.div>
+
+          {/* Headline with parallax */}
+          <motion.div style={{ y: textY }}>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+            >
+              <p className="neo-label text-[var(--gold)] mb-4 tracking-[0.15em]">
+                <Sparkles className="w-4 h-4 inline mr-1 -mt-0.5" />
+                Next-Gen Filmmaking
+              </p>
+              <h1 className="text-4xl sm:text-5xl md:text-7xl font-display font-bold tracking-tight leading-[1.1] mb-4">
+                Your AI-Powered
+              </h1>
+              <div className="relative inline-block mb-6">
+                <motion.span
+                  className="inline-block px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--gold-dark)] via-[var(--gold)] to-[var(--gold-bright)] text-[var(--w3-void)] font-display font-black text-4xl sm:text-5xl md:text-7xl tracking-wide"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6, delay: 0.6 }}
+                  style={{
+                    boxShadow: "0 0 40px var(--gold-30), 0 0 80px rgba(212, 148, 10, 0.1), inset 0 1px 0 rgba(255,255,255,0.2)",
+                  }}
+                >
+                  Movie Studio
+                </motion.span>
+              </div>
+            </motion.div>
+
+            <motion.p
+              className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+            >
+              From script to screen — write, storyboard, shoot, edit, and score your films
+              with cutting-edge AI tools, all in one place.
+            </motion.p>
+
+            {/* CTA buttons */}
+            <motion.div
+              className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.7 }}
+            >
+              <Link to="/auth">
+                <Button
+                  size="lg"
+                  className="relative text-lg px-8 py-6 bg-gradient-to-r from-[var(--gold-dark)] via-[var(--gold)] to-[var(--amber)] text-[var(--w3-void)] font-bold shadow-[0_0_30px_var(--gold-30)] hover:shadow-[0_0_50px_var(--gold-30)] transition-shadow"
+                >
+                  Start Creating Free <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </Link>
+              <a href="#features">
+                <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-[var(--w3-border)] hover:border-[var(--gold-30)] hover:bg-[var(--gold-05)] transition-all">
+                  See Features
+                </Button>
+              </a>
+            </motion.div>
+          </motion.div>
+
+          {/* Stats row */}
+          <motion.div
+            className="grid grid-cols-3 gap-3 sm:gap-6 max-w-md sm:max-w-lg mx-auto"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.9 }}
+          >
+            <StatPill value="6" label="AI Tools" delay={1.0} />
+            <StatPill value="4K" label="Export" delay={1.1} />
+            <StatPill value="∞" label="Creativity" delay={1.2} />
+          </motion.div>
         </motion.div>
+
+        {/* Bottom gradient fade */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
       </section>
 
       {/* Features */}
