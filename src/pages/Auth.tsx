@@ -7,7 +7,8 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Clapperboard, Mail, Lock, User } from "lucide-react";
+import { Mail, Lock, User } from "lucide-react";
+import logoImg from "@/assets/logo.png";
 
 const Auth = () => {
   const { user, loading } = useAuth();
