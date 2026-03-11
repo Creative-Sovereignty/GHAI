@@ -8,7 +8,7 @@ import {
 import logoImg from "@/assets/logo.png";
 
 const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/", neon: "pink" },
+  { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard", neon: "pink" },
   { icon: FileText, label: "Script", path: "/script", neon: "cyan" },
   { icon: Image, label: "Storyboard", path: "/storyboard", neon: "cyan" },
   { icon: ListChecks, label: "Shot List", path: "/shots", neon: "pink" },
