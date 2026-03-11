@@ -1,1 +1,4 @@
 project_id = "broeyaqgxkaqfjxjgrnw"
+
+[functions.helpdesk]
+verify_jwt = false
