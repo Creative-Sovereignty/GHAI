@@ -128,7 +128,7 @@ const Dashboard = () => {
                   <Download className="w-5 h-5 text-accent" />
                 </div>
                 <div className="min-w-0">
-                  <p className="font-semibold text-sm">Install A List Webs</p>
+                  <p className="font-semibold text-sm">Install Golden Hour AI</p>
                   <p className="text-xs text-muted-foreground truncate">Add to your home screen for the best experience</p>
                 </div>
               </div>
