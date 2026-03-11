@@ -128,7 +128,7 @@ const Dashboard = () => {
                   <Download className="w-5 h-5 text-accent" />
                 </div>
                 <div className="min-w-0">
-                  <p className="font-semibold text-sm">Install A List Webs</p>
+                  <p className="font-semibold text-sm">Install Golden Hour AI</p>
                   <p className="text-xs text-muted-foreground truncate">Add to your home screen for the best experience</p>
                 </div>
               </div>
@@ -157,12 +157,12 @@ const Dashboard = () => {
           transition={{ duration: 0.6 }}
           className="relative rounded-2xl overflow-hidden h-48 lg:h-56 border border-[var(--neon-pink-30)]"
         >
-          <img src={heroBanner} alt="A List Webs banner" className="w-full h-full object-cover" />
+          <img src={heroBanner} alt="Golden Hour AI banner" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-r from-[var(--neo-black)]/95 via-[var(--neo-black)]/70 to-[var(--neon-purple-30)]" />
           <div className="absolute inset-0 flex items-center justify-between px-8">
             <div>
               <h1 className="font-display text-3xl lg:text-4xl font-bold mb-2">
-                Welcome to <span className="rainbow-text">A List Webs</span>
+                Welcome to <span className="rainbow-text">Golden Hour AI</span>
               </h1>
               <p className="text-muted-foreground text-sm lg:text-base max-w-md">
                 Your AI-powered filmmaking studio. Create stunning shorts from script to screen.

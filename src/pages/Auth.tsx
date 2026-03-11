@@ -100,7 +100,7 @@ const Auth = () => {
       >
         {/* Logo */}
         <div className="flex items-center justify-center mb-8">
-          <img src={logoImg} alt="A List Webs" className="h-40 object-contain" />
+          <img src={logoImg} alt="Golden Hour AI" className="h-40 object-contain" />
         </div>
 
         <div className="card-gradient rounded-2xl border border-border p-8">

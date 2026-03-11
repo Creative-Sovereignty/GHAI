@@ -8,13 +8,13 @@ import {
 } from "@/components/ui/accordion";
 
 const faqs = [
-  { q: "What is A List Webs?", a: "A List Webs is an AI-powered filmmaking studio that helps you create stunning short films from script to screen — including scriptwriting, storyboarding, shot planning, video editing, and AI music generation." },
-  { q: "Do I need filmmaking experience?", a: "Not at all. A List Webs is designed for creators at every level. The AI assists with each step, so you can focus on your creative vision while the tools handle the technical details." },
-  { q: "What can I create with A List Webs?", a: "You can write scripts, generate storyboards, plan shot lists, edit video timelines, create AI-generated music, and produce videos with Veo 3 — all from a single dashboard." },
+  { q: "What is Golden Hour AI?", a: "Golden Hour AI is an AI-powered filmmaking studio that helps you create stunning short films from script to screen — including scriptwriting, storyboarding, shot planning, video editing, and AI music generation." },
+  { q: "Do I need filmmaking experience?", a: "Not at all. Golden Hour AI is designed for creators at every level. The AI assists with each step, so you can focus on your creative vision while the tools handle the technical details." },
+  { q: "What can I create with Golden Hour AI?", a: "You can write scripts, generate storyboards, plan shot lists, edit video timelines, create AI-generated music, and produce videos with Veo 3 — all from a single dashboard." },
   { q: "Is my content private?", a: "Yes. Every project is tied to your account and protected by row-level security. Only you can access your scripts, storyboards, and videos." },
-  { q: "Can I install A List Webs on my phone?", a: "Yes! A List Webs is a Progressive Web App (PWA). Visit the app in your mobile browser and add it to your home screen for a native app-like experience that works offline." },
-  { q: "What AI models power A List Webs?", a: "We use a combination of state-of-the-art models for text generation, image synthesis, music composition, and video generation — all accessible without needing your own API keys." },
-  { q: "Is there a free plan?", a: "A List Webs offers free credits to get started. You can create projects, write scripts, and explore the tools. Paid plans unlock higher usage limits and premium features." },
+  { q: "Can I install Golden Hour AI on my phone?", a: "Yes! Golden Hour AI is a Progressive Web App (PWA). Visit the app in your mobile browser and add it to your home screen for a native app-like experience that works offline." },
+  { q: "What AI models power Golden Hour AI?", a: "We use a combination of state-of-the-art models for text generation, image synthesis, music composition, and video generation — all accessible without needing your own API keys." },
+  { q: "Is there a free plan?", a: "Golden Hour AI offers free credits to get started. You can create projects, write scripts, and explore the tools. Paid plans unlock higher usage limits and premium features." },
   { q: "How do I export my videos?", a: "Once your project is complete, you can download your final video directly from the editor. Exported files are standard MP4 format compatible with all platforms." },
 ];
 
@@ -29,13 +29,13 @@ const FAQ = () => {
           className="text-center space-y-3"
         >
           <div className="flex items-center justify-center mb-4">
-            <img src={logoImg} alt="A List Webs" className="h-14 object-contain" />
+            <img src={logoImg} alt="Golden Hour AI" className="h-14 object-contain" />
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold font-display tracking-tight">
             Frequently Asked <span className="rainbow-text">Questions</span>
           </h1>
           <p className="text-muted-foreground max-w-md mx-auto">
-            Everything you need to know about creating films with A List Webs.
+            Everything you need to know about creating films with Golden Hour AI.
           </p>
         </motion.div>
 
@@ -50,7 +50,7 @@ const FAQ = () => {
               <AccordionItem
                 key={i}
                 value={`faq-${i}`}
-                className="neo-card rounded-xl px-5 data-[state=open]:border-[var(--neon-pink-30)] data-[state=open]:shadow-[0_0_15px_var(--neon-pink-10)]"
+                className="neo-card rounded-xl px-5 data-[state=open]:border-[var(--gold-30)] data-[state=open]:shadow-[0_0_15px_var(--gold-10)]"
               >
                 <AccordionTrigger className="text-left text-sm font-medium hover:no-underline py-4 hover:text-primary">
                   {faq.q}

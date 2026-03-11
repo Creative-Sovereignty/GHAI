@@ -13,7 +13,7 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/helpdesk`;
 
 const Help = () => {
   const [messages, setMessages] = useState<Message[]>([
-    { role: "assistant", content: "Hi! I'm the A List Webs support assistant. I can answer questions about our filmmaking tools, help troubleshoot issues, or create a support ticket. How can I help?" },
+    { role: "assistant", content: "Hi! I'm the Golden Hour AI support assistant. I can answer questions about our filmmaking tools, help troubleshoot issues, or create a support ticket. How can I help?" },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -93,7 +93,7 @@ const Help = () => {
         <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="w-5 h-5" />
         </Link>
-        <img src={logoImg} alt="A List Webs" className="h-8 object-contain" />
+        <img src={logoImg} alt="Golden Hour AI" className="h-8 object-contain" />
         <div>
           <h1 className="font-display font-bold text-lg">Help Desk</h1>
           <p className="text-xs text-muted-foreground">AI-powered support</p>

@@ -14,7 +14,7 @@ const features = [
 ];
 
 const testimonials = [
-  { name: "Jordan K.", role: "Indie Filmmaker", text: "A List Webs transformed my workflow. I went from script to final cut in a weekend.", avatar: "JK" },
+  { name: "Jordan K.", role: "Indie Filmmaker", text: "Golden Hour AI transformed my workflow. I went from script to final cut in a weekend.", avatar: "JK" },
   { name: "Samira P.", role: "Content Creator", text: "The AI music generator alone is worth it. Every track feels custom-made for my videos.", avatar: "SP" },
   { name: "Marcus T.", role: "Film Student", text: "I had zero editing experience. Now I'm producing short films that look professional.", avatar: "MT" },
 ];
@@ -38,7 +38,7 @@ const Landing = () => {
       <nav className="fixed top-0 w-full z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <img src={logoImg} alt="A List Webs" className="h-10 object-contain" />
+            <img src={logoImg} alt="Golden Hour AI" className="h-10 object-contain" />
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
             <a href="#features" className="hover:text-foreground transition-colors">Features</a>
@@ -69,7 +69,7 @@ const Landing = () => {
           transition={{ duration: 0.8 }}
           className="max-w-4xl mx-auto text-center relative z-10"
         >
-          <img src={logoImg} alt="A List Webs" className="h-48 mx-auto mb-8 object-contain" />
+          <img src={logoImg} alt="Golden Hour AI" className="h-48 mx-auto mb-8 object-contain" />
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-bold tracking-tight leading-tight mb-6">
             Your AI-Powered <br />
             <span className="inline-block mt-2 px-5 py-2 rounded-lg bg-gradient-to-r from-[var(--gold-dark)] via-[var(--gold)] to-[var(--gold-bright)] text-[var(--w3-void)] font-black tracking-wide shadow-[0_0_30px_var(--gold-30)]">
@@ -227,14 +227,14 @@ const Landing = () => {
       <footer className="border-t border-border py-12 px-6">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
-            <img src={logoImg} alt="A List Webs" className="h-8 object-contain" />
+            <img src={logoImg} alt="Golden Hour AI" className="h-8 object-contain" />
           </div>
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
             <Link to="/faq" className="hover:text-foreground transition-colors">FAQ</Link>
             <Link to="/help" className="hover:text-foreground transition-colors">Help</Link>
             <Link to="/install" className="hover:text-foreground transition-colors">Install App</Link>
           </div>
-          <p className="text-xs text-muted-foreground">© 2026 A List Webs. All rights reserved.</p>
+          <p className="text-xs text-muted-foreground">© 2026 Golden Hour AI. All rights reserved.</p>
         </div>
       </footer>
     </div>

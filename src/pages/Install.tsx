@@ -39,11 +39,11 @@ const Install = () => {
         className="max-w-lg w-full space-y-8"
       >
         <div className="text-center space-y-3">
-          <div className="w-20 h-20 mx-auto rounded-2xl overflow-hidden shadow-[0_0_30px_var(--neon-pink-30)]">
-            <img src="/pwa-192x192.png" alt="A List Webs" className="w-full h-full" />
+          <div className="w-20 h-20 mx-auto rounded-2xl overflow-hidden shadow-[0_0_30px_var(--gold-30)]">
+            <img src="/pwa-192x192.png" alt="Golden Hour AI" className="w-full h-full" />
           </div>
           <h1 className="text-3xl font-bold font-display tracking-tight">
-            Install <span className="rainbow-text">A List Webs</span>
+            Install <span className="rainbow-text">Golden Hour AI</span>
           </h1>
           <p className="text-muted-foreground">
             Add to your home screen for a native app experience — works offline.
@@ -56,7 +56,7 @@ const Install = () => {
               ✓ Already installed!
             </Badge>
             <p className="text-muted-foreground text-sm mt-2">
-              Open A List Webs from your home screen or app launcher.
+              Open Golden Hour AI from your home screen or app launcher.
             </p>
           </div>
         ) : deferredPrompt ? (
