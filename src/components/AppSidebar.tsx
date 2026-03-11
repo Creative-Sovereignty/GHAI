@@ -36,9 +36,7 @@ const AppSidebar = () => {
     >
       {/* Logo */}
       <div className="flex items-center gap-3 px-4 h-16 border-b border-[var(--neo-border)]">
-        <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center shrink-0 shadow-[0_0_15px_var(--neon-pink-30)]">
-          <Clapperboard className="w-5 h-5 text-primary-foreground" />
-        </div>
+        <img src={logoImg} alt="A List Webs" className="w-9 h-9 rounded-lg shrink-0 object-contain" />
         {!collapsed && (
           <motion.span
             initial={{ opacity: 0 }}
