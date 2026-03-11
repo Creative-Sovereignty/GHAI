@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, forwardRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X, Send, Bot, User, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ type Message = { role: "user" | "assistant"; content: string };
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/helpdesk`;
 
-const ChatWidget = forwardRef<HTMLDivElement>((_, ref) => {
+const ChatWidget = () => {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     { role: "assistant", content: "Hi! Need help? Ask me anything about Golden Hour AI." },
@@ -168,8 +168,6 @@ const ChatWidget = forwardRef<HTMLDivElement>((_, ref) => {
       </AnimatePresence>
     </>
   );
-});
-
-ChatWidget.displayName = "ChatWidget";
+};
 
 export default ChatWidget;
