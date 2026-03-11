@@ -61,10 +61,19 @@ const StatPill = ({ value, label, delay }: { value: string; label: string; delay
 
 const Landing = () => {
   const heroRef = useRef<HTMLElement>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const logoY = useTransform(scrollYProgress, [0, 1], [0, -60]);
   const textY = useTransform(scrollYProgress, [0, 1], [0, -30]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+
+  const navLinks = [
+    { href: "#features", label: "Features" },
+    { href: "#pricing", label: "Pricing" },
+    { href: "#testimonials", label: "Testimonials" },
+    { href: "/faq", label: "FAQ", isRoute: true },
+    { href: "/help", label: "Help", isRoute: true },
+  ];
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
@@ -75,14 +84,16 @@ const Landing = () => {
             <img src={logoImg} alt="Golden Hour AI" className="h-10 object-contain" />
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
-            <a href="#features" className="hover:text-foreground transition-colors">Features</a>
-            <a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a>
-            <a href="#testimonials" className="hover:text-foreground transition-colors">Testimonials</a>
-            <Link to="/faq" className="hover:text-foreground transition-colors">FAQ</Link>
-            <Link to="/help" className="hover:text-foreground transition-colors">Help</Link>
+            {navLinks.map((link) =>
+              link.isRoute ? (
+                <Link key={link.href} to={link.href} className="hover:text-foreground transition-colors">{link.label}</Link>
+              ) : (
+                <a key={link.href} href={link.href} className="hover:text-foreground transition-colors">{link.label}</a>
+              )
+            )}
           </div>
           <div className="flex items-center gap-3">
-            <Link to="/auth">
+            <Link to="/auth" className="hidden sm:block">
               <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">Sign In</Button>
             </Link>
             <Link to="/auth">
@@ -90,8 +101,55 @@ const Landing = () => {
                 Get Started <ArrowRight className="w-4 h-4 ml-1" />
               </Button>
             </Link>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="md:hidden overflow-hidden border-t border-border/30 bg-background/95 backdrop-blur-2xl"
+            >
+              <div className="px-6 py-4 flex flex-col gap-3">
+                {navLinks.map((link) =>
+                  link.isRoute ? (
+                    <Link
+                      key={link.href}
+                      to={link.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
+                    >
+                      {link.label}
+                    </Link>
+                  ) : (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
+                    >
+                      {link.label}
+                    </a>
+                  )
+                )}
+                <Link to="/auth" onClick={() => setMobileMenuOpen(false)} className="sm:hidden">
+                  <Button variant="ghost" size="sm" className="w-full text-muted-foreground hover:text-foreground">Sign In</Button>
+                </Link>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       {/* ══════════ HERO ══════════ */}
