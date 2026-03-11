@@ -14,7 +14,7 @@ const features = [
 ];
 
 const testimonials = [
-  { name: "Jordan K.", role: "Indie Filmmaker", text: "A List Webs transformed my workflow. I went from script to final cut in a weekend.", avatar: "JK" },
+  { name: "Jordan K.", role: "Indie Filmmaker", text: "Golden Hour AI transformed my workflow. I went from script to final cut in a weekend.", avatar: "JK" },
   { name: "Samira P.", role: "Content Creator", text: "The AI music generator alone is worth it. Every track feels custom-made for my videos.", avatar: "SP" },
   { name: "Marcus T.", role: "Film Student", text: "I had zero editing experience. Now I'm producing short films that look professional.", avatar: "MT" },
 ];
