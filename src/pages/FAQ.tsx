@@ -65,7 +65,7 @@ const FAQ = () => {
 
         <div className="text-center">
           <a href="/" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-            ← Back to Dashboard
+            ← Back to Home
           </a>
         </div>
       </div>
