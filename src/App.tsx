@@ -15,6 +15,7 @@ import Veo3 from "./pages/Veo3";
 import Auth from "./pages/Auth";
 import Install from "./pages/Install";
 import FAQ from "./pages/FAQ";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
