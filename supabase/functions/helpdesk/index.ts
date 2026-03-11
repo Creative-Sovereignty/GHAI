@@ -7,8 +7,8 @@ const corsHeaders = {
 };
 
 const FAQ_KNOWLEDGE = `
-A List Webs FAQ:
-- A List Webs is an AI-powered filmmaking studio for creating short films from script to screen.
+Golden Hour AI FAQ:
+- Golden Hour AI is an AI-powered filmmaking studio for creating short films from script to screen.
 - No filmmaking experience needed. AI assists with each step.
 - Features: Script Editor, Storyboard Studio, Shot List Tracker, Veo 3 video generation, Timeline Editor, AI Music Studio.
 - All content is private and protected by row-level security.
