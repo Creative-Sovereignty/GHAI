@@ -100,9 +100,7 @@ const Auth = () => {
       >
         {/* Logo */}
         <div className="flex items-center justify-center gap-3 mb-8">
-          <div className="w-11 h-11 rounded-xl bg-primary flex items-center justify-center">
-            <Clapperboard className="w-6 h-6 text-primary-foreground" />
-          </div>
+          <img src={logoImg} alt="A List Webs" className="w-11 h-11 rounded-xl object-contain" />
           <span className="font-display font-bold text-2xl text-gradient-shimmer">
             A List Webs
           </span>

@@ -29,7 +29,7 @@ const FAQ = () => {
           className="text-center space-y-3"
         >
           <div className="flex items-center justify-center gap-2 text-primary mb-4">
-            <Clapperboard className="w-6 h-6" />
+            <img src={logoImg} alt="A List Webs" className="w-6 h-6 object-contain" />
             <span className="font-display font-semibold text-sm tracking-wide uppercase">
               A List Webs
             </span>
