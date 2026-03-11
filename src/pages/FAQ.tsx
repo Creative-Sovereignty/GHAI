@@ -28,11 +28,8 @@ const FAQ = () => {
           animate={{ opacity: 1, y: 0 }}
           className="text-center space-y-3"
         >
-          <div className="flex items-center justify-center gap-2 text-primary mb-4">
-            <img src={logoImg} alt="A List Webs" className="w-6 h-6 object-contain" />
-            <span className="font-display font-semibold text-sm tracking-wide uppercase">
-              A List Webs
-            </span>
+          <div className="flex items-center justify-center mb-4">
+            <img src={logoImg} alt="A List Webs" className="h-14 object-contain" />
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold font-display tracking-tight">
             Frequently Asked <span className="rainbow-text">Questions</span>
