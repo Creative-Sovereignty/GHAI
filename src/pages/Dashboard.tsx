@@ -157,7 +157,7 @@ const Dashboard = () => {
           transition={{ duration: 0.6 }}
           className="relative rounded-2xl overflow-hidden h-48 lg:h-56 border border-[var(--neon-pink-30)]"
         >
-          <img src={heroBanner} alt="Golden Hour AI banner" className="w-full h-full object-cover" />
+          <img src={heroBanner} alt="A List Webs banner" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-r from-[var(--neo-black)]/95 via-[var(--neo-black)]/70 to-[var(--neon-purple-30)]" />
           <div className="absolute inset-0 flex items-center justify-between px-8">
             <div>
