@@ -48,11 +48,13 @@ const Storyboard = () => {
   const generateThumbnail = async (frame: Frame) => {
     setGeneratingImageIds(prev => new Set(prev).add(frame.id));
     try {
+      const { data: { session } } = await supabase.auth.getSession();
       const resp = await fetch(STORYBOARD_IMAGE_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${session?.access_token}`,
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
         },
         body: JSON.stringify({
           scene: frame.scene,
