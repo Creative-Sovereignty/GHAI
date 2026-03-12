@@ -13,6 +13,7 @@ import ShotList from "./pages/ShotList";
 import VideoEditor from "./pages/VideoEditor";
 import AIMusic from "./pages/AIMusic";
 import Veo3 from "./pages/Veo3";
+import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import Install from "./pages/Install";
 import FAQ from "./pages/FAQ";
@@ -44,6 +45,7 @@ const App = () => (
             <Route path="/editor" element={<ProtectedRoute><VideoEditor /></ProtectedRoute>} />
             <Route path="/veo3" element={<ProtectedRoute><Veo3 /></ProtectedRoute>} />
             <Route path="/music" element={<ProtectedRoute><AIMusic /></ProtectedRoute>} />
+            <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <ChatWidget />
