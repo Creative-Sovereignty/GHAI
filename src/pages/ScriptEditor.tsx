@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Save, Wand2, Download, Copy, RotateCcw, Send, Bot, User, Loader2, Sparkles, X } from "lucide-react";
+import { Save, Wand2, Download, Copy, RotateCcw, Send, Bot, User, Loader2, Sparkles, X, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
