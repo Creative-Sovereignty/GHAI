@@ -163,6 +163,15 @@ const Storyboard = () => {
           </div>
           <div className="flex gap-2">
             <Button
+              variant="outline"
+              size="sm"
+              onClick={generateAllThumbnails}
+              disabled={generatingImageIds.size > 0}
+            >
+              {generatingImageIds.size > 0 ? <Loader2 className="w-4 h-4 animate-spin" /> : <Image className="w-4 h-4" />}
+              {generatingImageIds.size > 0 ? `Generating (${generatingImageIds.size})...` : "Generate All Thumbnails"}
+            </Button>
+            <Button
               variant="cinema"
               size="sm"
               onClick={() => setShowAI(!showAI)}
