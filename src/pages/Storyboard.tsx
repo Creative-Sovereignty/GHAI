@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, ImageIcon, Wand2, GripVertical, Loader2, Sparkles, X, Trash2, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -47,11 +48,13 @@ const Storyboard = () => {
   const generateThumbnail = async (frame: Frame) => {
     setGeneratingImageIds(prev => new Set(prev).add(frame.id));
     try {
+      const { data: { session } } = await supabase.auth.getSession();
       const resp = await fetch(STORYBOARD_IMAGE_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${session?.access_token}`,
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
         },
         body: JSON.stringify({
           scene: frame.scene,
@@ -102,11 +105,13 @@ const Storyboard = () => {
     setGeneratedFrames([]);
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
       const resp = await fetch(STORYBOARD_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${session?.access_token}`,
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
         },
         body: JSON.stringify({
           prompt: inputPrompt,
