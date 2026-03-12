@@ -12,7 +12,10 @@ type Frame = {
   scene: string;
   description: string;
   notes: string;
+  imageUrl?: string;
 };
+
+const STORYBOARD_IMAGE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/storyboard-image`;
 
 const initialFrames: Frame[] = [
   { id: 1, scene: "INT. APARTMENT - NIGHT", description: "Wide shot: Alex at desk, monitor glow", notes: "Blue/cold tones" },
