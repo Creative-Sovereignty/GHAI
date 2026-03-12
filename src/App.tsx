@@ -13,6 +13,7 @@ import ShotList from "./pages/ShotList";
 import VideoEditor from "./pages/VideoEditor";
 import AIMusic from "./pages/AIMusic";
 import Veo3 from "./pages/Veo3";
+import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import Install from "./pages/Install";
 import FAQ from "./pages/FAQ";
