@@ -64,6 +64,10 @@ const Storyboard = () => {
         }),
       });
 
+      if (resp.status === 401) {
+        toast({ title: "Session expired", description: "Please sign out and log in again to continue.", variant: "destructive" });
+        return;
+      }
       if (resp.status === 429 || resp.status === 402) {
         const data = await resp.json();
         toast({ title: "AI Unavailable", description: data.error, variant: "destructive" });
