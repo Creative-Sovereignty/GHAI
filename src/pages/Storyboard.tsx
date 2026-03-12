@@ -41,7 +41,60 @@ const Storyboard = () => {
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedFrames, setGeneratedFrames] = useState<Frame[]>([]);
+  const [generatingImageIds, setGeneratingImageIds] = useState<Set<number>>(new Set());
   const { toast } = useToast();
+
+  const generateThumbnail = async (frame: Frame) => {
+    setGeneratingImageIds(prev => new Set(prev).add(frame.id));
+    try {
+      const resp = await fetch(STORYBOARD_IMAGE_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
+          scene: frame.scene,
+          description: frame.description,
+          notes: frame.notes,
+          frameId: frame.id,
+        }),
+      });
+
+      if (resp.status === 429 || resp.status === 402) {
+        const data = await resp.json();
+        toast({ title: "AI Unavailable", description: data.error, variant: "destructive" });
+        return;
+      }
+      if (!resp.ok) throw new Error("Failed");
+
+      const data = await resp.json();
+      if (data.imageUrl) {
+        setFrames(prev => prev.map(f => f.id === frame.id ? { ...f, imageUrl: data.imageUrl } : f));
+        toast({ title: "Thumbnail generated!", description: `Frame "${frame.description}" now has a visual.` });
+      }
+    } catch {
+      toast({ title: "Error", description: "Failed to generate thumbnail.", variant: "destructive" });
+    } finally {
+      setGeneratingImageIds(prev => {
+        const next = new Set(prev);
+        next.delete(frame.id);
+        return next;
+      });
+    }
+  };
+
+  const generateAllThumbnails = async () => {
+    const framesWithoutImages = frames.filter(f => !f.imageUrl);
+    if (framesWithoutImages.length === 0) {
+      toast({ title: "All done", description: "Every frame already has a thumbnail." });
+      return;
+    }
+    toast({ title: "Generating thumbnails...", description: `${framesWithoutImages.length} frames queued.` });
+    for (const frame of framesWithoutImages) {
+      await generateThumbnail(frame);
+    }
+  };
 
   const generateFrames = async (inputPrompt: string) => {
     if (!inputPrompt.trim() || isGenerating) return;
