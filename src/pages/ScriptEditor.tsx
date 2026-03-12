@@ -235,7 +235,34 @@ Alex bursts through the apartment door into the rain-soaked street. Neon signs r
                         msg.role === "assistant" ? "bg-card border border-border" : "bg-primary/10 border border-primary/20"
                       }`}>
                         <div className="prose prose-sm prose-invert max-w-none [&_pre]:bg-background/50 [&_pre]:rounded-md [&_pre]:p-2 [&_pre]:text-[10px] [&_code]:text-[10px]">
-                          <ReactMarkdown>{msg.content}</ReactMarkdown>
+                          <ReactMarkdown
+                            components={{
+                              pre({ children }) {
+                                return <pre className="relative group">{children}</pre>;
+                              },
+                              code({ className, children, ...props }) {
+                                const text = String(children).replace(/\n$/, "");
+                                const isScreenplay = className?.includes("screenplay") || className?.includes("language-screenplay");
+                                if (isScreenplay) {
+                                  return (
+                                    <div className="relative">
+                                      <code className={className} {...props}>{children}</code>
+                                      <button
+                                        onClick={() => {
+                                          setScript(prev => prev.trimEnd() + "\n\n" + text);
+                                          toast({ title: "Inserted!", description: "Script content appended." });
+                                        }}
+                                        className="mt-2 flex items-center gap-1 text-[10px] px-2 py-1 rounded-md border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
+                                      >
+                                        <Plus className="w-3 h-3" /> Insert into script
+                                      </button>
+                                    </div>
+                                  );
+                                }
+                                return <code className={className} {...props}>{children}</code>;
+                              },
+                            }}
+                          >{msg.content}</ReactMarkdown>
                         </div>
                       </div>
                     </div>
