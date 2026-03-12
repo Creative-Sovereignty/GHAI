@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.script-assist]
 verify_jwt = false
+
+[functions.storyboard-assist]
+verify_jwt = false
