@@ -10,8 +10,8 @@ import logoImg from "@/assets/logo.png";
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard", neon: "pink" },
   { icon: FileText, label: "Script", path: "/script", neon: "cyan" },
-  { icon: Image, label: "Storyboard", path: "/storyboard", neon: "cyan" },
   { icon: ListChecks, label: "Shot List", path: "/shots", neon: "pink" },
+  { icon: Image, label: "Storyboard", path: "/storyboard", neon: "cyan" },
   { icon: Video, label: "Veo 3", path: "/veo3", neon: "cyan" },
   { icon: Film, label: "Editor", path: "/editor", neon: "pink" },
   { icon: Music, label: "AI Music", path: "/music", neon: "purple" },
