@@ -68,11 +68,13 @@ Alex bursts through the apartment door into the rain-soaked street. Neon signs r
 
     let assistantSoFar = "";
     try {
+      const { data: { session } } = await supabase.auth.getSession();
       const resp = await fetch(SCRIPT_ASSIST_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${session?.access_token}`,
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
         },
         body: JSON.stringify({
           messages: allMessages.map(m => ({ role: m.role, content: m.content })),
