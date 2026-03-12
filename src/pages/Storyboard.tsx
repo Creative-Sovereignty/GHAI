@@ -296,14 +296,38 @@ const Storyboard = () => {
               whileHover={{ y: -2 }}
               className="neo-card rounded-xl overflow-hidden group cursor-pointer hover:border-[var(--neon-cyan-30)] hover:shadow-[0_0_20px_var(--neon-cyan-10)] transition-all"
             >
-              <div className="aspect-video bg-secondary/50 flex items-center justify-center relative">
-                <ImageIcon className="w-10 h-10 text-muted-foreground/30" />
+              <div className="aspect-video bg-secondary/50 flex items-center justify-center relative overflow-hidden">
+                {frame.imageUrl ? (
+                  <img src={frame.imageUrl} alt={frame.description} className="w-full h-full object-cover" />
+                ) : generatingImageIds.has(frame.id) ? (
+                  <div className="flex flex-col items-center gap-2">
+                    <Loader2 className="w-8 h-8 text-primary animate-spin" />
+                    <span className="text-[10px] text-muted-foreground">Generating...</span>
+                  </div>
+                ) : (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); generateThumbnail(frame); }}
+                    className="flex flex-col items-center gap-2 hover:scale-105 transition-transform"
+                  >
+                    <ImageIcon className="w-10 h-10 text-muted-foreground/30" />
+                    <span className="text-[10px] text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">Click to generate</span>
+                  </button>
+                )}
                 <Badge className="absolute top-2 left-2 bg-[var(--neon-cyan-10)] text-[var(--neon-cyan)] border-[var(--neon-cyan-30)] font-mono text-[10px]">
                   #{index + 1}
                 </Badge>
                 <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  {frame.imageUrl && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); generateThumbnail(frame); }}
+                      className="w-6 h-6 rounded bg-primary/80 flex items-center justify-center hover:bg-primary transition-colors"
+                      title="Regenerate thumbnail"
+                    >
+                      <Wand2 className="w-3 h-3 text-primary-foreground" />
+                    </button>
+                  )}
                   <button
-                    onClick={() => removeFrame(frame.id)}
+                    onClick={(e) => { e.stopPropagation(); removeFrame(frame.id); }}
                     className="w-6 h-6 rounded bg-destructive/80 flex items-center justify-center hover:bg-destructive transition-colors"
                   >
                     <Trash2 className="w-3 h-3 text-destructive-foreground" />
