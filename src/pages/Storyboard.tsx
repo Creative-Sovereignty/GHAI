@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, ImageIcon, Wand2, GripVertical, Loader2, Sparkles, X, Trash2 } from "lucide-react";
+import { Plus, ImageIcon, Wand2, GripVertical, Loader2, Sparkles, X, Trash2, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,10 @@ type Frame = {
   scene: string;
   description: string;
   notes: string;
+  imageUrl?: string;
 };
+
+const STORYBOARD_IMAGE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/storyboard-image`;
 
 const initialFrames: Frame[] = [
   { id: 1, scene: "INT. APARTMENT - NIGHT", description: "Wide shot: Alex at desk, monitor glow", notes: "Blue/cold tones" },
@@ -38,7 +41,60 @@ const Storyboard = () => {
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedFrames, setGeneratedFrames] = useState<Frame[]>([]);
+  const [generatingImageIds, setGeneratingImageIds] = useState<Set<number>>(new Set());
   const { toast } = useToast();
+
+  const generateThumbnail = async (frame: Frame) => {
+    setGeneratingImageIds(prev => new Set(prev).add(frame.id));
+    try {
+      const resp = await fetch(STORYBOARD_IMAGE_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
+          scene: frame.scene,
+          description: frame.description,
+          notes: frame.notes,
+          frameId: frame.id,
+        }),
+      });
+
+      if (resp.status === 429 || resp.status === 402) {
+        const data = await resp.json();
+        toast({ title: "AI Unavailable", description: data.error, variant: "destructive" });
+        return;
+      }
+      if (!resp.ok) throw new Error("Failed");
+
+      const data = await resp.json();
+      if (data.imageUrl) {
+        setFrames(prev => prev.map(f => f.id === frame.id ? { ...f, imageUrl: data.imageUrl } : f));
+        toast({ title: "Thumbnail generated!", description: `Frame "${frame.description}" now has a visual.` });
+      }
+    } catch {
+      toast({ title: "Error", description: "Failed to generate thumbnail.", variant: "destructive" });
+    } finally {
+      setGeneratingImageIds(prev => {
+        const next = new Set(prev);
+        next.delete(frame.id);
+        return next;
+      });
+    }
+  };
+
+  const generateAllThumbnails = async () => {
+    const framesWithoutImages = frames.filter(f => !f.imageUrl);
+    if (framesWithoutImages.length === 0) {
+      toast({ title: "All done", description: "Every frame already has a thumbnail." });
+      return;
+    }
+    toast({ title: "Generating thumbnails...", description: `${framesWithoutImages.length} frames queued.` });
+    for (const frame of framesWithoutImages) {
+      await generateThumbnail(frame);
+    }
+  };
 
   const generateFrames = async (inputPrompt: string) => {
     if (!inputPrompt.trim() || isGenerating) return;
@@ -106,6 +162,15 @@ const Storyboard = () => {
             <p className="text-sm text-muted-foreground mt-1">Neon Dreams - {frames.length} frames</p>
           </div>
           <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={generateAllThumbnails}
+              disabled={generatingImageIds.size > 0}
+            >
+              {generatingImageIds.size > 0 ? <Loader2 className="w-4 h-4 animate-spin" /> : <Image className="w-4 h-4" />}
+              {generatingImageIds.size > 0 ? `Generating (${generatingImageIds.size})...` : "Generate All Thumbnails"}
+            </Button>
             <Button
               variant="cinema"
               size="sm"
@@ -231,14 +296,38 @@ const Storyboard = () => {
               whileHover={{ y: -2 }}
               className="neo-card rounded-xl overflow-hidden group cursor-pointer hover:border-[var(--neon-cyan-30)] hover:shadow-[0_0_20px_var(--neon-cyan-10)] transition-all"
             >
-              <div className="aspect-video bg-secondary/50 flex items-center justify-center relative">
-                <ImageIcon className="w-10 h-10 text-muted-foreground/30" />
+              <div className="aspect-video bg-secondary/50 flex items-center justify-center relative overflow-hidden">
+                {frame.imageUrl ? (
+                  <img src={frame.imageUrl} alt={frame.description} className="w-full h-full object-cover" />
+                ) : generatingImageIds.has(frame.id) ? (
+                  <div className="flex flex-col items-center gap-2">
+                    <Loader2 className="w-8 h-8 text-primary animate-spin" />
+                    <span className="text-[10px] text-muted-foreground">Generating...</span>
+                  </div>
+                ) : (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); generateThumbnail(frame); }}
+                    className="flex flex-col items-center gap-2 hover:scale-105 transition-transform"
+                  >
+                    <ImageIcon className="w-10 h-10 text-muted-foreground/30" />
+                    <span className="text-[10px] text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">Click to generate</span>
+                  </button>
+                )}
                 <Badge className="absolute top-2 left-2 bg-[var(--neon-cyan-10)] text-[var(--neon-cyan)] border-[var(--neon-cyan-30)] font-mono text-[10px]">
                   #{index + 1}
                 </Badge>
                 <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  {frame.imageUrl && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); generateThumbnail(frame); }}
+                      className="w-6 h-6 rounded bg-primary/80 flex items-center justify-center hover:bg-primary transition-colors"
+                      title="Regenerate thumbnail"
+                    >
+                      <Wand2 className="w-3 h-3 text-primary-foreground" />
+                    </button>
+                  )}
                   <button
-                    onClick={() => removeFrame(frame.id)}
+                    onClick={(e) => { e.stopPropagation(); removeFrame(frame.id); }}
                     className="w-6 h-6 rounded bg-destructive/80 flex items-center justify-center hover:bg-destructive transition-colors"
                   >
                     <Trash2 className="w-3 h-3 text-destructive-foreground" />
