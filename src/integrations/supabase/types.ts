@@ -196,6 +196,38 @@ export type Database = {
         }
         Relationships: []
       }
+      scenes: {
+        Row: {
+          id: string
+          scene_number: number
+          script_id: string
+          slugline: string | null
+          summary: string | null
+        }
+        Insert: {
+          id?: string
+          scene_number: number
+          script_id: string
+          slugline?: string | null
+          summary?: string | null
+        }
+        Update: {
+          id?: string
+          scene_number?: number
+          script_id?: string
+          slugline?: string | null
+          summary?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scenes_script_id_fkey"
+            columns: ["script_id"]
+            isOneToOne: false
+            referencedRelation: "scripts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       scripts: {
         Row: {
           content: string | null
@@ -231,51 +263,75 @@ export type Database = {
       shots: {
         Row: {
           angle: string | null
+          camera_angle: string | null
           created_at: string
           description: string
           duration: string | null
           id: string
           is_completed: boolean
           lens: string | null
+          motion_intensity: number | null
           movement: string | null
-          project_id: string
+          order_index: number
+          project_id: string | null
+          prompt: string | null
+          scene_id: string | null
           scene_number: string
           shot_code: string
           shot_type: string
           sort_order: number
+          status: string | null
+          thumbnail_url: string | null
           updated_at: string
+          video_url: string | null
         }
         Insert: {
           angle?: string | null
+          camera_angle?: string | null
           created_at?: string
           description?: string
           duration?: string | null
           id?: string
           is_completed?: boolean
           lens?: string | null
+          motion_intensity?: number | null
           movement?: string | null
-          project_id: string
+          order_index?: number
+          project_id?: string | null
+          prompt?: string | null
+          scene_id?: string | null
           scene_number?: string
           shot_code?: string
           shot_type?: string
           sort_order?: number
+          status?: string | null
+          thumbnail_url?: string | null
           updated_at?: string
+          video_url?: string | null
         }
         Update: {
           angle?: string | null
+          camera_angle?: string | null
           created_at?: string
           description?: string
           duration?: string | null
           id?: string
           is_completed?: boolean
           lens?: string | null
+          motion_intensity?: number | null
           movement?: string | null
-          project_id?: string
+          order_index?: number
+          project_id?: string | null
+          prompt?: string | null
+          scene_id?: string | null
           scene_number?: string
           shot_code?: string
           shot_type?: string
           sort_order?: number
+          status?: string | null
+          thumbnail_url?: string | null
           updated_at?: string
+          video_url?: string | null
         }
         Relationships: [
           {
@@ -283,6 +339,13 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shots_scene_id_fkey"
+            columns: ["scene_id"]
+            isOneToOne: false
+            referencedRelation: "scenes"
             referencedColumns: ["id"]
           },
         ]
@@ -417,6 +480,7 @@ export type Database = {
         Returns: number
       }
       is_own_project: { Args: { _project_id: string }; Returns: boolean }
+      is_own_script: { Args: { _script_id: string }; Returns: boolean }
       move_to_dlq: {
         Args: {
           dlq_name: string
