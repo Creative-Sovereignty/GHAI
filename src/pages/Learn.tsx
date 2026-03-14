@@ -1,40 +1,25 @@
-import { useState, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Loader2, BookOpen, RefreshCw, Search, ExternalLink } from "lucide-react";
+import { Loader2, BookOpen, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { trackEvent } from "@/lib/analytics";
 import AppLayout from "@/components/AppLayout";
 
-const DEFAULT_URL = "https://en.wikipedia.org/wiki/Filmmaking";
+const WIKI_URL = "https://en.wikipedia.org/wiki/Filmmaking";
 
 const Learn = () => {
-  const [url, setUrl] = useState(DEFAULT_URL);
-  const [activeUrl, setActiveUrl] = useState(DEFAULT_URL);
   const [content, setContent] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchContent = useCallback(async (targetUrl?: string) => {
-    const scrapeUrl = targetUrl || url;
-
-    try {
-      new URL(scrapeUrl);
-    } catch {
-      setError("Please enter a valid URL (e.g. https://example.com)");
-      return;
-    }
-
+  const fetchContent = async () => {
     setLoading(true);
     setError(null);
-    setContent(null);
-    setActiveUrl(scrapeUrl);
 
     try {
       const { data, error: fnError } = await supabase.functions.invoke("firecrawl-scrape", {
-        body: { url: scrapeUrl, options: { formats: ["markdown"], onlyMainContent: true } },
+        body: { url: WIKI_URL, options: { formats: ["markdown"], onlyMainContent: true } },
       });
 
       if (fnError) throw new Error(fnError.message);
@@ -43,67 +28,39 @@ const Learn = () => {
       if (!markdown) throw new Error("No content returned");
 
       setContent(markdown);
-      trackEvent("learn_scrape", { url: scrapeUrl });
     } catch (err: any) {
       console.error("Scrape error:", err);
       setError(err.message || "Failed to load content");
     } finally {
       setLoading(false);
     }
-  }, [url]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    fetchContent();
   };
+
+  useEffect(() => {
+    fetchContent();
+  }, []);
 
   return (
     <AppLayout>
       <div className="p-6 lg:p-8 max-w-4xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center gap-3">
-          <BookOpen className="w-6 h-6 text-primary" />
-          <div>
-            <h1 className="font-display text-2xl font-bold">Learn</h1>
-            <p className="text-sm text-muted-foreground">Scrape any article or webpage into readable content</p>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <BookOpen className="w-6 h-6 text-primary" />
+            <div>
+              <h1 className="font-display text-2xl font-bold">Learn: Filmmaking</h1>
+              <p className="text-sm text-muted-foreground">
+                Sourced from{" "}
+                <a href={WIKI_URL} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                  Wikipedia
+                </a>
+              </p>
+            </div>
           </div>
+          <Button variant="ghost" size="sm" onClick={fetchContent} disabled={loading}>
+            <RefreshCw className={`w-4 h-4 mr-1 ${loading ? "animate-spin" : ""}`} /> Refresh
+          </Button>
         </div>
 
-        {/* URL input */}
-        <form onSubmit={handleSubmit} className="neo-card rounded-xl p-4 flex gap-3">
-          <Input
-            type="url"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="https://en.wikipedia.org/wiki/Filmmaking"
-            className="flex-1 bg-secondary/50 border-[var(--neo-border)] focus-visible:border-primary focus-visible:ring-primary/20"
-            required
-          />
-          <Button type="submit" variant="glow" disabled={loading}>
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-            <span className="ml-1.5 hidden sm:inline">Scrape</span>
-          </Button>
-        </form>
-
-        {/* Active URL indicator */}
-        {activeUrl && content && !loading && (
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <span>Showing:</span>
-            <a
-              href={activeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:underline inline-flex items-center gap-1 truncate max-w-md"
-            >
-              {activeUrl} <ExternalLink className="w-3 h-3 shrink-0" />
-            </a>
-            <Button variant="ghost" size="sm" className="ml-auto h-7 text-xs" onClick={() => fetchContent(activeUrl)} disabled={loading}>
-              <RefreshCw className={`w-3 h-3 mr-1 ${loading ? "animate-spin" : ""}`} /> Refresh
-            </Button>
-          </div>
-        )}
-
-        {/* Loading */}
         {loading && (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -111,25 +68,15 @@ const Learn = () => {
           </div>
         )}
 
-        {/* Error */}
-        {error && !loading && (
+        {error && (
           <div className="neo-card rounded-xl p-6 text-center space-y-3">
             <p className="text-destructive">{error}</p>
-            <Button variant="glow" size="sm" onClick={() => fetchContent()}>
+            <Button variant="glow" size="sm" onClick={fetchContent}>
               Try Again
             </Button>
           </div>
         )}
 
-        {/* Empty state */}
-        {!content && !loading && !error && (
-          <div className="neo-card rounded-xl p-12 text-center space-y-3">
-            <BookOpen className="w-10 h-10 text-muted-foreground/30 mx-auto" />
-            <p className="text-muted-foreground">Enter a URL above and click Scrape to load an article</p>
-          </div>
-        )}
-
-        {/* Content */}
         {content && !loading && (
           <div className="neo-card rounded-xl p-6 lg:p-8">
             <div className="prose prose-invert prose-sm max-w-none

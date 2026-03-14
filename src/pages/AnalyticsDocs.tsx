@@ -69,12 +69,6 @@ const events = [
       { event: "avatar_updated", params: "—", trigger: "Avatar uploaded successfully", source: "Settings.tsx" },
     ],
   },
-  {
-    category: "Learn",
-    items: [
-      { event: "learn_scrape", params: "url", trigger: "Article scraped successfully", source: "Learn.tsx" },
-    ],
-  },
 ];
 
 const AnalyticsDocs = () => (
