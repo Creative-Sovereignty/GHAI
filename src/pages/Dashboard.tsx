@@ -60,7 +60,7 @@ const Dashboard = () => {
 
   // Production state
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
-  const [activeShot, setActiveShot] = useState<Shot | null>(null);
+  const [activeShot, setActiveShot] = useState<EnrichedShot | null>(null);
   const [generatedPrompt, setGeneratedPrompt] = useState("");
   const [generatedClips, setGeneratedClips] = useState<GeneratedClip[]>([]);
   const [playingClipId, setPlayingClipId] = useState<string | null>(null);
