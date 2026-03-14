@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Play, Clock, Film, Music, FileText, TrendingUp, Trash2, LogOut, Download, X } from "lucide-react";
+import { Plus, Play, Clock, Film, Music, FileText, TrendingUp, Trash2, LogOut, Download, X, Zap, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,6 +13,10 @@ import heroBanner from "@/assets/hero-banner.jpg";
 import { useProjects, useCreateProject, useDeleteProject } from "@/hooks/useProjects";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { Shot } from "@/hooks/useShots";
+import ShotListTracker from "@/components/production/ShotListTracker";
+import VeoVideoEngine from "@/components/production/VeoVideoEngine";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const stats = [
   { label: "Active Projects", value: "–", icon: Film, change: "" },
@@ -53,6 +57,11 @@ const Dashboard = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
+  // Production state
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [activeShot, setActiveShot] = useState<Shot | null>(null);
+  const [generatedPrompt, setGeneratedPrompt] = useState("");
+
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [bannerDismissed, setBannerDismissed] = useState(() =>
     localStorage.getItem("pwa-banner-dismissed") === "true"
@@ -85,6 +94,21 @@ const Dashboard = () => {
   };
 
   const showBanner = !isStandalone && !bannerDismissed;
+
+  // Auto-select first project for production
+  useEffect(() => {
+    if (projects?.length && !selectedProjectId) {
+      setSelectedProjectId(projects[0].id);
+    }
+  }, [projects, selectedProjectId]);
+
+  // Generate cinematic prompt from active shot
+  useEffect(() => {
+    if (activeShot) {
+      const cinematicPrompt = `Cinematic ${activeShot.shot_type}, ${activeShot.angle || "Eye Level"}. ${activeShot.description}. ${activeShot.movement || "Static"} camera movement. High-fidelity textures, professional lighting, 4K, shot on ${activeShot.lens || "50mm"} lens.`;
+      setGeneratedPrompt(cinematicPrompt);
+    }
+  }, [activeShot]);
 
   const dynamicStats = [
     { ...stats[0], value: String(projects?.length ?? 0), change: "" },
@@ -298,6 +322,60 @@ const Dashboard = () => {
             </motion.div>
           )}
         </div>
+
+        {/* Production Studio Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="space-y-4"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <h2 className="font-display text-xl font-semibold">Production Studio</h2>
+              <Badge className="bg-[var(--neon-green-10)] text-[var(--neon-green-raw)] border-[var(--neon-green-30)] text-[10px]">
+                <Zap className="w-2.5 h-2.5 mr-0.5" fill="currentColor" /> Live
+              </Badge>
+            </div>
+            {projects && projects.length > 0 && (
+              <Select value={selectedProjectId ?? undefined} onValueChange={(v) => { setSelectedProjectId(v); setActiveShot(null); setGeneratedPrompt(""); }}>
+                <SelectTrigger className="w-48 h-8 text-xs">
+                  <SelectValue placeholder="Select project" />
+                </SelectTrigger>
+                <SelectContent>
+                  {projects.map(p => <SelectItem key={p.id} value={p.id}>{p.title}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            )}
+          </div>
+
+          {selectedProjectId ? (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              {/* Left: Shot List */}
+              <div className="lg:col-span-4 space-y-2">
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-1">Script Breakdown</p>
+                <ShotListTracker
+                  projectId={selectedProjectId}
+                  onSelectShot={(shot) => setActiveShot(shot)}
+                  currentShotId={activeShot?.id}
+                />
+              </div>
+              {/* Right: Veo Engine */}
+              <div className="lg:col-span-8">
+                <VeoVideoEngine
+                  initialPrompt={generatedPrompt}
+                  isSyncing={!!activeShot}
+                  shotData={activeShot}
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="neo-card rounded-xl p-12 text-center">
+              <Film className="w-10 h-10 mx-auto mb-3 text-muted-foreground opacity-30" />
+              <p className="text-sm text-muted-foreground">Create a project above to start production</p>
+            </div>
+          )}
+        </motion.div>
       </div>
     </AppLayout>
   );
