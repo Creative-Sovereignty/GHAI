@@ -12,10 +12,23 @@ const styles = ["Cinematic", "Anime", "Photorealistic", "Surreal", "Documentary"
 const aspectRatios = ["16:9", "9:16", "1:1", "4:3"];
 const durations = ["5s", "10s", "15s", "30s"];
 
+export interface GeneratedClip {
+  id: string;
+  title: string;
+  prompt: string;
+  style: string;
+  aspect: string;
+  duration: string;
+  status: "rendering" | "ready";
+  shotCode?: string;
+}
+
 interface VeoVideoEngineProps {
   initialPrompt: string;
   isSyncing: boolean;
   shotData: Shot | null;
+  onGenerate?: (clip: GeneratedClip) => void;
+  onGenerateComplete?: (clipId: string) => void;
 }
 
 const VeoVideoEngine = ({ initialPrompt, isSyncing, shotData }: VeoVideoEngineProps) => {
