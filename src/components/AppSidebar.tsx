@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   LayoutDashboard, FileText, Image, ListChecks, Film, Video, Music, Settings,
-  ChevronLeft, ChevronRight,
+  ChevronLeft, ChevronRight, BarChart3,
 } from "lucide-react";
 import logoImg from "@/assets/logo.png";
 
@@ -16,6 +16,7 @@ const navItems = [
   { icon: Film, label: "Editor", path: "/editor", neon: "pink" },
   { icon: Music, label: "AI Music", path: "/music", neon: "purple" },
   { icon: Settings, label: "Settings", path: "/settings", neon: "pink" },
+  { icon: BarChart3, label: "Analytics Docs", path: "/analytics-docs", neon: "cyan" },
 ];
 
 const neonStyles: Record<string, { bg: string; text: string; bar: string; glow: string }> = {
