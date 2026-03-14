@@ -186,3 +186,21 @@ export function useDeleteShot() {
     },
   });
 }
+
+export function useReorderShots() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (updates: { id: string; order_index: number }[]) => {
+      // Update each shot's order_index
+      await Promise.all(
+        updates.map(({ id, order_index }) =>
+          (supabase as any).from("shots").update({ order_index }).eq("id", id)
+        )
+      );
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["shots-by-project"] });
+      qc.invalidateQueries({ queryKey: ["shots"] });
+    },
+  });
+}
