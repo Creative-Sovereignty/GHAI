@@ -71,6 +71,7 @@ const Auth = () => {
           },
         });
         if (error) throw error;
+        trackEvent("sign_up", { method: "email" });
         toast({
           title: "Check your email",
           description: "We sent you a confirmation link to verify your account.",
