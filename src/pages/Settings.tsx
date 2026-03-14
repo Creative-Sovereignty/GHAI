@@ -101,6 +101,7 @@ const Settings = () => {
     if (!updateErr) {
       setAvatarUrl(urlData.publicUrl + "?t=" + Date.now());
       toast.success("Avatar updated");
+      trackEvent("avatar_updated");
     }
     setUploading(false);
   };

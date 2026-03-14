@@ -129,7 +129,7 @@ const Veo3 = () => {
               <Settings2 className="w-4 h-4" />
               Advanced Settings
             </button>
-            <Button variant="glow" size="lg">
+            <Button variant="glow" size="lg" onClick={() => trackEvent("veo3_generate", { style: selectedStyle, aspect_ratio: selectedAspect, duration: selectedDuration, prompt_length: prompt.length })}>
               <Wand2 className="w-4 h-4" /> Generate Video
             </Button>
           </div>
