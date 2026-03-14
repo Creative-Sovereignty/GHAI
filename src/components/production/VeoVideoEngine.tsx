@@ -66,6 +66,20 @@ const VeoVideoEngine = ({ initialPrompt, isSyncing, shotData, onGenerate, onGene
       return;
     }
     setIsGenerating(true);
+
+    const clipId = crypto.randomUUID();
+    const clip: GeneratedClip = {
+      id: clipId,
+      title: shotData ? `Shot ${shotData.shot_code}` : "Generated Clip",
+      prompt: prompt.slice(0, 120),
+      style: selectedStyle,
+      aspect: selectedAspect,
+      duration: selectedDuration,
+      status: "rendering",
+      shotCode: shotData?.shot_code,
+    };
+    onGenerate?.(clip);
+
     trackEvent("veo_engine_generate", {
       style: selectedStyle,
       aspect: selectedAspect,
@@ -73,10 +87,12 @@ const VeoVideoEngine = ({ initialPrompt, isSyncing, shotData, onGenerate, onGene
       from_shot: !!shotData,
       prompt_length: prompt.length,
     });
+
     setTimeout(() => {
       setIsGenerating(false);
+      onGenerateComplete?.(clipId);
       toast({ title: "Generation complete", description: "Your video clip is ready for preview." });
-    }, 3000);
+    }, 5000);
   };
 
   const copyPrompt = () => {
