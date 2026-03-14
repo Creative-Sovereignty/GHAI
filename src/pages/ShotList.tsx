@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Plus, CheckCircle2, Circle, Camera, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { trackEvent } from "@/lib/analytics";
 import { Badge } from "@/components/ui/badge";
 import AppLayout from "@/components/AppLayout";
 
@@ -72,9 +73,11 @@ const ShotList = () => {
               {shots.map((shot) => (
                 <tr
                   key={shot.id}
-                  onClick={() =>
-                    setShots(shots.map((s) => (s.id === shot.id ? { ...s, done: !s.done } : s)))
-                  }
+                  onClick={() => {
+                    const newDone = !shot.done;
+                    setShots(shots.map((s) => (s.id === shot.id ? { ...s, done: newDone } : s)));
+                    trackEvent("shot_toggled", { shot_id: shot.shot, completed: newDone });
+                  }}
                   className={`border-b border-[var(--neo-border)]/50 cursor-pointer transition-colors hover:bg-[var(--neon-pink-05)] ${
                     shot.done ? "opacity-50" : ""
                   }`}

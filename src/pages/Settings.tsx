@@ -14,6 +14,7 @@ import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import { trackEvent } from "@/lib/analytics";
 
 const Settings = () => {
   const { theme, toggleTheme } = useTheme();
@@ -62,6 +63,7 @@ const Settings = () => {
       toast.error("Failed to save profile");
     } else {
       toast.success("Profile updated");
+      trackEvent("profile_updated");
     }
     setSaving(false);
   };
@@ -99,6 +101,7 @@ const Settings = () => {
     if (!updateErr) {
       setAvatarUrl(urlData.publicUrl + "?t=" + Date.now());
       toast.success("Avatar updated");
+      trackEvent("avatar_updated");
     }
     setUploading(false);
   };

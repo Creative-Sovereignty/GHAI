@@ -5,6 +5,7 @@ import {
   Type, Layers, Wand2, ZoomIn, ZoomOut, Maximize2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { trackEvent } from "@/lib/analytics";
 import AppLayout from "@/components/AppLayout";
 
 const tracks = [
@@ -35,8 +36,8 @@ const VideoEditor = () => {
         >
           <h1 className="font-display font-semibold">Video Editor</h1>
           <div className="flex items-center gap-2">
-            <Button variant="cinema" size="sm"><Wand2 className="w-4 h-4" /> AI Edit</Button>
-            <Button variant="glow" size="sm">Export</Button>
+            <Button variant="cinema" size="sm" onClick={() => trackEvent("video_ai_edit")}><Wand2 className="w-4 h-4" /> AI Edit</Button>
+            <Button variant="glow" size="sm" onClick={() => trackEvent("video_export")}>Export</Button>
           </div>
         </motion.div>
 

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Video, Wand2, Download, Play, Pause, Clock, Sparkles, Settings2, ImagePlus, Type, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { trackEvent } from "@/lib/analytics";
 import { Badge } from "@/components/ui/badge";
 import AppLayout from "@/components/AppLayout";
 
@@ -128,7 +129,7 @@ const Veo3 = () => {
               <Settings2 className="w-4 h-4" />
               Advanced Settings
             </button>
-            <Button variant="glow" size="lg">
+            <Button variant="glow" size="lg" onClick={() => trackEvent("veo3_generate", { style: selectedStyle, aspect_ratio: selectedAspect, duration: selectedDuration, prompt_length: prompt.length })}>
               <Wand2 className="w-4 h-4" /> Generate Video
             </Button>
           </div>

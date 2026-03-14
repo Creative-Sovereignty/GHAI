@@ -36,6 +36,38 @@ const events = [
       { event: "storyboard_image_generated", params: "frame_scene", trigger: "Frame thumbnail generated", source: "Storyboard.tsx" },
     ],
   },
+  {
+    category: "Shot List",
+    items: [
+      { event: "shot_toggled", params: "shot_id, completed", trigger: "Shot marked complete / incomplete", source: "ShotList.tsx" },
+    ],
+  },
+  {
+    category: "Veo 3 — Video Generation",
+    items: [
+      { event: "veo3_generate", params: "style, aspect_ratio, duration, prompt_length", trigger: "Generate Video button clicked", source: "Veo3.tsx" },
+    ],
+  },
+  {
+    category: "Video Editor",
+    items: [
+      { event: "video_ai_edit", params: "—", trigger: "AI Edit button clicked", source: "VideoEditor.tsx" },
+      { event: "video_export", params: "—", trigger: "Export button clicked", source: "VideoEditor.tsx" },
+    ],
+  },
+  {
+    category: "AI Music",
+    items: [
+      { event: "music_generate", params: "genre, mood, prompt_length", trigger: "Generate Track button clicked", source: "AIMusic.tsx" },
+    ],
+  },
+  {
+    category: "Settings",
+    items: [
+      { event: "profile_updated", params: "—", trigger: "Profile saved successfully", source: "Settings.tsx" },
+      { event: "avatar_updated", params: "—", trigger: "Avatar uploaded successfully", source: "Settings.tsx" },
+    ],
+  },
 ];
 
 const AnalyticsDocs = () => (

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Music, Play, Pause, Download, Wand2, Clock, RefreshCw, Volume2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { trackEvent } from "@/lib/analytics";
 import { Badge } from "@/components/ui/badge";
 import AppLayout from "@/components/AppLayout";
 
@@ -109,7 +110,7 @@ const AIMusic = () => {
                 />
               </div>
             </div>
-            <Button variant="glow" size="lg">
+            <Button variant="glow" size="lg" onClick={() => trackEvent("music_generate", { genre: selectedGenre, mood: selectedMood, prompt_length: prompt.length })}>
               <Wand2 className="w-4 h-4" /> Generate Track
             </Button>
           </div>
