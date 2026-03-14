@@ -36,7 +36,8 @@ export const useCreateProject = () => {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      trackEvent("project_created", { project_id: data.id, project_title: data.title });
       queryClient.invalidateQueries({ queryKey: ["projects"] });
     },
   });
