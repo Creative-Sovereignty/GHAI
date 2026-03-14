@@ -5,6 +5,7 @@ import {
   Type, Layers, Wand2, ZoomIn, ZoomOut, Maximize2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { trackEvent } from "@/lib/analytics";
 import AppLayout from "@/components/AppLayout";
 
 const tracks = [
