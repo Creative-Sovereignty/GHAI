@@ -12,13 +12,26 @@ const styles = ["Cinematic", "Anime", "Photorealistic", "Surreal", "Documentary"
 const aspectRatios = ["16:9", "9:16", "1:1", "4:3"];
 const durations = ["5s", "10s", "15s", "30s"];
 
+export interface GeneratedClip {
+  id: string;
+  title: string;
+  prompt: string;
+  style: string;
+  aspect: string;
+  duration: string;
+  status: "rendering" | "ready";
+  shotCode?: string;
+}
+
 interface VeoVideoEngineProps {
   initialPrompt: string;
   isSyncing: boolean;
   shotData: Shot | null;
+  onGenerate?: (clip: GeneratedClip) => void;
+  onGenerateComplete?: (clipId: string) => void;
 }
 
-const VeoVideoEngine = ({ initialPrompt, isSyncing, shotData }: VeoVideoEngineProps) => {
+const VeoVideoEngine = ({ initialPrompt, isSyncing, shotData, onGenerate, onGenerateComplete }: VeoVideoEngineProps) => {
   const [prompt, setPrompt] = useState("");
   const [selectedStyle, setSelectedStyle] = useState("Cinematic");
   const [selectedAspect, setSelectedAspect] = useState("16:9");
@@ -53,6 +66,20 @@ const VeoVideoEngine = ({ initialPrompt, isSyncing, shotData }: VeoVideoEnginePr
       return;
     }
     setIsGenerating(true);
+
+    const clipId = crypto.randomUUID();
+    const clip: GeneratedClip = {
+      id: clipId,
+      title: shotData ? `Shot ${shotData.shot_code}` : "Generated Clip",
+      prompt: prompt.slice(0, 120),
+      style: selectedStyle,
+      aspect: selectedAspect,
+      duration: selectedDuration,
+      status: "rendering",
+      shotCode: shotData?.shot_code,
+    };
+    onGenerate?.(clip);
+
     trackEvent("veo_engine_generate", {
       style: selectedStyle,
       aspect: selectedAspect,
@@ -60,10 +87,12 @@ const VeoVideoEngine = ({ initialPrompt, isSyncing, shotData }: VeoVideoEnginePr
       from_shot: !!shotData,
       prompt_length: prompt.length,
     });
+
     setTimeout(() => {
       setIsGenerating(false);
+      onGenerateComplete?.(clipId);
       toast({ title: "Generation complete", description: "Your video clip is ready for preview." });
-    }, 3000);
+    }, 5000);
   };
 
   const copyPrompt = () => {

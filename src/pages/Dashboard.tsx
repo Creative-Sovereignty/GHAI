@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Play, Clock, Film, Music, FileText, TrendingUp, Trash2, LogOut, Download, X, Zap, ChevronDown } from "lucide-react";
+import { Plus, Play, Pause, Clock, Film, Music, FileText, TrendingUp, Trash2, LogOut, Download, X, Zap, ChevronDown, Video, Move, Maximize2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -15,7 +15,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { Shot } from "@/hooks/useShots";
 import ShotListTracker from "@/components/production/ShotListTracker";
-import VeoVideoEngine from "@/components/production/VeoVideoEngine";
+import VeoVideoEngine, { GeneratedClip } from "@/components/production/VeoVideoEngine";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const stats = [
@@ -61,6 +61,18 @@ const Dashboard = () => {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [activeShot, setActiveShot] = useState<Shot | null>(null);
   const [generatedPrompt, setGeneratedPrompt] = useState("");
+  const [generatedClips, setGeneratedClips] = useState<GeneratedClip[]>([]);
+  const [playingClipId, setPlayingClipId] = useState<string | null>(null);
+
+  const handleClipGenerated = (clip: GeneratedClip) => {
+    setGeneratedClips(prev => [clip, ...prev]);
+  };
+
+  const handleClipReady = (clipId: string) => {
+    setGeneratedClips(prev =>
+      prev.map(c => c.id === clipId ? { ...c, status: "ready" } : c)
+    );
+  };
 
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [bannerDismissed, setBannerDismissed] = useState(() =>
@@ -366,6 +378,8 @@ const Dashboard = () => {
                   initialPrompt={generatedPrompt}
                   isSyncing={!!activeShot}
                   shotData={activeShot}
+                  onGenerate={handleClipGenerated}
+                  onGenerateComplete={handleClipReady}
                 />
               </div>
             </div>
@@ -375,6 +389,108 @@ const Dashboard = () => {
               <p className="text-sm text-muted-foreground">Create a project above to start production</p>
             </div>
           )}
+
+          {/* Generated Clips Storyboard Grid */}
+          <AnimatePresence>
+            {generatedClips.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-3 mt-6"
+              >
+                <div className="flex items-center justify-between px-1">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                      <Video className="w-3.5 h-3.5 inline mr-1.5" />
+                      Storyboard Canvas
+                    </h3>
+                    <span className="text-[10px] bg-secondary px-2 py-0.5 rounded-full text-muted-foreground">
+                      {generatedClips.length} clips
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {generatedClips.map((clip, index) => (
+                    <motion.div
+                      key={clip.id}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: index * 0.05 }}
+                      className="group relative neo-card rounded-xl overflow-hidden hover:border-[var(--neon-cyan-30)] hover:shadow-[0_0_20px_var(--neon-cyan-10)] transition-all"
+                    >
+                      {/* 16:9 Visual */}
+                      <div className="relative aspect-video bg-secondary/50 overflow-hidden">
+                        {clip.status === "rendering" ? (
+                          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background/60 backdrop-blur-sm">
+                            <div className="w-16 h-1 bg-secondary rounded-full overflow-hidden">
+                              <motion.div
+                                className="h-full bg-primary rounded-full"
+                                animate={{ x: [-64, 64] }}
+                                transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                              />
+                            </div>
+                            <span className="text-[10px] text-primary font-bold uppercase animate-pulse">
+                              Veo Rendering...
+                            </span>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="absolute inset-0 bg-gradient-to-br from-[var(--neon-cyan-10)] via-secondary/30 to-[var(--neon-pink-10)]" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-background/20">
+                              <button
+                                onClick={() => setPlayingClipId(playingClipId === clip.id ? null : clip.id)}
+                                className="p-3 bg-primary rounded-full text-primary-foreground shadow-[0_0_20px_var(--neon-pink-30)] scale-90 group-hover:scale-100 transition-transform"
+                              >
+                                {playingClipId === clip.id ? (
+                                  <Pause fill="currentColor" className="w-5 h-5" />
+                                ) : (
+                                  <Play fill="currentColor" className="w-5 h-5" />
+                                )}
+                              </button>
+                            </div>
+                          </>
+                        )}
+
+                        {/* Badge */}
+                        <Badge className="absolute top-2 left-2 bg-[var(--neon-cyan-10)] text-[var(--neon-cyan)] border-[var(--neon-cyan-30)] font-mono text-[10px] z-10">
+                          {clip.shotCode ? `Shot ${clip.shotCode}` : `#${generatedClips.length - index}`}
+                        </Badge>
+
+                        {/* Move handle */}
+                        <div className="absolute top-2 right-2 p-1 bg-background/50 rounded backdrop-blur-md border border-[var(--neo-border)] opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                          <Move className="w-3 h-3 text-muted-foreground" />
+                        </div>
+                      </div>
+
+                      {/* Info */}
+                      <div className="p-3 flex justify-between items-start">
+                        <div className="min-w-0 flex-1">
+                          <h4 className="text-xs font-bold truncate">{clip.title}</h4>
+                          <p className="text-[10px] text-muted-foreground mt-0.5 line-clamp-1">{clip.prompt}</p>
+                          <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-tighter">
+                            {clip.style} • {clip.aspect} • {clip.duration}
+                          </p>
+                        </div>
+                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-2">
+                          <button className="p-1.5 hover:bg-secondary rounded text-muted-foreground hover:text-foreground transition-colors">
+                            <Maximize2 className="w-3 h-3" />
+                          </button>
+                          <button
+                            onClick={() => setGeneratedClips(prev => prev.filter(c => c.id !== clip.id))}
+                            className="p-1.5 hover:bg-destructive/10 rounded text-muted-foreground hover:text-destructive transition-colors"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
       </div>
     </AppLayout>
