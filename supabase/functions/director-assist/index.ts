@@ -107,29 +107,77 @@ async function executeGenerateVideoClip(
     };
   }
 
-  // Get next sort order
+  // Find or create script
+  let script = await supabaseAdmin
+    .from("scripts")
+    .select("id")
+    .eq("project_id", projectId)
+    .maybeSingle();
+  
+  if (!script.data) {
+    const { data: newScript, error: scriptErr } = await supabaseAdmin
+      .from("scripts")
+      .insert({ project_id: projectId, content: "" })
+      .select("id")
+      .single();
+    if (scriptErr) {
+      return { success: false, result: `Error creating script: ${scriptErr.message}`, data: null };
+    }
+    script = { data: newScript, error: null };
+  }
+
+  const sceneNum = parseInt(args.scene_number || "1") || 1;
+
+  // Find or create scene
+  let scene = await supabaseAdmin
+    .from("scenes")
+    .select("id")
+    .eq("script_id", script.data.id)
+    .eq("scene_number", sceneNum)
+    .maybeSingle();
+
+  if (!scene.data) {
+    const { data: newScene, error: sceneErr } = await supabaseAdmin
+      .from("scenes")
+      .insert({ script_id: script.data.id, scene_number: sceneNum })
+      .select("id")
+      .single();
+    if (sceneErr) {
+      return { success: false, result: `Error creating scene: ${sceneErr.message}`, data: null };
+    }
+    scene = { data: newScene, error: null };
+  }
+
+  // Get next order_index
   const { data: lastShot } = await supabaseAdmin
     .from("shots")
-    .select("sort_order, shot_code")
-    .eq("project_id", projectId)
-    .order("sort_order", { ascending: false })
+    .select("order_index")
+    .eq("scene_id", scene.data.id)
+    .order("order_index", { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
 
-  const nextOrder = (lastShot?.sort_order ?? 0) + 1;
-  const sceneNum = args.scene_number || "1";
-  const shotCode = `${sceneNum}${String.fromCharCode(64 + nextOrder)}`; // 1A, 1B, etc.
+  const nextOrder = (lastShot?.order_index ?? -1) + 1;
+
+  // Map camera_movement to a motion intensity range
+  const cameraAngleMap: Record<string, string> = {
+    static: "Eye Level",
+    dolly_in: "Eye Level",
+    pan_left: "Eye Level",
+    crane_up: "High Angle",
+    handheld: "Eye Level",
+  };
 
   const { data: newShot, error } = await supabaseAdmin
     .from("shots")
     .insert({
-      project_id: projectId,
-      description: args.prompt,
-      shot_type: args.shot_type || "Wide",
-      movement: args.camera_movement || "static",
-      scene_number: sceneNum,
-      shot_code: shotCode,
-      sort_order: nextOrder,
+      scene_id: scene.data.id,
+      order_index: nextOrder,
+      shot_type: args.shot_type || "WS",
+      camera_angle: cameraAngleMap[args.camera_movement || "static"] || "Eye Level",
+      prompt: args.prompt,
+      motion_intensity: args.motion_intensity ?? 50,
+      status: "rendering",
     })
     .select()
     .single();
@@ -145,7 +193,7 @@ async function executeGenerateVideoClip(
 
   return {
     success: true,
-    result: `Shot ${shotCode} created (ID: ${newShot.id}) and rendering started. Prompt: "${args.prompt.slice(0, 60)}..."`,
+    result: `Shot ${sceneNum}.${nextOrder + 1} created (ID: ${newShot.id}) and rendering started. Prompt: "${args.prompt.slice(0, 60)}..."`,
     data: { shot: newShot, prompt: args.prompt },
   };
 }
