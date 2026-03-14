@@ -21,7 +21,7 @@ const testimonials = [
 ];
 
 const plans = [
-  { name: "Starter", price: "Free", features: ["3 Projects", "Basic Script Editor", "5 AI Generations/mo", "Community Support"], cta: "Get Started", popular: false },
+  { name: "Starter", price: "Free", features: ["1 Project", "Basic Script Editor", "5 AI Generations/mo", "No Credit Card Required"], cta: "Get Started", popular: false },
   { name: "Pro", price: "$19/mo", features: ["Unlimited Projects", "Full Toolkit Access", "100 AI Generations/mo", "Priority Support", "HD Export"], cta: "Go Pro", popular: true },
   { name: "Studio", price: "$49/mo", features: ["Everything in Pro", "Unlimited AI Generations", "4K Export", "Team Collaboration", "Dedicated Support"], cta: "Contact Sales", popular: false },
 ];
