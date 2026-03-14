@@ -2,7 +2,10 @@ import { useState, useRef, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/analytics";
 import { motion, AnimatePresence } from "framer-motion";
-import { Save, Wand2, Download, Copy, RotateCcw, Send, Bot, User, Loader2, Sparkles, X, Plus } from "lucide-react";
+import {
+  Save, Wand2, Download, Copy, RotateCcw, Send, Bot, User, Loader2,
+  Sparkles, X, Plus, FileText, Type,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -20,6 +23,41 @@ const QUICK_PROMPTS = [
   { label: "Rewrite last scene", prompt: "Rewrite the last scene with more tension and visual dynamism. Make the action lines more cinematic." },
   { label: "Add new character", prompt: "Introduce a new character who enters the current scene and creates an unexpected complication." },
 ];
+
+/** Parse script content into a scene list */
+const extractScenes = (text: string): string[] => {
+  const scenes: string[] = [];
+  for (const line of text.split("\n")) {
+    const trimmed = line.trim();
+    if (trimmed.startsWith("INT.") || trimmed.startsWith("EXT.")) {
+      scenes.push(trimmed);
+    }
+  }
+  return scenes.length > 0 ? scenes : ["No scenes detected"];
+};
+
+/** Parse unique uppercase character names from the script */
+const extractCharacters = (text: string): string[] => {
+  const chars = new Set<string>();
+  const lines = text.split("\n");
+  for (const line of lines) {
+    const trimmed = line.trim();
+    // Character cues: all-caps, not a slugline, not empty, not a parenthetical
+    if (
+      trimmed.length > 1 &&
+      trimmed === trimmed.toUpperCase() &&
+      !trimmed.startsWith("INT.") &&
+      !trimmed.startsWith("EXT.") &&
+      !trimmed.startsWith("(") &&
+      !trimmed.startsWith("INSERT") &&
+      !trimmed.includes(":") &&
+      /^[A-Z\s()'.]+$/.test(trimmed)
+    ) {
+      chars.add(trimmed.replace(/\s*\(CONT'D\)/, "").trim());
+    }
+  }
+  return Array.from(chars);
+};
 
 const ScriptEditor = () => {
   const [script, setScript] = useState(
@@ -47,6 +85,7 @@ Alex bursts through the apartment door into the rain-soaked street. Neon signs r
 
   const [title, setTitle] = useState("Neon Dreams - Draft 1");
   const [aiOpen, setAiOpen] = useState(false);
+  const [isAiProcessing, setIsAiProcessing] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     { role: "assistant", content: "I'm your script writing assistant. I can help you **generate new scenes**, **polish dialogue**, **continue your story**, or **rewrite sections**. What would you like to work on?" },
   ]);
@@ -55,9 +94,24 @@ Alex bursts through the apartment door into the rain-soaked street. Neon signs r
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
+  const scenes = extractScenes(script);
+  const characters = extractCharacters(script);
+  const wordCount = script.split(/\s+/).filter(Boolean).length;
+  const lineCount = script.split("\n").length;
+
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages]);
+
+  // AI Ghostwriter — quick inline suggestion
+  const simulateAiSuggestion = () => {
+    setIsAiProcessing(true);
+    setTimeout(() => {
+      setScript(prev => prev.trimEnd() + "\n\nSuddenly, the ground begins to TREMBLE. A shadow grows over the dunes.");
+      setIsAiProcessing(false);
+      toast({ title: "AI Suggestion added", description: "New content appended to your script." });
+    }, 1500);
+  };
 
   const streamChat = async (userPrompt: string) => {
     if (!userPrompt.trim() || isLoading) return;
@@ -137,213 +191,319 @@ Alex bursts through the apartment door into the rain-soaked street. Neon signs r
     setIsLoading(false);
   };
 
+  const scrollToScene = (scene: string) => {
+    const idx = script.indexOf(scene);
+    if (idx === -1) return;
+    // Focus textarea and set cursor position
+    const textarea = document.querySelector<HTMLTextAreaElement>("#script-textarea");
+    if (textarea) {
+      textarea.focus();
+      textarea.setSelectionRange(idx, idx + scene.length);
+      // Scroll textarea to show selected scene
+      const linesBefore = script.slice(0, idx).split("\n").length;
+      const lineHeight = 24;
+      textarea.scrollTop = Math.max(0, (linesBefore - 3) * lineHeight);
+    }
+  };
+
   return (
     <AppLayout>
-      <div className="p-6 lg:p-8 h-[calc(100vh-0px)] flex flex-col">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between mb-6"
-        >
-          <div>
-            <input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="font-display text-2xl font-bold bg-transparent border-none outline-none text-foreground"
-            />
-            <p className="text-sm text-muted-foreground mt-1">Last edited 2 hours ago</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="cinema"
-              size="sm"
-              onClick={() => setAiOpen(!aiOpen)}
-              className={aiOpen ? "ring-2 ring-primary" : ""}
-            >
-              <Wand2 className="w-4 h-4" /> AI Assist
-            </Button>
-            <Button variant="ghost" size="sm"><RotateCcw className="w-4 h-4" /></Button>
-            <Button variant="ghost" size="sm"><Copy className="w-4 h-4" /></Button>
-            <Button variant="ghost" size="sm"><Download className="w-4 h-4" /></Button>
-            <Button variant="glow" size="sm">
-              <Save className="w-4 h-4" /> Save
-            </Button>
-          </div>
-        </motion.div>
-
-        {/* Editor + AI Panel */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="flex-1 flex gap-6 min-h-0"
-        >
-          {/* Main Editor */}
-          <div className="flex-1 neo-card rounded-xl overflow-hidden flex flex-col">
-            <div className="border-b border-[var(--neo-border)] px-4 py-2 flex items-center gap-4">
-              <span className="text-xs text-muted-foreground">Screenplay Format</span>
-              <Badge className="bg-[var(--neon-cyan-10)] text-[var(--neon-cyan)] border-[var(--neon-cyan-30)] text-[10px]">
-                Words: {script.split(/\s+/).length}
-              </Badge>
-              <span className="text-xs text-muted-foreground">Lines: {script.split("\n").length}</span>
-            </div>
-            <textarea
-              value={script}
-              onChange={(e) => setScript(e.target.value)}
-              className="w-full flex-1 p-6 bg-transparent text-foreground font-mono text-sm leading-relaxed resize-none outline-none"
-              spellCheck={false}
-            />
+      <div className="flex h-[calc(100vh-0px)] overflow-hidden">
+        {/* Left Sidebar: Scene Navigation */}
+        <div className="w-56 bg-card border-r border-[var(--neo-border)] p-4 flex flex-col shrink-0 hidden lg:flex">
+          <div className="flex items-center gap-2 mb-6 px-1">
+            <FileText className="w-4 h-4 text-primary" />
+            <span className="text-[10px] font-black uppercase tracking-tighter text-muted-foreground truncate">
+              {title.split(" - ")[0]}.fountain
+            </span>
           </div>
 
-          {/* Side Panel — Scene Breakdown OR AI Assistant */}
-          <AnimatePresence mode="wait">
-            {aiOpen ? (
-              <motion.div
-                key="ai-panel"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="w-80 lg:w-96 neo-card rounded-xl flex flex-col overflow-hidden border border-primary/20"
-              >
-                {/* AI Header */}
-                <div className="px-4 py-3 border-b border-border flex items-center justify-between bg-card">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-primary" />
-                    <span className="font-display font-semibold text-sm">Script Assistant</span>
-                  </div>
-                  <button onClick={() => setAiOpen(false)} className="text-muted-foreground hover:text-foreground">
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-
-                {/* Quick Prompts */}
-                <div className="px-3 py-2 border-b border-border flex gap-1.5 flex-wrap">
-                  {QUICK_PROMPTS.map((qp) => (
-                    <button
-                      key={qp.label}
-                      onClick={() => streamChat(qp.prompt)}
-                      disabled={isLoading}
-                      className="text-[10px] px-2 py-1 rounded-full border border-primary/30 text-primary hover:bg-primary/10 transition-colors disabled:opacity-50"
-                    >
-                      {qp.label}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Messages */}
-                <div ref={scrollRef} className="flex-1 overflow-y-auto px-3 py-4 space-y-3">
-                  {messages.map((msg, i) => (
-                    <div key={i} className={`flex gap-2 ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs ${
-                        msg.role === "assistant" ? "bg-primary/20 text-primary" : "bg-accent/20 text-accent"
-                      }`}>
-                        {msg.role === "assistant" ? <Bot className="w-3 h-3" /> : <User className="w-3 h-3" />}
-                      </div>
-                      <div className={`max-w-[85%] rounded-lg px-3 py-2 text-xs leading-relaxed ${
-                        msg.role === "assistant" ? "bg-card border border-border" : "bg-primary/10 border border-primary/20"
-                      }`}>
-                        <div className="prose prose-sm prose-invert max-w-none [&_pre]:bg-background/50 [&_pre]:rounded-md [&_pre]:p-2 [&_pre]:text-[10px] [&_code]:text-[10px]">
-                          <ReactMarkdown
-                            components={{
-                              pre({ children }) {
-                                return <pre className="relative group">{children}</pre>;
-                              },
-                              code({ className, children, ...props }) {
-                                const text = String(children).replace(/\n$/, "");
-                                const isScreenplay = className?.includes("screenplay") || className?.includes("language-screenplay");
-                                if (isScreenplay) {
-                                  return (
-                                    <div className="relative">
-                                      <code className={className} {...props}>{children}</code>
-                                      <button
-                                         onClick={() => {
-                                          setScript(prev => prev.trimEnd() + "\n\n" + text);
-                                          trackEvent("script_ai_insert", { content_length: text.length });
-                                          toast({ title: "Inserted!", description: "Script content appended." });
-                                        }}
-                                        className="mt-2 flex items-center gap-1 text-[10px] px-2 py-1 rounded-md border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
-                                      >
-                                        <Plus className="w-3 h-3" /> Insert into script
-                                      </button>
-                                    </div>
-                                  );
-                                }
-                                return <code className={className} {...props}>{children}</code>;
-                              },
-                            }}
-                          >{msg.content}</ReactMarkdown>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  {isLoading && messages[messages.length - 1]?.role === "user" && (
-                    <div className="flex gap-2">
-                      <div className="w-6 h-6 rounded-full bg-primary/20 text-primary flex items-center justify-center shrink-0">
-                        <Bot className="w-3 h-3" />
-                      </div>
-                      <div className="bg-card border border-border rounded-lg px-3 py-2">
-                        <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Input */}
-                <form
-                  onSubmit={(e) => { e.preventDefault(); streamChat(input); }}
-                  className="p-3 border-t border-border flex gap-2"
+          {/* Scene List */}
+          <div className="space-y-4 flex-1 overflow-y-auto">
+            <p className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest px-1">Scene List</p>
+            <div className="space-y-1">
+              {scenes.map((scene, i) => (
+                <button
+                  key={i}
+                  onClick={() => scrollToScene(scene)}
+                  className="w-full text-left px-3 py-2 rounded-lg text-[11px] font-medium transition-colors hover:bg-primary/10 text-muted-foreground hover:text-primary truncate"
                 >
-                  <Input
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    placeholder="Ask to write, continue, or refine..."
-                    className="flex-1 text-xs h-8 bg-card border-border"
+                  {String(i + 1).padStart(2, "0")}. {scene.replace(/^(INT\.|EXT\.)\s*/, "").split(" - ")[0]}
+                </button>
+              ))}
+            </div>
+
+            {/* Characters */}
+            {characters.length > 0 && (
+              <div className="pt-4 border-t border-[var(--neo-border)]">
+                <p className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest px-1 mb-2">Characters</p>
+                <div className="space-y-2">
+                  {characters.map((char, i) => (
+                    <div key={char} className="flex items-center gap-2 px-1">
+                      <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-primary to-accent flex items-center justify-center text-[9px] font-bold text-primary-foreground shrink-0">
+                        {char[0]}
+                      </div>
+                      <span className="text-[11px] text-muted-foreground truncate">{char}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Script Stats */}
+          <div className="pt-4 border-t border-[var(--neo-border)] space-y-1.5">
+            <div className="flex justify-between text-[10px] text-muted-foreground">
+              <span>Words</span>
+              <span className="font-mono">{wordCount}</span>
+            </div>
+            <div className="flex justify-between text-[10px] text-muted-foreground">
+              <span>Lines</span>
+              <span className="font-mono">{lineCount}</span>
+            </div>
+            <div className="flex justify-between text-[10px] text-muted-foreground">
+              <span>Scenes</span>
+              <span className="font-mono">{scenes.length}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Editor Canvas */}
+        <div className="flex-1 flex flex-col relative overflow-hidden">
+          {/* Top Bar */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center justify-between px-6 py-3 border-b border-[var(--neo-border)] bg-card/50 backdrop-blur-sm shrink-0"
+          >
+            <div className="flex items-center gap-3">
+              <input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="font-display text-lg font-bold bg-transparent border-none outline-none text-foreground w-64"
+              />
+              <Badge className="bg-[var(--neon-cyan-10)] text-[var(--neon-cyan)] border-[var(--neon-cyan-30)] text-[10px]">
+                Screenplay
+              </Badge>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Button variant="ghost" size="sm" className="h-8"><RotateCcw className="w-3.5 h-3.5" /></Button>
+              <Button variant="ghost" size="sm" className="h-8"><Copy className="w-3.5 h-3.5" /></Button>
+              <Button variant="ghost" size="sm" className="h-8"><Download className="w-3.5 h-3.5" /></Button>
+              <Button variant="glow" size="sm" className="h-8">
+                <Save className="w-3.5 h-3.5" /> Save
+              </Button>
+            </div>
+          </motion.div>
+
+          {/* Editor Area */}
+          <div className="flex-1 overflow-y-auto relative">
+            <div className="max-w-[800px] mx-auto px-8 lg:px-12 pt-10 pb-32">
+              <textarea
+                id="script-textarea"
+                value={script}
+                onChange={(e) => setScript(e.target.value)}
+                className="w-full bg-transparent border-none outline-none resize-none text-foreground/80 leading-relaxed overflow-hidden"
+                style={{
+                  minHeight: "80vh",
+                  fontFamily: '"Courier Prime", "Courier New", monospace',
+                  fontSize: "15px",
+                }}
+                spellCheck={false}
+              />
+            </div>
+          </div>
+
+          {/* Floating Action Bar */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-card/80 backdrop-blur-xl p-2 rounded-2xl border border-[var(--neo-border)] shadow-[0_8px_30px_rgba(0,0,0,0.5)] z-20"
+          >
+            <button className="p-2.5 hover:bg-secondary rounded-xl transition-colors text-muted-foreground hover:text-foreground">
+              <Type className="w-4 h-4" />
+            </button>
+            <div className="w-px h-6 bg-[var(--neo-border)]" />
+            <button
+              onClick={simulateAiSuggestion}
+              disabled={isAiProcessing}
+              className="flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-black text-[11px] uppercase tracking-widest transition-all disabled:opacity-50"
+            >
+              {isAiProcessing ? (
+                <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <Wand2 className="w-4 h-4" />
+              )}
+              AI Ghostwriter
+            </button>
+            <div className="w-px h-6 bg-[var(--neo-border)]" />
+            <button
+              onClick={() => setAiOpen(!aiOpen)}
+              className={`p-2.5 rounded-xl transition-colors ${aiOpen ? "bg-primary/20 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-secondary"}`}
+            >
+              <Sparkles className="w-4 h-4" />
+            </button>
+            <button className="p-2.5 hover:bg-secondary rounded-xl transition-colors text-muted-foreground hover:text-foreground">
+              <Save className="w-4 h-4" />
+            </button>
+            <button className="p-2.5 hover:bg-secondary rounded-xl transition-colors text-muted-foreground hover:text-foreground">
+              <Download className="w-4 h-4" />
+            </button>
+          </motion.div>
+        </div>
+
+        {/* Right Sidebar: AI Assistant */}
+        <AnimatePresence>
+          {aiOpen && (
+            <motion.div
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: 340, opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              className="border-l border-[var(--neo-border)] bg-card flex flex-col overflow-hidden shrink-0"
+            >
+              {/* AI Header */}
+              <div className="px-5 py-4 border-b border-[var(--neo-border)] flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-primary" />
+                  <span className="font-display font-semibold text-sm">AI Assistant</span>
+                </div>
+                <button onClick={() => setAiOpen(false)} className="text-muted-foreground hover:text-foreground transition-colors">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Quick Prompts */}
+              <div className="px-4 py-3 border-b border-[var(--neo-border)] flex gap-1.5 flex-wrap">
+                {QUICK_PROMPTS.map((qp) => (
+                  <button
+                    key={qp.label}
+                    onClick={() => streamChat(qp.prompt)}
                     disabled={isLoading}
-                  />
-                  <Button type="submit" size="icon" className="h-8 w-8 bg-primary hover:bg-primary/90" disabled={isLoading || !input.trim()}>
-                    <Send className="w-3 h-3" />
-                  </Button>
-                </form>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="side-panel"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="w-64 space-y-4 hidden lg:block"
-              >
-                <div className="neo-card rounded-xl p-4">
-                  <h3 className="font-display font-semibold text-sm mb-3">Scene Breakdown</h3>
+                    className="text-[10px] px-2.5 py-1 rounded-full border border-primary/30 text-primary hover:bg-primary/10 transition-colors disabled:opacity-50"
+                  >
+                    {qp.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* AI Suggestions Card */}
+              <div className="px-4 pt-4">
+                <div className="neo-card rounded-xl p-4 border border-[var(--neo-border)] hover:border-primary/30 transition-colors cursor-pointer group">
+                  <p className="text-xs text-muted-foreground italic leading-relaxed">
+                    "What if the protagonist finds an old compass buried in the sand here?"
+                  </p>
+                  <div className="mt-3 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={() => {
+                        setScript(prev => prev.trimEnd() + "\n\nThe protagonist kneels, fingers brushing against something metallic. A compass, its glass cracked but needle still spinning.");
+                        toast({ title: "Suggestion added to script" });
+                      }}
+                      className="text-[10px] text-primary font-bold uppercase tracking-wider"
+                    >
+                      Add to Script
+                    </button>
+                    <Wand2 className="w-3 h-3 text-primary" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Messages */}
+              <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+                {messages.map((msg, i) => (
+                  <div key={i} className={`flex gap-2 ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs ${
+                      msg.role === "assistant" ? "bg-primary/20 text-primary" : "bg-accent/20 text-accent"
+                    }`}>
+                      {msg.role === "assistant" ? <Bot className="w-3 h-3" /> : <User className="w-3 h-3" />}
+                    </div>
+                    <div className={`max-w-[85%] rounded-lg px-3 py-2 text-xs leading-relaxed ${
+                      msg.role === "assistant" ? "bg-secondary/50 border border-[var(--neo-border)]" : "bg-primary/10 border border-primary/20"
+                    }`}>
+                      <div className="prose prose-sm prose-invert max-w-none [&_pre]:bg-background/50 [&_pre]:rounded-md [&_pre]:p-2 [&_pre]:text-[10px] [&_code]:text-[10px]">
+                        <ReactMarkdown
+                          components={{
+                            pre({ children }) {
+                              return <pre className="relative group">{children}</pre>;
+                            },
+                            code({ className, children, ...props }) {
+                              const text = String(children).replace(/\n$/, "");
+                              const isScreenplay = className?.includes("screenplay") || className?.includes("language-screenplay");
+                              if (isScreenplay) {
+                                return (
+                                  <div className="relative">
+                                    <code className={className} {...props}>{children}</code>
+                                    <button
+                                      onClick={() => {
+                                        setScript(prev => prev.trimEnd() + "\n\n" + text);
+                                        trackEvent("script_ai_insert", { content_length: text.length });
+                                        toast({ title: "Inserted!", description: "Script content appended." });
+                                      }}
+                                      className="mt-2 flex items-center gap-1 text-[10px] px-2 py-1 rounded-md border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
+                                    >
+                                      <Plus className="w-3 h-3" /> Insert into script
+                                    </button>
+                                  </div>
+                                );
+                              }
+                              return <code className={className} {...props}>{children}</code>;
+                            },
+                          }}
+                        >{msg.content}</ReactMarkdown>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {isLoading && messages[messages.length - 1]?.role === "user" && (
+                  <div className="flex gap-2">
+                    <div className="w-6 h-6 rounded-full bg-primary/20 text-primary flex items-center justify-center shrink-0">
+                      <Bot className="w-3 h-3" />
+                    </div>
+                    <div className="bg-secondary/50 border border-[var(--neo-border)] rounded-lg px-3 py-2">
+                      <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Character Profiles */}
+              {characters.length > 0 && (
+                <div className="px-4 py-3 border-t border-[var(--neo-border)]">
+                  <p className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest mb-2">Character Profiles</p>
                   <div className="space-y-2">
-                    {["INT. APARTMENT - NIGHT", "EXT. CITY STREET"].map((scene, i) => (
-                      <div
-                        key={i}
-                        className="text-xs px-3 py-2 rounded-lg bg-[var(--neon-purple-05)] border border-[var(--neon-purple-30)] hover:bg-[var(--neon-purple-10)] cursor-pointer transition-colors text-[var(--neon-purple)]"
-                      >
-                        {scene}
+                    {characters.slice(0, 3).map((char) => (
+                      <div key={char} className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-accent shrink-0" />
+                        <div>
+                          <p className="text-[11px] font-bold">{char}</p>
+                          <p className="text-[10px] text-muted-foreground">Motivated by: Story</p>
+                        </div>
                       </div>
                     ))}
                   </div>
                 </div>
-                <div className="neo-card rounded-xl p-4">
-                  <h3 className="font-display font-semibold text-sm mb-3">Characters</h3>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <div className="w-6 h-6 rounded-full bg-[var(--neon-cyan-10)] flex items-center justify-center text-accent font-bold">A</div>
-                      Alex (30s)
-                    </div>
-                  </div>
-                </div>
-                <div className="neo-card rounded-xl p-4">
-                  <h3 className="font-display font-semibold text-sm mb-3">AI Suggestions</h3>
-                  <p className="text-xs text-muted-foreground">Click "AI Assist" to generate scene continuations, dialogue, or shot descriptions.</p>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
+              )}
+
+              {/* Input */}
+              <form
+                onSubmit={(e) => { e.preventDefault(); streamChat(input); }}
+                className="p-3 border-t border-[var(--neo-border)] flex gap-2"
+              >
+                <Input
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Ask to write, continue, or refine..."
+                  className="flex-1 text-xs h-8 bg-card border-[var(--neo-border)]"
+                  disabled={isLoading}
+                />
+                <Button type="submit" size="icon" className="h-8 w-8 bg-primary hover:bg-primary/90" disabled={isLoading || !input.trim()}>
+                  <Send className="w-3 h-3" />
+                </Button>
+              </form>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </AppLayout>
   );
