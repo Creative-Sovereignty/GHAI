@@ -14,8 +14,10 @@ import { useProjects, useCreateProject, useDeleteProject } from "@/hooks/useProj
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { Shot } from "@/hooks/useShots";
+import { Shot } from "@/hooks/useShots";
 import ShotListTracker from "@/components/production/ShotListTracker";
-import VeoVideoEngine from "@/components/production/VeoVideoEngine";
+import VeoVideoEngine, { GeneratedClip } from "@/components/production/VeoVideoEngine";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const stats = [
