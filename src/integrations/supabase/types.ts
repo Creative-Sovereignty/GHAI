@@ -273,7 +273,7 @@ export type Database = {
           motion_intensity: number | null
           movement: string | null
           order_index: number
-          project_id: string
+          project_id: string | null
           prompt: string | null
           scene_id: string | null
           scene_number: string
@@ -297,7 +297,7 @@ export type Database = {
           motion_intensity?: number | null
           movement?: string | null
           order_index?: number
-          project_id: string
+          project_id?: string | null
           prompt?: string | null
           scene_id?: string | null
           scene_number?: string
@@ -321,7 +321,7 @@ export type Database = {
           motion_intensity?: number | null
           movement?: string | null
           order_index?: number
-          project_id?: string
+          project_id?: string | null
           prompt?: string | null
           scene_id?: string | null
           scene_number?: string
