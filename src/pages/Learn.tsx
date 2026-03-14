@@ -6,7 +6,7 @@ import { Loader2, BookOpen, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppLayout from "@/components/AppLayout";
 
-const WIKI_URL = "https://en.wikipedia.org/wiki/Film";
+const WIKI_URL = "https://en.wikipedia.org/wiki/Filmmaking";
 
 const Learn = () => {
   const [content, setContent] = useState<string | null>(null);
