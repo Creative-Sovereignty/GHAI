@@ -24,6 +24,7 @@ const FAQ = lazy(() => import("./pages/FAQ"));
 const Help = lazy(() => import("./pages/Help"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const AnalyticsDocs = lazy(() => import("./pages/AnalyticsDocs"));
 import ChatWidget from "./components/ChatWidget";
 
 const queryClient = new QueryClient();
