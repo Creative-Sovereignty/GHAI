@@ -158,6 +158,7 @@ const Storyboard = () => {
     setGeneratedFrames([]);
     setShowAI(false);
     setPrompt("");
+    trackEvent("storyboard_ai_generated", { frame_count: generatedFrames.length });
     toast({ title: "Frames added!", description: `${generatedFrames.length} frames appended to your storyboard.` });
   };
 
