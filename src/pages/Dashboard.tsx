@@ -263,7 +263,7 @@ const Dashboard = () => {
                       </span>
                     </div>
                     <div className="mt-4 flex gap-2">
-                      <Button variant="cinema" size="sm" className="flex-1 text-xs">
+                      <Button variant="cinema" size="sm" className="flex-1 text-xs" onClick={(e) => { e.stopPropagation(); navigate(`/script?project=${project.id}`); }}>
                         <Play className="w-3 h-3" /> Open
                       </Button>
                       <Button
