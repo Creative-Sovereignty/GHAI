@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/analytics";
-import { motion, AnimatePresence } from "framer-motion";
-import { Plus, ImageIcon, Wand2, GripVertical, Loader2, Sparkles, X, Trash2, Image } from "lucide-react";
+import { motion, AnimatePresence, Reorder } from "framer-motion";
+import { Plus, ImageIcon, Wand2, Loader2, Sparkles, X, Trash2, Image, Play, Maximize2, Move, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -15,17 +15,18 @@ type Frame = {
   description: string;
   notes: string;
   imageUrl?: string;
+  status?: "ready" | "rendering";
 };
 
 const STORYBOARD_IMAGE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/storyboard-image`;
 
 const initialFrames: Frame[] = [
-  { id: 1, scene: "INT. APARTMENT - NIGHT", description: "Wide shot: Alex at desk, monitor glow", notes: "Blue/cold tones" },
-  { id: 2, scene: "INT. APARTMENT - NIGHT", description: "CU: Monitor screen with countdown", notes: "Insert shot" },
-  { id: 3, scene: "INT. APARTMENT - NIGHT", description: "MCU: Alex stands, chair falls", notes: "Quick camera movement" },
-  { id: 4, scene: "EXT. CITY STREET", description: "Wide: Alex exits building into rain", notes: "Neon reflections in puddles" },
-  { id: 5, scene: "EXT. CITY STREET", description: "Tracking shot: Alex running", notes: "Handheld, urgent feel" },
-  { id: 6, scene: "EXT. CITY STREET", description: "Low angle: Neon signs above", notes: "Atmosphere establishing" },
+  { id: 1, scene: "INT. APARTMENT - NIGHT", description: "Wide shot: Alex at desk, monitor glow", notes: "Blue/cold tones", status: "ready" },
+  { id: 2, scene: "INT. APARTMENT - NIGHT", description: "CU: Monitor screen with countdown", notes: "Insert shot", status: "ready" },
+  { id: 3, scene: "INT. APARTMENT - NIGHT", description: "MCU: Alex stands, chair falls", notes: "Quick camera movement", status: "ready" },
+  { id: 4, scene: "EXT. CITY STREET", description: "Wide: Alex exits building into rain", notes: "Neon reflections in puddles", status: "ready" },
+  { id: 5, scene: "EXT. CITY STREET", description: "Tracking shot: Alex running", notes: "Handheld, urgent feel", status: "ready" },
+  { id: 6, scene: "EXT. CITY STREET", description: "Low angle: Neon signs above", notes: "Atmosphere establishing", status: "ready" },
 ];
 
 const STORYBOARD_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/storyboard-assist`;
@@ -44,10 +45,13 @@ const Storyboard = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedFrames, setGeneratedFrames] = useState<Frame[]>([]);
   const [generatingImageIds, setGeneratingImageIds] = useState<Set<number>>(new Set());
+  const [expandedFrame, setExpandedFrame] = useState<number | null>(null);
   const { toast } = useToast();
 
   const generateThumbnail = async (frame: Frame) => {
     setGeneratingImageIds(prev => new Set(prev).add(frame.id));
+    // Mark frame as rendering
+    setFrames(prev => prev.map(f => f.id === frame.id ? { ...f, status: "rendering" } : f));
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const resp = await fetch(STORYBOARD_IMAGE_URL, {
@@ -78,12 +82,13 @@ const Storyboard = () => {
 
       const data = await resp.json();
       if (data.imageUrl) {
-        setFrames(prev => prev.map(f => f.id === frame.id ? { ...f, imageUrl: data.imageUrl } : f));
+        setFrames(prev => prev.map(f => f.id === frame.id ? { ...f, imageUrl: data.imageUrl, status: "ready" } : f));
         toast({ title: "Thumbnail generated!", description: `Frame "${frame.description}" now has a visual.` });
         trackEvent("storyboard_image_generated", { frame_scene: frame.scene });
       }
     } catch {
       toast({ title: "Error", description: "Failed to generate thumbnail.", variant: "destructive" });
+      setFrames(prev => prev.map(f => f.id === frame.id ? { ...f, status: "ready" } : f));
     } finally {
       setGeneratingImageIds(prev => {
         const next = new Set(prev);
@@ -145,6 +150,7 @@ const Storyboard = () => {
         scene: f.scene,
         description: f.description,
         notes: f.notes,
+        status: "ready" as const,
       }));
       setGeneratedFrames(newFrames);
     } catch {
@@ -169,14 +175,19 @@ const Storyboard = () => {
   return (
     <AppLayout>
       <div className="p-6 lg:p-8">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between mb-6"
+          className="flex items-center justify-between mb-8 border-b border-[var(--neo-border)] pb-6"
         >
           <div>
-            <h1 className="font-display text-2xl font-bold">Storyboard</h1>
-            <p className="text-sm text-muted-foreground mt-1">Neon Dreams - {frames.length} frames</p>
+            <h1 className="font-display text-2xl font-bold flex items-center gap-2">
+              <Video className="w-5 h-5 text-primary" /> Storyboard Canvas
+            </h1>
+            <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-widest">
+              Visual Sequence Layout • {frames.length} frames
+            </p>
           </div>
           <div className="flex gap-2">
             <Button
@@ -186,7 +197,7 @@ const Storyboard = () => {
               disabled={generatingImageIds.size > 0}
             >
               {generatingImageIds.size > 0 ? <Loader2 className="w-4 h-4 animate-spin" /> : <Image className="w-4 h-4" />}
-              {generatingImageIds.size > 0 ? `Generating (${generatingImageIds.size})...` : "Generate All Thumbnails"}
+              {generatingImageIds.size > 0 ? `Generating (${generatingImageIds.size})...` : "Generate All"}
             </Button>
             <Button
               variant="cinema"
@@ -201,10 +212,10 @@ const Storyboard = () => {
               size="sm"
               onClick={() => {
                 const newId = Date.now();
-                setFrames(prev => [...prev, { id: newId, scene: "INT. NEW SCENE", description: "Shot description", notes: "Notes" }]);
+                setFrames(prev => [...prev, { id: newId, scene: "INT. NEW SCENE", description: "Shot description", notes: "Notes", status: "ready" }]);
               }}
             >
-              <Plus className="w-4 h-4" /> Add Frame
+              <Plus className="w-4 h-4" /> New Scene
             </Button>
           </div>
         </motion.div>
@@ -229,7 +240,6 @@ const Storyboard = () => {
                   </button>
                 </div>
 
-                {/* Suggestion chips */}
                 <div className="flex flex-wrap gap-1.5 mb-3">
                   {SUGGESTIONS.map((s) => (
                     <button
@@ -243,7 +253,6 @@ const Storyboard = () => {
                   ))}
                 </div>
 
-                {/* Input */}
                 <form
                   onSubmit={(e) => { e.preventDefault(); generateFrames(prompt); }}
                   className="flex gap-2 mb-4"
@@ -261,7 +270,6 @@ const Storyboard = () => {
                   </Button>
                 </form>
 
-                {/* Generated Frames Preview */}
                 {generatedFrames.length > 0 && (
                   <div>
                     <div className="flex items-center justify-between mb-3">
@@ -302,64 +310,127 @@ const Storyboard = () => {
           )}
         </AnimatePresence>
 
-        {/* Storyboard Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* Draggable Storyboard Grid */}
+        <Reorder.Group
+          axis="y"
+          values={frames}
+          onReorder={setFrames}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
+        >
           {frames.map((frame, index) => (
-            <motion.div
+            <Reorder.Item
               key={frame.id}
+              value={frame}
+              className="group relative neo-card rounded-xl overflow-hidden cursor-grab active:cursor-grabbing hover:border-[var(--neon-cyan-30)] hover:shadow-[0_0_20px_var(--neon-cyan-10)] transition-all"
+              whileHover={{ y: -2 }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-              whileHover={{ y: -2 }}
-              className="neo-card rounded-xl overflow-hidden group cursor-pointer hover:border-[var(--neon-cyan-30)] hover:shadow-[0_0_20px_var(--neon-cyan-10)] transition-all"
+              transition={{ delay: index * 0.04 }}
             >
-              <div className="aspect-video bg-secondary/50 flex items-center justify-center relative overflow-hidden">
-                {frame.imageUrl ? (
-                  <img src={frame.imageUrl} alt={frame.description} className="w-full h-full object-cover" />
-                ) : generatingImageIds.has(frame.id) ? (
-                  <div className="flex flex-col items-center gap-2">
-                    <Loader2 className="w-8 h-8 text-primary animate-spin" />
-                    <span className="text-[10px] text-muted-foreground">Generating...</span>
+              {/* 16:9 Aspect Ratio Visual */}
+              <div className="relative aspect-video bg-secondary/50 overflow-hidden">
+                {frame.status === "rendering" || generatingImageIds.has(frame.id) ? (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background/60 backdrop-blur-sm">
+                    <div className="w-16 h-1 bg-secondary rounded-full overflow-hidden">
+                      <motion.div
+                        className="h-full bg-primary rounded-full"
+                        animate={{ x: [-64, 64] }}
+                        transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                      />
+                    </div>
+                    <span className="text-[10px] text-primary font-bold uppercase animate-pulse">
+                      Veo Rendering...
+                    </span>
                   </div>
+                ) : frame.imageUrl ? (
+                  <>
+                    <img
+                      src={frame.imageUrl}
+                      alt={frame.description}
+                      className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-background/20">
+                      <button className="p-3 bg-primary rounded-full text-primary-foreground shadow-[0_0_20px_var(--neon-pink-30)] scale-90 group-hover:scale-100 transition-transform">
+                        <Play fill="currentColor" className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </>
                 ) : (
                   <button
                     onClick={(e) => { e.stopPropagation(); generateThumbnail(frame); }}
-                    className="flex flex-col items-center gap-2 hover:scale-105 transition-transform"
+                    className="absolute inset-0 flex flex-col items-center justify-center gap-2 hover:bg-secondary/30 transition-colors"
                   >
                     <ImageIcon className="w-10 h-10 text-muted-foreground/30" />
-                    <span className="text-[10px] text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">Click to generate</span>
+                    <span className="text-[10px] text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
+                      Click to generate
+                    </span>
                   </button>
                 )}
-                <Badge className="absolute top-2 left-2 bg-[var(--neon-cyan-10)] text-[var(--neon-cyan)] border-[var(--neon-cyan-30)] font-mono text-[10px]">
+
+                {/* Frame number badge */}
+                <Badge className="absolute top-2 left-2 bg-[var(--neon-cyan-10)] text-[var(--neon-cyan)] border-[var(--neon-cyan-30)] font-mono text-[10px] z-10">
                   #{index + 1}
                 </Badge>
-                <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+
+                {/* Reorder handle */}
+                <div className="absolute top-2 left-[calc(100%-2rem-0.5rem)] p-1 bg-background/50 rounded backdrop-blur-md border border-[var(--neo-border)] opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                  <Move className="w-3 h-3 text-muted-foreground" />
+                </div>
+              </div>
+
+              {/* Frame Info */}
+              <div className="p-3 flex justify-between items-start">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs text-accent font-mono mb-0.5 truncate">{frame.scene}</p>
+                  <h4 className="text-xs font-bold truncate">{frame.description}</h4>
+                  <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-tighter">
+                    {frame.notes} • {frame.imageUrl ? "AI-Generated" : "Pending"}
+                  </p>
+                </div>
+                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-2">
                   {frame.imageUrl && (
                     <button
                       onClick={(e) => { e.stopPropagation(); generateThumbnail(frame); }}
-                      className="w-6 h-6 rounded bg-primary/80 flex items-center justify-center hover:bg-primary transition-colors"
-                      title="Regenerate thumbnail"
+                      className="p-1.5 hover:bg-primary/10 rounded text-muted-foreground hover:text-primary transition-colors"
+                      title="Regenerate"
                     >
-                      <Wand2 className="w-3 h-3 text-primary-foreground" />
+                      <Wand2 className="w-3 h-3" />
                     </button>
                   )}
                   <button
-                    onClick={(e) => { e.stopPropagation(); removeFrame(frame.id); }}
-                    className="w-6 h-6 rounded bg-destructive/80 flex items-center justify-center hover:bg-destructive transition-colors"
+                    onClick={(e) => { e.stopPropagation(); setExpandedFrame(expandedFrame === frame.id ? null : frame.id); }}
+                    className="p-1.5 hover:bg-secondary rounded text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    <Trash2 className="w-3 h-3 text-destructive-foreground" />
+                    <Maximize2 className="w-3 h-3" />
                   </button>
-                  <GripVertical className="w-4 h-4 text-muted-foreground mt-1" />
+                  <button
+                    onClick={(e) => { e.stopPropagation(); removeFrame(frame.id); }}
+                    className="p-1.5 hover:bg-destructive/10 rounded text-muted-foreground hover:text-destructive transition-colors"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </button>
                 </div>
               </div>
-              <div className="p-4">
-                <p className="text-xs text-accent font-mono mb-1">{frame.scene}</p>
-                <p className="text-sm font-medium mb-2">{frame.description}</p>
-                <p className="text-xs text-muted-foreground">{frame.notes}</p>
-              </div>
-            </motion.div>
+            </Reorder.Item>
           ))}
-        </div>
+
+          {/* Empty Placeholder Slot */}
+          <div
+            onClick={() => {
+              const newId = Date.now();
+              setFrames(prev => [...prev, { id: newId, scene: "INT. NEW SCENE", description: "Shot description", notes: "Notes", status: "ready" }]);
+            }}
+            className="aspect-[16/12] border-2 border-dashed border-[var(--neo-border)] rounded-xl flex flex-col items-center justify-center gap-2 group hover:border-primary/50 hover:bg-primary/[0.02] transition-all cursor-pointer"
+          >
+            <div className="p-3 bg-secondary/50 rounded-full text-muted-foreground group-hover:text-primary transition-colors">
+              <Plus className="w-6 h-6" />
+            </div>
+            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest group-hover:text-primary/50 transition-colors">
+              Add Visual Beat
+            </span>
+          </div>
+        </Reorder.Group>
       </div>
     </AppLayout>
   );
