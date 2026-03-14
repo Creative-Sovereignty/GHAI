@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, FileText, Image, ListChecks, Film, Video, Music, Settings,
-  ChevronLeft, ChevronRight, BarChart3, BookOpen, Menu, X,
+  ChevronLeft, ChevronRight, BarChart3, BookOpen, Menu, X, Clapperboard,
 } from "lucide-react";
 import logoImg from "@/assets/logo.png";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -16,6 +16,7 @@ const navItems = [
   { icon: Video, label: "Veo 3", path: "/veo3", neon: "cyan" },
   { icon: Film, label: "Editor", path: "/editor", neon: "pink" },
   { icon: Music, label: "AI Music", path: "/music", neon: "purple" },
+  { icon: Clapperboard, label: "Director AI", path: "/director", neon: "pink" },
   { icon: Settings, label: "Settings", path: "/settings", neon: "pink" },
   { icon: BookOpen, label: "Learn", path: "/learn", neon: "cyan" },
   { icon: BarChart3, label: "Analytics Docs", path: "/analytics-docs", neon: "cyan" },
