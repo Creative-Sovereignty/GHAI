@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   LayoutDashboard, FileText, Image, ListChecks, Film, Video, Music, Settings,
-  ChevronLeft, ChevronRight,
+  ChevronLeft, ChevronRight, BarChart3,
 } from "lucide-react";
 import logoImg from "@/assets/logo.png";
 
