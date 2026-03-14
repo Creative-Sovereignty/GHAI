@@ -119,7 +119,7 @@ const Learn = () => {
           <Button
             variant="glow"
             size="icon"
-            className="fixed bottom-6 right-6 z-50 rounded-full shadow-lg transition-opacity"
+            className="fixed bottom-20 right-6 z-50 rounded-full shadow-lg transition-opacity"
             onClick={scrollToTop}
             aria-label="Scroll to top"
           >

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Play, Clock, Film, Music, FileText, TrendingUp, Trash2, LogOut, Download, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -42,6 +43,7 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const { data: projects, isLoading } = useProjects();
   const createProject = useCreateProject();
   const deleteProject = useDeleteProject();
@@ -263,7 +265,7 @@ const Dashboard = () => {
                       </span>
                     </div>
                     <div className="mt-4 flex gap-2">
-                      <Button variant="cinema" size="sm" className="flex-1 text-xs">
+                      <Button variant="cinema" size="sm" className="flex-1 text-xs" onClick={(e) => { e.stopPropagation(); navigate(`/script?project=${project.id}`); }}>
                         <Play className="w-3 h-3" /> Open
                       </Button>
                       <Button
