@@ -26,6 +26,7 @@ const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const AnalyticsDocs = lazy(() => import("./pages/AnalyticsDocs"));
 const Learn = lazy(() => import("./pages/Learn"));
+const DirectorAI = lazy(() => import("./pages/DirectorAI"));
 import ChatWidget from "./components/ChatWidget";
 
 const queryClient = new QueryClient();
