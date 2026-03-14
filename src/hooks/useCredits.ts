@@ -9,15 +9,13 @@ export function useCredits() {
     queryKey: ["credits", user?.id],
     enabled: !!user,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("user_credits" as any)
+      const { data, error } = await (supabase as any)
+        .from("user_credits")
         .select("balance")
         .eq("user_id", user!.id)
         .maybeSingle();
 
       if (error) throw error;
-
-      // If no row yet, return default
       if (!data) return { balance: 100 };
       return data as { balance: number };
     },
