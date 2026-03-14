@@ -4,7 +4,7 @@ import { Wand2, Sparkles, Zap, Copy, Settings2, ImagePlus, Video } from "lucide-
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Shot } from "@/hooks/useShots";
+import { EnrichedShot } from "@/hooks/useShots";
 import { trackEvent } from "@/lib/analytics";
 import { useToast } from "@/hooks/use-toast";
 
@@ -20,13 +20,13 @@ export interface GeneratedClip {
   aspect: string;
   duration: string;
   status: "rendering" | "ready";
-  shotCode?: string;
+  shotLabel?: string;
 }
 
 interface VeoVideoEngineProps {
   initialPrompt: string;
   isSyncing: boolean;
-  shotData: Shot | null;
+  shotData: EnrichedShot | null;
   onGenerate?: (clip: GeneratedClip) => void;
   onGenerateComplete?: (clipId: string) => void;
 }
@@ -37,11 +37,9 @@ const VeoVideoEngine = ({ initialPrompt, isSyncing, shotData, onGenerate, onGene
   const [selectedAspect, setSelectedAspect] = useState("16:9");
   const [selectedDuration, setSelectedDuration] = useState("10s");
   const [isGenerating, setIsGenerating] = useState(false);
-  // Key to force re-mount of the prompt area for fade-in on each shot change
   const [promptKey, setPromptKey] = useState(0);
   const { toast } = useToast();
 
-  // Sync prompt from shot selection with fade-in trigger
   useEffect(() => {
     if (initialPrompt) {
       setPrompt(initialPrompt);
@@ -49,16 +47,7 @@ const VeoVideoEngine = ({ initialPrompt, isSyncing, shotData, onGenerate, onGene
     }
   }, [initialPrompt]);
 
-  // Auto-set duration from shot data
-  useEffect(() => {
-    if (shotData?.duration) {
-      const dur = shotData.duration.replace("s", "");
-      const closest = durations.reduce((prev, curr) =>
-        Math.abs(parseInt(curr) - parseInt(dur)) < Math.abs(parseInt(prev) - parseInt(dur)) ? curr : prev
-      );
-      setSelectedDuration(closest);
-    }
-  }, [shotData]);
+  const shotLabel = shotData ? `${shotData.scene_number}.${shotData.order_index + 1}` : null;
 
   const handleGenerate = () => {
     if (!prompt.trim()) {
@@ -70,13 +59,13 @@ const VeoVideoEngine = ({ initialPrompt, isSyncing, shotData, onGenerate, onGene
     const clipId = crypto.randomUUID();
     const clip: GeneratedClip = {
       id: clipId,
-      title: shotData ? `Shot ${shotData.shot_code}` : "Generated Clip",
+      title: shotData ? `Shot ${shotLabel}` : "Generated Clip",
       prompt: prompt.slice(0, 120),
       style: selectedStyle,
       aspect: selectedAspect,
       duration: selectedDuration,
       status: "rendering",
-      shotCode: shotData?.shot_code,
+      shotLabel: shotLabel ?? undefined,
     };
     onGenerate?.(clip);
 
@@ -114,7 +103,7 @@ const VeoVideoEngine = ({ initialPrompt, isSyncing, shotData, onGenerate, onGene
 
       {/* Main Panel */}
       <div className="neo-card rounded-2xl p-6 relative overflow-hidden space-y-5">
-        {/* Sync Indicator — amber ping badge */}
+        {/* Sync Indicator */}
         <AnimatePresence>
           {isSyncing && shotData && (
             <motion.div
@@ -129,7 +118,7 @@ const VeoVideoEngine = ({ initialPrompt, isSyncing, shotData, onGenerate, onGene
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
               </span>
               <span className="text-[10px] font-bold text-primary uppercase tracking-tighter">
-                Synced to Shot {shotData.shot_code}
+                Synced to Shot {shotLabel}
               </span>
             </motion.div>
           )}
@@ -148,16 +137,16 @@ const VeoVideoEngine = ({ initialPrompt, isSyncing, shotData, onGenerate, onGene
             >
               <Video className="w-4 h-4 text-accent shrink-0" />
               <div className="text-xs">
-                <span className="text-accent font-mono font-bold">{shotData.shot_code}</span>
+                <span className="text-accent font-mono font-bold">{shotLabel}</span>
                 <span className="text-muted-foreground ml-2">
-                  {shotData.shot_type} • {shotData.movement || "Static"} • {shotData.lens || "50mm"}
+                  {shotData.shot_type} • {shotData.camera_angle} • Motion: {shotData.motion_intensity}%
                 </span>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Director's Prompt — fades in on each shot selection */}
+        {/* Director's Prompt */}
         <div className="space-y-2 mt-2">
           <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
             Director's Prompt
@@ -247,7 +236,7 @@ const VeoVideoEngine = ({ initialPrompt, isSyncing, shotData, onGenerate, onGene
           </Button>
         </div>
 
-        {/* Generation preview placeholder */}
+        {/* Generation preview */}
         <AnimatePresence>
           {isGenerating && (
             <motion.div

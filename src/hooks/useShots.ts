@@ -1,61 +1,158 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export interface Shot {
+// ─── Scene types ─────────────────────────────────────────────────────
+export interface Scene {
   id: string;
-  project_id: string;
-  scene_number: string;
-  shot_code: string;
-  shot_type: string;
-  description: string;
-  lens: string | null;
-  movement: string | null;
-  angle: string | null;
-  duration: string | null;
-  is_completed: boolean;
-  sort_order: number;
-  created_at: string;
-  updated_at: string;
+  script_id: string;
+  scene_number: number;
+  slugline: string | null;
+  summary: string | null;
 }
 
-export function useShots(projectId: string | null) {
+export function useScenes(scriptId: string | null) {
   return useQuery({
-    queryKey: ["shots", projectId],
+    queryKey: ["scenes", scriptId],
     queryFn: async () => {
-      if (!projectId) return [];
+      if (!scriptId) return [];
+      const { data, error } = await supabase
+        .from("scenes")
+        .select("*")
+        .eq("script_id", scriptId)
+        .order("scene_number", { ascending: true });
+      if (error) throw error;
+      return data as Scene[];
+    },
+    enabled: !!scriptId,
+  });
+}
+
+export function useCreateScene() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (scene: {
+      script_id: string;
+      scene_number: number;
+      slugline?: string;
+      summary?: string;
+    }) => {
+      const { data, error } = await supabase.from("scenes").insert(scene).select().single();
+      if (error) throw error;
+      return data as Scene;
+    },
+    onSuccess: (data) => {
+      qc.invalidateQueries({ queryKey: ["scenes", data.script_id] });
+    },
+  });
+}
+
+export function useDeleteScene() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, scriptId }: { id: string; scriptId: string }) => {
+      const { error } = await supabase.from("scenes").delete().eq("id", id);
+      if (error) throw error;
+      return scriptId;
+    },
+    onSuccess: (scriptId) => {
+      qc.invalidateQueries({ queryKey: ["scenes", scriptId] });
+    },
+  });
+}
+
+// ─── Shot types (new schema) ─────────────────────────────────────────
+export interface Shot {
+  id: string;
+  scene_id: string;
+  order_index: number;
+  shot_type: string;
+  camera_angle: string;
+  prompt: string | null;
+  motion_intensity: number;
+  status: string;
+  video_url: string | null;
+  thumbnail_url: string | null;
+  created_at: string;
+}
+
+export function useShots(sceneId: string | null) {
+  return useQuery({
+    queryKey: ["shots", sceneId],
+    queryFn: async () => {
+      if (!sceneId) return [];
       const { data, error } = await supabase
         .from("shots")
         .select("*")
-        .eq("project_id", projectId)
-        .order("sort_order", { ascending: true });
+        .eq("scene_id", sceneId)
+        .order("order_index", { ascending: true });
       if (error) throw error;
       return data as Shot[];
+    },
+    enabled: !!sceneId,
+  });
+}
+
+/** Fetch all shots for all scenes in a project (via script → scenes → shots) */
+export function useShotsByProject(projectId: string | null) {
+  return useQuery({
+    queryKey: ["shots-by-project", projectId],
+    queryFn: async () => {
+      if (!projectId) return [];
+      // Get script
+      const { data: script } = await supabase
+        .from("scripts")
+        .select("id")
+        .eq("project_id", projectId)
+        .maybeSingle();
+      if (!script) return [];
+      // Get scenes
+      const { data: scenes } = await supabase
+        .from("scenes")
+        .select("id, scene_number, slugline")
+        .eq("script_id", script.id)
+        .order("scene_number", { ascending: true });
+      if (!scenes?.length) return [];
+      // Get shots for all scenes
+      const sceneIds = scenes.map((s) => s.id);
+      const { data: shots, error } = await supabase
+        .from("shots")
+        .select("*")
+        .in("scene_id", sceneIds)
+        .order("order_index", { ascending: true });
+      if (error) throw error;
+      // Enrich with scene info
+      const sceneMap = Object.fromEntries(scenes.map((s) => [s.id, s]));
+      return (shots as Shot[]).map((shot) => ({
+        ...shot,
+        scene_number: sceneMap[shot.scene_id]?.scene_number ?? 0,
+        slugline: sceneMap[shot.scene_id]?.slugline ?? null,
+      }));
     },
     enabled: !!projectId,
   });
 }
 
+export type EnrichedShot = Shot & { scene_number: number; slugline: string | null };
+
 export function useCreateShot() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (shot: {
-      project_id: string;
-      scene_number: string;
-      shot_code: string;
-      shot_type: string;
-      description: string;
-      lens?: string;
-      movement?: string;
-      angle?: string;
-      duration?: string;
-      sort_order?: number;
+      scene_id: string;
+      order_index?: number;
+      shot_type?: string;
+      camera_angle?: string;
+      prompt?: string;
+      motion_intensity?: number;
+      status?: string;
     }) => {
       const { data, error } = await supabase.from("shots").insert(shot).select().single();
       if (error) throw error;
-      return data;
+      return data as Shot;
     },
     onSuccess: (data) => {
-      qc.invalidateQueries({ queryKey: ["shots", data.project_id] });
+      qc.invalidateQueries({ queryKey: ["shots", data.scene_id] });
+      qc.invalidateQueries({ queryKey: ["shots-by-project"] });
     },
   });
 }
@@ -66,10 +163,11 @@ export function useUpdateShot() {
     mutationFn: async ({ id, ...updates }: Partial<Shot> & { id: string }) => {
       const { data, error } = await supabase.from("shots").update(updates).eq("id", id).select().single();
       if (error) throw error;
-      return data;
+      return data as Shot;
     },
     onSuccess: (data) => {
-      qc.invalidateQueries({ queryKey: ["shots", data.project_id] });
+      qc.invalidateQueries({ queryKey: ["shots", data.scene_id] });
+      qc.invalidateQueries({ queryKey: ["shots-by-project"] });
     },
   });
 }
@@ -77,13 +175,14 @@ export function useUpdateShot() {
 export function useDeleteShot() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, projectId }: { id: string; projectId: string }) => {
+    mutationFn: async ({ id, sceneId }: { id: string; sceneId: string }) => {
       const { error } = await supabase.from("shots").delete().eq("id", id);
       if (error) throw error;
-      return projectId;
+      return sceneId;
     },
-    onSuccess: (projectId) => {
-      qc.invalidateQueries({ queryKey: ["shots", projectId] });
+    onSuccess: (sceneId) => {
+      qc.invalidateQueries({ queryKey: ["shots", sceneId] });
+      qc.invalidateQueries({ queryKey: ["shots-by-project"] });
     },
   });
 }
