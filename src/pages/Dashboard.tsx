@@ -43,6 +43,7 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const { data: projects, isLoading } = useProjects();
   const createProject = useCreateProject();
   const deleteProject = useDeleteProject();
