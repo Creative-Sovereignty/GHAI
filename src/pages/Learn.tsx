@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Loader2, BookOpen, RefreshCw } from "lucide-react";
+import { Loader2, BookOpen, RefreshCw, ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AppLayout from "@/components/AppLayout";
 
@@ -12,6 +12,17 @@ const Learn = () => {
   const [content, setContent] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setShowScrollTop(window.scrollY > 400);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = useCallback(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   const fetchContent = async () => {
     setLoading(true);
@@ -99,6 +110,18 @@ const Learn = () => {
             ← Back
           </Button>
         </div>
+
+        {showScrollTop && (
+          <Button
+            variant="glow"
+            size="icon"
+            className="fixed bottom-6 right-6 z-50 rounded-full shadow-lg transition-opacity"
+            onClick={scrollToTop}
+            aria-label="Scroll to top"
+          >
+            <ArrowUp className="w-5 h-5" />
+          </Button>
+        )}
       </div>
     </AppLayout>
   );
