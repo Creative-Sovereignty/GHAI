@@ -161,6 +161,65 @@ export type Database = {
         }
         Relationships: []
       }
+      shots: {
+        Row: {
+          angle: string | null
+          created_at: string
+          description: string
+          duration: string | null
+          id: string
+          is_completed: boolean
+          lens: string | null
+          movement: string | null
+          project_id: string
+          scene_number: string
+          shot_code: string
+          shot_type: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          angle?: string | null
+          created_at?: string
+          description?: string
+          duration?: string | null
+          id?: string
+          is_completed?: boolean
+          lens?: string | null
+          movement?: string | null
+          project_id: string
+          scene_number?: string
+          shot_code?: string
+          shot_type?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          angle?: string | null
+          created_at?: string
+          description?: string
+          duration?: string | null
+          id?: string
+          is_completed?: boolean
+          lens?: string | null
+          movement?: string | null
+          project_id?: string
+          scene_number?: string
+          shot_code?: string
+          shot_type?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shots_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       support_tickets: {
         Row: {
           created_at: string
