@@ -63,6 +63,7 @@ const Settings = () => {
       toast.error("Failed to save profile");
     } else {
       toast.success("Profile updated");
+      trackEvent("profile_updated");
     }
     setSaving(false);
   };
