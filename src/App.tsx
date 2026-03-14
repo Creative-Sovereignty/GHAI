@@ -61,6 +61,7 @@ const App = () => (
                 <Route path="/music" element={<ProtectedRoute><AIMusic /></ProtectedRoute>} />
                 <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                 <Route path="/analytics-docs" element={<ProtectedRoute><AnalyticsDocs /></ProtectedRoute>} />
+                <Route path="/learn" element={<ProtectedRoute><Learn /></ProtectedRoute>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
