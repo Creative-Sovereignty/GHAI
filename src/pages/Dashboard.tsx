@@ -13,7 +13,7 @@ import heroBanner from "@/assets/hero-banner.jpg";
 import { useProjects, useCreateProject, useDeleteProject } from "@/hooks/useProjects";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { Shot } from "@/hooks/useShots";
+import { EnrichedShot } from "@/hooks/useShots";
 import ShotListTracker from "@/components/production/ShotListTracker";
 import VeoVideoEngine, { GeneratedClip } from "@/components/production/VeoVideoEngine";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
