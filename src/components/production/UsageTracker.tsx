@@ -1,13 +1,15 @@
 import { motion } from "framer-motion";
 import { Database, Zap, ArrowUpRight } from "lucide-react";
+import { useCredits } from "@/hooks/useCredits";
 
 interface UsageTrackerProps {
-  creditsRemaining?: number;
   totalCredits?: number;
 }
 
-const UsageTracker = ({ creditsRemaining = 450, totalCredits = 1000 }: UsageTrackerProps) => {
-  const percentage = (creditsRemaining / totalCredits) * 100;
+const UsageTracker = ({ totalCredits = 1000 }: UsageTrackerProps) => {
+  const { data } = useCredits();
+  const creditsRemaining = data?.balance ?? 100;
+  const percentage = Math.min((creditsRemaining / totalCredits) * 100, 100);
 
   return (
     <div className="neo-card rounded-2xl p-4 space-y-3">
