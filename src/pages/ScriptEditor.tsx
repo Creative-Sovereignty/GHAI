@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { trackEvent } from "@/lib/analytics";
 import { motion, AnimatePresence } from "framer-motion";
 import { Save, Wand2, Download, Copy, RotateCcw, Send, Bot, User, Loader2, Sparkles, X, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
