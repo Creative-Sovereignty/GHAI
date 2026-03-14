@@ -57,6 +57,11 @@ const Dashboard = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
+  // Production state
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [activeShot, setActiveShot] = useState<Shot | null>(null);
+  const [generatedPrompt, setGeneratedPrompt] = useState("");
+
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [bannerDismissed, setBannerDismissed] = useState(() =>
     localStorage.getItem("pwa-banner-dismissed") === "true"
