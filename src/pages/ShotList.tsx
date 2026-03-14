@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Plus, CheckCircle2, Circle, Camera, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { trackEvent } from "@/lib/analytics";
 import { Badge } from "@/components/ui/badge";
 import AppLayout from "@/components/AppLayout";
 
