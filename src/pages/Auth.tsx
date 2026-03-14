@@ -82,6 +82,7 @@ const Auth = () => {
           password,
         });
         if (error) throw error;
+        trackEvent("login", { method: "email" });
       }
     } catch (error: any) {
       toast({
