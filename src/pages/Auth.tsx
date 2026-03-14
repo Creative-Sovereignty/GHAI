@@ -182,6 +182,7 @@ const Auth = () => {
             variant="outline"
             className="w-full flex items-center gap-2"
             onClick={async () => {
+              trackEvent("login", { method: "google" });
               const { error } = await lovable.auth.signInWithOAuth("google", {
                 redirect_uri: window.location.origin,
               });
