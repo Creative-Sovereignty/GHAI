@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
+import { trackEvent } from "@/lib/analytics";
 import { lovable } from "@/integrations/lovable/index";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -70,6 +71,7 @@ const Auth = () => {
           },
         });
         if (error) throw error;
+        trackEvent("sign_up", { method: "email" });
         toast({
           title: "Check your email",
           description: "We sent you a confirmation link to verify your account.",
@@ -80,6 +82,7 @@ const Auth = () => {
           password,
         });
         if (error) throw error;
+        trackEvent("login", { method: "email" });
       }
     } catch (error: any) {
       toast({
@@ -179,6 +182,7 @@ const Auth = () => {
             variant="outline"
             className="w-full flex items-center gap-2"
             onClick={async () => {
+              trackEvent("login", { method: "google" });
               const { error } = await lovable.auth.signInWithOAuth("google", {
                 redirect_uri: window.location.origin,
               });
@@ -201,6 +205,7 @@ const Auth = () => {
             variant="outline"
             className="w-full flex items-center gap-2"
             onClick={async () => {
+              trackEvent("login", { method: "apple" });
               const { error } = await lovable.auth.signInWithOAuth("apple", {
                 redirect_uri: window.location.origin,
               });
