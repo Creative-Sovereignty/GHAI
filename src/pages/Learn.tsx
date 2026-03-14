@@ -100,7 +100,14 @@ const Learn = () => {
               prose-th:text-foreground prose-th:border-border
               prose-td:border-border
             ">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  a: ({ children }) => <span>{children}</span>,
+                }}
+              >
+                {content}
+              </ReactMarkdown>
             </div>
           </div>
         )}
