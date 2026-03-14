@@ -1,55 +1,49 @@
 
 
-## Plan: Ship Golden Hour AI as a PWA
+# Launch Plan for Golden Hour AI
 
-### Overview
-Turn the existing Golden Hour AI web app into a fully installable Progressive Web App (PWA) so users can add it to their home screen on any device.
+## Current State
+Your app is already in good shape: PWA configured, authentication working, landing page with pricing tiers, protected routes for core features (Script Editor, Storyboard, Shot List, Video Editor, AI Music, Veo3), settings with profile management, FAQ, and Help pages. It's published at **gldhourai.lovable.app**.
 
-### Steps
+## Pre-Launch Checklist
 
-**1. Install `vite-plugin-pwa`**
-- Add `vite-plugin-pwa` as a dev dependency.
+### 1. Connect a Custom Domain
+- Go to **Project Settings → Domains** and connect your custom domain (e.g., `goldenhourai.com`)
+- Requires a paid Lovable plan
 
-**2. Configure PWA plugin in `vite.config.ts`**
-- Import and add `VitePWA()` to the plugins array with:
-  - `registerType: 'autoUpdate'` for seamless service worker updates
-  - A `manifest` object containing app name ("Golden Hour AI"), short name, description, theme color (dark/gold), background color, display mode (`standalone`), start URL `/`, and icon definitions
-  - `navigateFallbackDenylist: [/^\/~oauth/]` to prevent caching OAuth redirects
-  - Workbox runtime caching strategies for API calls and assets
+### 2. Hide the Lovable Badge
+- Go to **Project Settings** and toggle on **"Hide 'Lovable' Badge"**
 
-**3. Create PWA icons in `public/`**
-- Generate and place the following icon files:
-  - `pwa-192x192.png` (192×192)
-  - `pwa-512x512.png` (512×512)
-  - `pwa-maskable-512x512.png` (512×512, maskable, with safe-zone padding)
-- Use the Golden Hour AI branding (gold on dark background).
+### 3. Dark/Light Mode Toggle (pending from earlier)
+- Add a theme toggle to the Settings page with CSS variable swapping between the current dark theme and a new light theme
+- Store preference in `localStorage` and respect `prefers-color-scheme`
 
-**4. Update `index.html` with mobile meta tags**
-- Add `<meta name="theme-color" content="#1a1a2e">` (or matching dark brand color)
-- Add `<link rel="apple-touch-icon" href="/pwa-192x192.png">`
-- Add `<meta name="apple-mobile-web-app-capable" content="yes">`
-- Add `<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">`
+### 4. Final Polish Items
+- **SEO**: Verify `robots.txt` allows crawling, add a `sitemap.xml`
+- **Analytics**: Add a lightweight analytics solution (e.g., Plausible or Google Analytics via a script tag)
+- **Error boundaries**: Wrap the app in a React error boundary for graceful crash handling
+- **404 page**: Already exists — verify it matches branding
+- **Favicon**: Already set — verify it renders correctly in browser tabs
 
-**5. Create an `/install` page**
-- New page at `src/pages/Install.tsx` with:
-  - Instructions for installing on iOS (Share → Add to Home Screen) and Android (browser menu)
-  - A "Install App" button that triggers the native `beforeinstallprompt` event on supported browsers
-  - Fallback guidance when the prompt isn't available
-- Add route in `App.tsx` (public, no auth required)
+### 5. Pre-Launch Testing
+- Test the full auth flow: sign up → email verification → login → dashboard
+- Test PWA install on iOS Safari and Android Chrome
+- Test all protected routes load correctly when logged in
+- Verify the landing page loads fast and looks good on mobile
 
-**6. Add install prompt / banner to Dashboard**
-- Optionally show a dismissible banner on the Dashboard prompting users to install the app, linking to `/install`.
+### 6. Publish
+- Click **Publish** and hit **Update** to push the latest frontend changes live
 
-### File Changes Summary
+## Implementation Work (Code Changes)
 
-| File | Action |
+The only code change needed before launch is the **Dark/Light mode toggle** you previously requested:
+
+| File | Change |
 |------|--------|
-| `package.json` | Add `vite-plugin-pwa` dev dependency |
-| `vite.config.ts` | Configure `VitePWA` plugin with manifest and workbox settings |
-| `public/pwa-192x192.png` | Create branded icon |
-| `public/pwa-512x512.png` | Create branded icon |
-| `public/pwa-maskable-512x512.png` | Create maskable icon |
-| `index.html` | Add mobile/PWA meta tags |
-| `src/pages/Install.tsx` | New install instructions page |
-| `src/App.tsx` | Add `/install` route |
+| `src/index.css` | Add `.light` theme CSS variables (light backgrounds, dark text, adjusted gold tones) |
+| `src/hooks/useTheme.ts` | New hook: read/write theme preference to `localStorage`, toggle `.light` class on `<html>` |
+| `src/pages/Settings.tsx` | Add a "Theme" section with a Dark/Light toggle switch |
+| `src/components/AppLayout.tsx` | Initialize theme on mount via the hook |
+
+Everything else is configuration in the Lovable UI (domain, badge, publish).
 
