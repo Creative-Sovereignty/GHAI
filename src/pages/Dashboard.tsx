@@ -380,6 +380,8 @@ const Dashboard = () => {
                   initialPrompt={generatedPrompt}
                   isSyncing={!!activeShot}
                   shotData={activeShot}
+                  onGenerate={handleClipGenerated}
+                  onGenerateComplete={handleClipReady}
                 />
               </div>
             </div>
