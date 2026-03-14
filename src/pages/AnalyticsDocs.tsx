@@ -13,6 +13,7 @@ const events = [
     items: [
       { event: "sign_up", params: "method (email)", trigger: "Successful email signup", source: "Auth.tsx" },
       { event: "login", params: "method (email | google | apple)", trigger: "Successful login via any method", source: "Auth.tsx" },
+      { event: "logout", params: "—", trigger: "User signs out", source: "AuthContext.tsx" },
     ],
   },
   {
