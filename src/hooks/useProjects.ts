@@ -70,7 +70,8 @@ export const useDeleteProject = () => {
       const { error } = await supabase.from("projects").delete().eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (_data, id) => {
+      trackEvent("project_deleted", { project_id: id });
       queryClient.invalidateQueries({ queryKey: ["projects"] });
     },
   });
