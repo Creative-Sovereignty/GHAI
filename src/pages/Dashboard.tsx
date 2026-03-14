@@ -265,6 +265,9 @@ const Dashboard = () => {
           })}
         </motion.div>
 
+        {/* Usage Tracker */}
+        <UsageTracker />
+
         {/* Projects */}
         <div>
           <div className="flex items-center justify-between mb-4">
