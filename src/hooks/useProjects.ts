@@ -56,7 +56,8 @@ export const useUpdateProject = () => {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      trackEvent("project_updated", { project_id: data.id });
       queryClient.invalidateQueries({ queryKey: ["projects"] });
     },
   });
