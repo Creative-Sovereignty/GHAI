@@ -35,23 +35,25 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Landing />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/install" element={<Install />} />
-              <Route path="/faq" element={<FAQ />} />
-              <Route path="/help" element={<Help />} />
-              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-              <Route path="/script" element={<ProtectedRoute><ScriptEditor /></ProtectedRoute>} />
-              <Route path="/storyboard" element={<ProtectedRoute><Storyboard /></ProtectedRoute>} />
-              <Route path="/shots" element={<ProtectedRoute><ShotList /></ProtectedRoute>} />
-              <Route path="/editor" element={<ProtectedRoute><VideoEditor /></ProtectedRoute>} />
-              <Route path="/veo3" element={<ProtectedRoute><Veo3 /></ProtectedRoute>} />
-              <Route path="/music" element={<ProtectedRoute><AIMusic /></ProtectedRoute>} />
-              <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background"><div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" /></div>}>
+              <Routes>
+                <Route path="/" element={<Landing />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/install" element={<Install />} />
+                <Route path="/faq" element={<FAQ />} />
+                <Route path="/help" element={<Help />} />
+                <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                <Route path="/script" element={<ProtectedRoute><ScriptEditor /></ProtectedRoute>} />
+                <Route path="/storyboard" element={<ProtectedRoute><Storyboard /></ProtectedRoute>} />
+                <Route path="/shots" element={<ProtectedRoute><ShotList /></ProtectedRoute>} />
+                <Route path="/editor" element={<ProtectedRoute><VideoEditor /></ProtectedRoute>} />
+                <Route path="/veo3" element={<ProtectedRoute><Veo3 /></ProtectedRoute>} />
+                <Route path="/music" element={<ProtectedRoute><AIMusic /></ProtectedRoute>} />
+                <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
             <ChatWidget />
           </BrowserRouter>
         </TooltipProvider>
