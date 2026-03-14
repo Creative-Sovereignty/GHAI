@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -9,6 +10,7 @@ import AppLayout from "@/components/AppLayout";
 const WIKI_URL = "https://en.wikipedia.org/wiki/Filmmaking";
 
 const Learn = () => {
+  const navigate = useNavigate();
   const [content, setContent] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -113,7 +115,7 @@ const Learn = () => {
         )}
 
         <div className="flex justify-center pt-4 pb-8">
-          <Button variant="outline" size="sm" onClick={() => window.history.back()}>
+          <Button variant="outline" size="sm" onClick={() => navigate("/dashboard")}>
             ← Back
           </Button>
         </div>
