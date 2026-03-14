@@ -118,7 +118,7 @@ const Dashboard = () => {
   // Generate cinematic prompt from active shot
   useEffect(() => {
     if (activeShot) {
-      const cinematicPrompt = `Cinematic ${activeShot.shot_type}, ${activeShot.angle || "Eye Level"}. ${activeShot.description}. ${activeShot.movement || "Static"} camera movement. High-fidelity textures, professional lighting, 4K, shot on ${activeShot.lens || "50mm"} lens.`;
+      const cinematicPrompt = `Cinematic ${activeShot.shot_type}, ${activeShot.camera_angle}. ${activeShot.prompt || "Describe the scene"}. Motion intensity: ${activeShot.motion_intensity}%. High-fidelity textures, professional lighting, 4K.`;
       setGeneratedPrompt(cinematicPrompt);
     }
   }, [activeShot]);
