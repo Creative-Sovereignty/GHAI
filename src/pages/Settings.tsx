@@ -14,6 +14,7 @@ import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import { trackEvent } from "@/lib/analytics";
 
 const Settings = () => {
   const { theme, toggleTheme } = useTheme();
