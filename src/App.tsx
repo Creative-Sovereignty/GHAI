@@ -63,6 +63,7 @@ const App = () => (
                 <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                 <Route path="/analytics-docs" element={<ProtectedRoute><AnalyticsDocs /></ProtectedRoute>} />
                 <Route path="/learn" element={<ProtectedRoute><Learn /></ProtectedRoute>} />
+                <Route path="/director" element={<ProtectedRoute><DirectorAI /></ProtectedRoute>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
