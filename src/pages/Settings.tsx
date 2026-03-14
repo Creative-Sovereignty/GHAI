@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { User, Camera, Lock, LogOut, Save, Loader2 } from "lucide-react";
+import { User, Camera, Lock, LogOut, Save, Loader2, Sun, Moon, Palette } from "lucide-react";
+import { useTheme } from "@/hooks/useTheme";
+import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import AppLayout from "@/components/AppLayout";
@@ -14,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 
 const Settings = () => {
+  const { theme, toggleTheme } = useTheme();
   const { user, signOut } = useAuth();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -151,9 +154,33 @@ const Settings = () => {
                 <Lock className="w-4 h-4 mr-2" />
                 Account
               </TabsTrigger>
+              <TabsTrigger value="appearance" className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary">
+                <Palette className="w-4 h-4 mr-2" />
+                Appearance
+              </TabsTrigger>
             </TabsList>
 
-            {/* ─── PROFILE TAB ─── */}
+            {/* ─── APPEARANCE TAB ─── */}
+            <TabsContent value="appearance">
+              <div className="space-y-6">
+                <div className="flex items-center justify-between p-4 rounded-lg bg-secondary/30 border border-border">
+                  <div className="flex items-center gap-3">
+                    {theme === "dark" ? <Moon className="w-5 h-5 text-primary" /> : <Sun className="w-5 h-5 text-primary" />}
+                    <div>
+                      <p className="text-foreground font-medium">Theme</p>
+                      <p className="text-muted-foreground text-sm">
+                        {theme === "dark" ? "Dark mode" : "Light mode"} is active
+                      </p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={theme === "light"}
+                    onCheckedChange={toggleTheme}
+                    aria-label="Toggle theme"
+                  />
+                </div>
+              </div>
+            </TabsContent>
             <TabsContent value="profile">
               <div className="space-y-8">
                 {/* Avatar */}
