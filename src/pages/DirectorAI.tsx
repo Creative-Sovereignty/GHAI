@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Send, Bot, User, Clapperboard, FileText, Video, Music,
-  Loader2, Sparkles, ChevronDown,
+  Loader2, Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,21 +10,17 @@ import { Badge } from "@/components/ui/badge";
 import AppLayout from "@/components/AppLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { useProjects } from "@/hooks/useProjects";
 import ReactMarkdown from "react-markdown";
+import DirectorsLog, { DirectorLogEvent } from "@/components/production/DirectorsLog";
 
 type Role = "user" | "assistant";
-
-interface ToolCall {
-  name: string;
-  arguments: Record<string, unknown>;
-}
 
 interface ChatMessage {
   id: string;
   role: Role;
   content: string;
-  toolCalls?: ToolCall[];
+  logEvents?: DirectorLogEvent[];
   timestamp: Date;
 }
 
@@ -51,6 +47,9 @@ const toolLabels: Record<string, string> = {
 const DirectorAI = () => {
   const { session } = useAuth();
   const { toast } = useToast();
+  const { data: projects } = useProjects();
+  const activeProject = projects?.[0];
+
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
@@ -85,14 +84,43 @@ const DirectorAI = () => {
       content: m.content,
     }));
 
+    const assistantId = crypto.randomUUID();
+    let assistantContent = "";
+    let logEvents: DirectorLogEvent[] = [];
+
+    const updateAssistant = () => {
+      setMessages((prev) => {
+        const msg: ChatMessage = {
+          id: assistantId,
+          role: "assistant",
+          content: assistantContent,
+          logEvents: logEvents.length > 0 ? [...logEvents] : undefined,
+          timestamp: new Date(),
+        };
+        const existing = prev.find((m) => m.id === assistantId);
+        if (existing) {
+          return prev.map((m) => (m.id === assistantId ? msg : m));
+        }
+        return [...prev, msg];
+      });
+    };
+
     try {
       const resp = await fetch(DIRECTOR_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.access_token}`,
+          ...(session?.access_token
+            ? { Authorization: `Bearer ${session.access_token}` }
+            : {}),
         },
-        body: JSON.stringify({ messages: apiMessages }),
+        body: JSON.stringify({
+          messages: apiMessages,
+          projectId: activeProject?.id || null,
+          projectContext: activeProject
+            ? { projectTitle: activeProject.title }
+            : undefined,
+        }),
       });
 
       if (!resp.ok) {
@@ -101,6 +129,8 @@ const DirectorAI = () => {
           toast({ title: "Rate Limited", description: "Too many requests. Please wait a moment.", variant: "destructive" });
         } else if (resp.status === 402) {
           toast({ title: "Credits Depleted", description: "Please add credits to continue using Director AI.", variant: "destructive" });
+        } else if (resp.status === 401) {
+          toast({ title: "Session Expired", description: "Please log in again to use Director AI.", variant: "destructive" });
         } else {
           toast({ title: "Error", description: err.error || "AI service error", variant: "destructive" });
         }
@@ -108,33 +138,10 @@ const DirectorAI = () => {
         return;
       }
 
-      // Stream SSE response
+      // Parse custom SSE events
       const reader = resp.body!.getReader();
       const decoder = new TextDecoder();
       let textBuffer = "";
-      let assistantContent = "";
-      let toolCalls: ToolCall[] = [];
-      // Track tool call accumulation from streaming deltas
-      const toolCallAccum: Record<number, { name: string; argsStr: string }> = {};
-
-      const assistantId = crypto.randomUUID();
-
-      const updateAssistant = () => {
-        setMessages((prev) => {
-          const existing = prev.find((m) => m.id === assistantId);
-          const msg: ChatMessage = {
-            id: assistantId,
-            role: "assistant",
-            content: assistantContent,
-            toolCalls: toolCalls.length > 0 ? [...toolCalls] : undefined,
-            timestamp: new Date(),
-          };
-          if (existing) {
-            return prev.map((m) => (m.id === assistantId ? msg : m));
-          }
-          return [...prev, msg];
-        });
-      };
 
       while (true) {
         const { done, value } = await reader.read();
@@ -146,7 +153,15 @@ const DirectorAI = () => {
           let line = textBuffer.slice(0, newlineIndex);
           textBuffer = textBuffer.slice(newlineIndex + 1);
           if (line.endsWith("\r")) line = line.slice(0, -1);
-          if (line.startsWith(":") || line.trim() === "") continue;
+          if (line.trim() === "") continue;
+
+          // Parse event type
+          if (line.startsWith("event: ")) {
+            // Next data line will follow
+            continue;
+          }
+
+          if (line.startsWith(":")) continue;
           if (!line.startsWith("data: ")) continue;
 
           const jsonStr = line.slice(6).trim();
@@ -154,48 +169,32 @@ const DirectorAI = () => {
 
           try {
             const parsed = JSON.parse(jsonStr);
-            const delta = parsed.choices?.[0]?.delta;
-            if (!delta) continue;
 
-            // Text content
-            if (delta.content) {
-              assistantContent += delta.content;
+            // Check what type of event this is by the fields
+            if (parsed.text !== undefined) {
+              // Content event
+              assistantContent += parsed.text;
+              updateAssistant();
+            } else if (parsed.name && parsed.status === "pending") {
+              // Tool call detected
+              logEvents.push({
+                id: parsed.id,
+                name: parsed.name,
+                arguments: parsed.arguments,
+                status: "pending",
+              });
+              updateAssistant();
+            } else if (parsed.name && (parsed.status === "done" || parsed.status === "error")) {
+              // Tool result
+              logEvents = logEvents.map((ev) =>
+                ev.id === parsed.id
+                  ? { ...ev, status: parsed.success ? "done" : "error", result: parsed.result, data: parsed.data }
+                  : ev
+              );
               updateAssistant();
             }
-
-            // Tool calls (streaming accumulation)
-            if (delta.tool_calls) {
-              for (const tc of delta.tool_calls) {
-                const idx = tc.index ?? 0;
-                if (!toolCallAccum[idx]) {
-                  toolCallAccum[idx] = { name: "", argsStr: "" };
-                }
-                if (tc.function?.name) {
-                  toolCallAccum[idx].name = tc.function.name;
-                }
-                if (tc.function?.arguments) {
-                  toolCallAccum[idx].argsStr += tc.function.arguments;
-                }
-
-                // Try to parse completed tool call
-                try {
-                  const args = JSON.parse(toolCallAccum[idx].argsStr);
-                  const existingIdx = toolCalls.findIndex(
-                    (t) => t.name === toolCallAccum[idx].name
-                  );
-                  const newTc: ToolCall = { name: toolCallAccum[idx].name, arguments: args };
-                  if (existingIdx >= 0) {
-                    toolCalls[existingIdx] = newTc;
-                  } else {
-                    toolCalls.push(newTc);
-                  }
-                  updateAssistant();
-                } catch {
-                  // Arguments still streaming, wait for more chunks
-                }
-              }
-            }
           } catch {
+            // Incomplete JSON, put it back
             textBuffer = line + "\n" + textBuffer;
             break;
           }
@@ -237,6 +236,11 @@ const DirectorAI = () => {
               </h1>
               <p className="text-xs text-muted-foreground">
                 Orchestrate script, video & music in one command
+                {activeProject && (
+                  <span className="ml-2 text-primary">
+                    · {activeProject.title}
+                  </span>
+                )}
               </p>
             </div>
           </div>
@@ -293,43 +297,14 @@ const DirectorAI = () => {
                       : ""
                   }`}
                 >
+                  {/* Director's Log */}
+                  {msg.logEvents && msg.logEvents.length > 0 && (
+                    <DirectorsLog events={msg.logEvents} />
+                  )}
+
                   {msg.content && (
                     <div className="prose prose-sm prose-invert max-w-none text-sm">
                       <ReactMarkdown>{msg.content}</ReactMarkdown>
-                    </div>
-                  )}
-
-                  {/* Tool Calls */}
-                  {msg.toolCalls && msg.toolCalls.length > 0 && (
-                    <div className="space-y-2 mt-3">
-                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-                        Production Actions
-                      </p>
-                      {msg.toolCalls.map((tc, i) => {
-                        const Icon = toolIcons[tc.name] || Clapperboard;
-                        const color = toolColors[tc.name] || "var(--neon-cyan)";
-                        const label = toolLabels[tc.name] || tc.name;
-                        return (
-                          <motion.div
-                            key={i}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: i * 0.1 }}
-                            className="neo-card rounded-xl p-3 border-l-2"
-                            style={{ borderLeftColor: color }}
-                          >
-                            <div className="flex items-center gap-2 mb-1.5">
-                              <Icon className="w-3.5 h-3.5" style={{ color }} />
-                              <span className="text-xs font-bold" style={{ color }}>
-                                {label}
-                              </span>
-                            </div>
-                            <pre className="text-[11px] text-muted-foreground whitespace-pre-wrap font-mono leading-relaxed">
-                              {JSON.stringify(tc.arguments, null, 2)}
-                            </pre>
-                          </motion.div>
-                        );
-                      })}
                     </div>
                   )}
                 </div>
