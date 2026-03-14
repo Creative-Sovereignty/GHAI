@@ -17,6 +17,7 @@ import { Shot } from "@/hooks/useShots";
 import ShotListTracker from "@/components/production/ShotListTracker";
 import VeoVideoEngine, { GeneratedClip } from "@/components/production/VeoVideoEngine";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import UsageTracker from "@/components/production/UsageTracker";
 
 const stats = [
   { label: "Active Projects", value: "–", icon: Film, change: "" },
