@@ -31,7 +31,7 @@ interface VeoVideoEngineProps {
   onGenerateComplete?: (clipId: string) => void;
 }
 
-const VeoVideoEngine = ({ initialPrompt, isSyncing, shotData }: VeoVideoEngineProps) => {
+const VeoVideoEngine = ({ initialPrompt, isSyncing, shotData, onGenerate, onGenerateComplete }: VeoVideoEngineProps) => {
   const [prompt, setPrompt] = useState("");
   const [selectedStyle, setSelectedStyle] = useState("Cinematic");
   const [selectedAspect, setSelectedAspect] = useState("16:9");
