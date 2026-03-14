@@ -47,7 +47,7 @@ const Learn = () => {
           <div className="flex items-center gap-3">
             <BookOpen className="w-6 h-6 text-primary" />
             <div>
-              <h1 className="font-display text-2xl font-bold">Learn: Film</h1>
+              <h1 className="font-display text-2xl font-bold">Learn: Filmmaking</h1>
               <p className="text-sm text-muted-foreground">
                 Sourced from{" "}
                 <a href={WIKI_URL} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
