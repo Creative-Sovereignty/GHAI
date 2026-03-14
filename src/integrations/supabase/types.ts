@@ -161,6 +161,38 @@ export type Database = {
         }
         Relationships: []
       }
+      scripts: {
+        Row: {
+          content: string | null
+          id: string
+          last_ai_suggestion: string | null
+          project_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          content?: string | null
+          id?: string
+          last_ai_suggestion?: string | null
+          project_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string | null
+          id?: string
+          last_ai_suggestion?: string | null
+          project_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scripts_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shots: {
         Row: {
           angle: string | null
