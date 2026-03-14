@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { trackEvent } from "@/lib/analytics";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, ImageIcon, Wand2, GripVertical, Loader2, Sparkles, X, Trash2, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -79,6 +80,7 @@ const Storyboard = () => {
       if (data.imageUrl) {
         setFrames(prev => prev.map(f => f.id === frame.id ? { ...f, imageUrl: data.imageUrl } : f));
         toast({ title: "Thumbnail generated!", description: `Frame "${frame.description}" now has a visual.` });
+        trackEvent("storyboard_image_generated", { frame_scene: frame.scene });
       }
     } catch {
       toast({ title: "Error", description: "Failed to generate thumbnail.", variant: "destructive" });
@@ -156,6 +158,7 @@ const Storyboard = () => {
     setGeneratedFrames([]);
     setShowAI(false);
     setPrompt("");
+    trackEvent("storyboard_ai_generated", { frame_count: generatedFrames.length });
     toast({ title: "Frames added!", description: `${generatedFrames.length} frames appended to your storyboard.` });
   };
 

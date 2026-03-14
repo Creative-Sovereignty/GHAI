@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Tables, TablesInsert } from "@/integrations/supabase/types";
+import { trackEvent } from "@/lib/analytics";
 
 export type Project = Tables<"projects">;
 
@@ -35,7 +36,8 @@ export const useCreateProject = () => {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      trackEvent("project_created", { project_id: data.id, project_title: data.title });
       queryClient.invalidateQueries({ queryKey: ["projects"] });
     },
   });
@@ -54,7 +56,8 @@ export const useUpdateProject = () => {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      trackEvent("project_updated", { project_id: data.id });
       queryClient.invalidateQueries({ queryKey: ["projects"] });
     },
   });
@@ -67,7 +70,8 @@ export const useDeleteProject = () => {
       const { error } = await supabase.from("projects").delete().eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (_data, id) => {
+      trackEvent("project_deleted", { project_id: id });
       queryClient.invalidateQueries({ queryKey: ["projects"] });
     },
   });

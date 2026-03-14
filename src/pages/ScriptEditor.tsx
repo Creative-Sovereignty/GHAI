@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { trackEvent } from "@/lib/analytics";
 import { motion, AnimatePresence } from "framer-motion";
 import { Save, Wand2, Download, Copy, RotateCcw, Send, Bot, User, Loader2, Sparkles, X, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -256,8 +257,9 @@ Alex bursts through the apartment door into the rain-soaked street. Neon signs r
                                     <div className="relative">
                                       <code className={className} {...props}>{children}</code>
                                       <button
-                                        onClick={() => {
+                                         onClick={() => {
                                           setScript(prev => prev.trimEnd() + "\n\n" + text);
+                                          trackEvent("script_ai_insert", { content_length: text.length });
                                           toast({ title: "Inserted!", description: "Script content appended." });
                                         }}
                                         className="mt-2 flex items-center gap-1 text-[10px] px-2 py-1 rounded-md border border-primary/30 text-primary hover:bg-primary/10 transition-colors"
