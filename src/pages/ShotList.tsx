@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
 import { Badge } from "@/components/ui/badge";
 import AppLayout from "@/components/AppLayout";
-import { useShots, useUpdateShot, Shot } from "@/hooks/useShots";
+import { useShotsByProject, useUpdateShot, EnrichedShot } from "@/hooks/useShots";
 import { useProjects } from "@/hooks/useProjects";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
@@ -16,54 +16,32 @@ const ShotList = () => {
   const activeProject = projects?.[0];
   const projectId = activeProject?.id ?? null;
 
-  const { data: shots = [], isLoading } = useShots(projectId);
+  const { data: shots = [], isLoading } = useShotsByProject(projectId);
   const updateShot = useUpdateShot();
   const queryClient = useQueryClient();
 
-  // 🎬 Realtime: listen for shots changes from Director AI or other sources
+  // Realtime subscription
   useEffect(() => {
     if (!projectId) return;
-
     const channel = supabase
       .channel("shots-realtime")
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "shots", filter: `project_id=eq.${projectId}` },
-        (payload) => {
-          queryClient.invalidateQueries({ queryKey: ["shots", projectId] });
-          toast({
-            title: "🎬 Director: New shot added!",
-            description: (payload.new as Shot).description || "New shot added to sequence",
-          });
-        }
-      )
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "shots", filter: `project_id=eq.${projectId}` },
+        { event: "*", schema: "public", table: "shots" },
         () => {
-          queryClient.invalidateQueries({ queryKey: ["shots", projectId] });
-        }
-      )
-      .on(
-        "postgres_changes",
-        { event: "DELETE", schema: "public", table: "shots", filter: `project_id=eq.${projectId}` },
-        () => {
-          queryClient.invalidateQueries({ queryKey: ["shots", projectId] });
+          queryClient.invalidateQueries({ queryKey: ["shots-by-project", projectId] });
         }
       )
       .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return () => { supabase.removeChannel(channel); };
   }, [projectId, queryClient]);
 
-  const completed = shots.filter((s) => s.is_completed).length;
+  const readyCount = shots.filter((s) => s.status === "ready").length;
 
-  const toggleShot = (shot: Shot) => {
-    const newDone = !shot.is_completed;
-    updateShot.mutate({ id: shot.id, is_completed: newDone });
-    trackEvent("shot_toggled", { shot_id: shot.shot_code, completed: newDone });
+  const toggleShot = (shot: EnrichedShot) => {
+    const nextStatus = shot.status === "ready" ? "draft" : "ready";
+    updateShot.mutate({ id: shot.id, status: nextStatus });
+    trackEvent("shot_toggled", { shot_id: shot.id, status: nextStatus });
   };
 
   return (
@@ -78,7 +56,7 @@ const ShotList = () => {
             <h1 className="font-display text-2xl font-bold">Shot List</h1>
             <div className="flex items-center gap-2 mt-1">
               <Badge className="bg-[var(--neon-pink-10)] text-[var(--neon-pink)] border-[var(--neon-pink-30)] text-[10px]">
-                {completed}/{shots.length} completed
+                {readyCount}/{shots.length} ready
               </Badge>
             </div>
           </div>
@@ -91,7 +69,7 @@ const ShotList = () => {
         <div className="mb-6 h-1.5 rounded-full bg-secondary overflow-hidden">
           <motion.div
             initial={{ width: 0 }}
-            animate={{ width: shots.length > 0 ? `${(completed / shots.length) * 100}%` : "0%" }}
+            animate={{ width: shots.length > 0 ? `${(readyCount / shots.length) * 100}%` : "0%" }}
             transition={{ duration: 1, ease: "easeOut" }}
             className="h-full rounded-full bg-primary shadow-[0_0_10px_var(--neon-pink-30)]"
           />
@@ -117,10 +95,10 @@ const ShotList = () => {
                   <th className="p-4 w-10"></th>
                   <th className="p-4">Shot</th>
                   <th className="p-4">Type</th>
-                  <th className="p-4 hidden md:table-cell">Description</th>
-                  <th className="p-4 hidden lg:table-cell">Lens</th>
-                  <th className="p-4 hidden lg:table-cell">Movement</th>
-                  <th className="p-4">Duration</th>
+                  <th className="p-4 hidden md:table-cell">Prompt</th>
+                  <th className="p-4 hidden lg:table-cell">Angle</th>
+                  <th className="p-4 hidden lg:table-cell">Motion</th>
+                  <th className="p-4">Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -129,30 +107,32 @@ const ShotList = () => {
                     key={shot.id}
                     onClick={() => toggleShot(shot)}
                     className={`border-b border-[var(--neo-border)]/50 cursor-pointer transition-colors hover:bg-[var(--neon-pink-05)] ${
-                      shot.is_completed ? "opacity-50" : ""
+                      shot.status === "ready" ? "opacity-50" : ""
                     }`}
                   >
                     <td className="p-4">
-                      {shot.is_completed ? (
+                      {shot.status === "ready" ? (
                         <CheckCircle2 className="w-4 h-4 text-[var(--neon-green-raw)]" />
                       ) : (
                         <Circle className="w-4 h-4 text-muted-foreground" />
                       )}
                     </td>
-                    <td className="p-4 font-mono font-medium text-primary">{shot.shot_code}</td>
+                    <td className="p-4 font-mono font-medium text-primary">
+                      {shot.scene_number}.{shot.order_index + 1}
+                    </td>
                     <td className="p-4">
                       <Badge className="bg-[var(--neon-purple-10)] text-[var(--neon-purple)] border-[var(--neon-purple-30)] text-[10px]">
                         <Camera className="w-3 h-3 mr-1" />
                         {shot.shot_type}
                       </Badge>
                     </td>
-                    <td className="p-4 hidden md:table-cell text-muted-foreground">{shot.description}</td>
-                    <td className="p-4 hidden lg:table-cell text-muted-foreground">{shot.lens ?? "—"}</td>
-                    <td className="p-4 hidden lg:table-cell text-muted-foreground">{shot.movement ?? "—"}</td>
+                    <td className="p-4 hidden md:table-cell text-muted-foreground max-w-[200px] truncate">
+                      {shot.prompt || "—"}
+                    </td>
+                    <td className="p-4 hidden lg:table-cell text-muted-foreground">{shot.camera_angle}</td>
+                    <td className="p-4 hidden lg:table-cell text-muted-foreground">{shot.motion_intensity}%</td>
                     <td className="p-4">
-                      <span className="inline-flex items-center gap-1 text-muted-foreground">
-                        <Clock className="w-3 h-3" /> {shot.duration ?? "—"}
-                      </span>
+                      <Badge variant="outline" className="text-[10px]">{shot.status}</Badge>
                     </td>
                   </tr>
                 ))}
