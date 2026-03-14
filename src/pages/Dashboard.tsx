@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Play, Clock, Film, Music, FileText, TrendingUp, Trash2, LogOut, Download, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
