@@ -10,6 +10,7 @@ import AppLayout from "@/components/AppLayout";
 const WIKI_URL = "https://en.wikipedia.org/wiki/Filmmaking";
 
 const Learn = () => {
+  const navigate = useNavigate();
   const [content, setContent] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
