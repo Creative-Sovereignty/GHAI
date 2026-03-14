@@ -14,7 +14,7 @@ export function useScript(projectId: string | null) {
     queryKey: ["script", projectId],
     queryFn: async () => {
       if (!projectId) return null;
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("scripts")
         .select("*")
         .eq("project_id", projectId)
@@ -38,8 +38,7 @@ export function useUpsertScript() {
       content: string;
       last_ai_suggestion?: string | null;
     }) => {
-      // Check if script exists
-      const { data: existing } = await supabase
+      const { data: existing } = await (supabase as any)
         .from("scripts")
         .select("id")
         .eq("project_id", projectId)
@@ -48,7 +47,7 @@ export function useUpsertScript() {
       if (existing) {
         const updates: Record<string, unknown> = { content };
         if (last_ai_suggestion !== undefined) updates.last_ai_suggestion = last_ai_suggestion;
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
           .from("scripts")
           .update(updates)
           .eq("id", existing.id)
@@ -57,7 +56,7 @@ export function useUpsertScript() {
         if (error) throw error;
         return data as Script;
       } else {
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
           .from("scripts")
           .insert({ project_id: projectId, content, last_ai_suggestion: last_ai_suggestion ?? null })
           .select()

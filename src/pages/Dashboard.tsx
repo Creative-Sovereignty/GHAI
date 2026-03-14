@@ -13,7 +13,7 @@ import heroBanner from "@/assets/hero-banner.jpg";
 import { useProjects, useCreateProject, useDeleteProject } from "@/hooks/useProjects";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { Shot } from "@/hooks/useShots";
+import { EnrichedShot } from "@/hooks/useShots";
 import ShotListTracker from "@/components/production/ShotListTracker";
 import VeoVideoEngine, { GeneratedClip } from "@/components/production/VeoVideoEngine";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -60,7 +60,7 @@ const Dashboard = () => {
 
   // Production state
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
-  const [activeShot, setActiveShot] = useState<Shot | null>(null);
+  const [activeShot, setActiveShot] = useState<EnrichedShot | null>(null);
   const [generatedPrompt, setGeneratedPrompt] = useState("");
   const [generatedClips, setGeneratedClips] = useState<GeneratedClip[]>([]);
   const [playingClipId, setPlayingClipId] = useState<string | null>(null);
@@ -118,7 +118,7 @@ const Dashboard = () => {
   // Generate cinematic prompt from active shot
   useEffect(() => {
     if (activeShot) {
-      const cinematicPrompt = `Cinematic ${activeShot.shot_type}, ${activeShot.angle || "Eye Level"}. ${activeShot.description}. ${activeShot.movement || "Static"} camera movement. High-fidelity textures, professional lighting, 4K, shot on ${activeShot.lens || "50mm"} lens.`;
+      const cinematicPrompt = `Cinematic ${activeShot.shot_type}, ${activeShot.camera_angle}. ${activeShot.prompt || "Describe the scene"}. Motion intensity: ${activeShot.motion_intensity}%. High-fidelity textures, professional lighting, 4K.`;
       setGeneratedPrompt(cinematicPrompt);
     }
   }, [activeShot]);
@@ -487,7 +487,7 @@ const Dashboard = () => {
 
                         {/* Badge */}
                         <Badge className="absolute top-2 left-2 bg-[var(--neon-cyan-10)] text-[var(--neon-cyan)] border-[var(--neon-cyan-30)] font-mono text-[10px] z-10">
-                          {clip.shotCode ? `Shot ${clip.shotCode}` : `#${generatedClips.length - index}`}
+                          {clip.shotLabel ? `Shot ${clip.shotLabel}` : `#${generatedClips.length - index}`}
                         </Badge>
 
                         {/* Move handle */}
