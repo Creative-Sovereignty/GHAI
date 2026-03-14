@@ -115,7 +115,7 @@ const Learn = () => {
         )}
 
         <div className="flex justify-center pt-4 pb-8">
-          <Button variant="outline" size="sm" onClick={() => window.history.back()}>
+          <Button variant="outline" size="sm" onClick={() => navigate("/dashboard")}>
             ← Back
           </Button>
         </div>
