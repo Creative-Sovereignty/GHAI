@@ -487,7 +487,7 @@ const Dashboard = () => {
 
                         {/* Badge */}
                         <Badge className="absolute top-2 left-2 bg-[var(--neon-cyan-10)] text-[var(--neon-cyan)] border-[var(--neon-cyan-30)] font-mono text-[10px] z-10">
-                          {clip.shotCode ? `Shot ${clip.shotCode}` : `#${generatedClips.length - index}`}
+                          {clip.shotLabel ? `Shot ${clip.shotLabel}` : `#${generatedClips.length - index}`}
                         </Badge>
 
                         {/* Move handle */}
