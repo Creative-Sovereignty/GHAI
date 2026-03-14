@@ -61,12 +61,7 @@ const Learn = () => {
             <BookOpen className="w-6 h-6 text-primary" />
             <div>
               <h1 className="font-display text-2xl font-bold">Learn: Filmmaking</h1>
-              <p className="text-sm text-muted-foreground">
-                Sourced from{" "}
-                <a href={WIKI_URL} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                  Wikipedia
-                </a>
-              </p>
+              <p className="text-sm text-muted-foreground">Sourced from Wikipedia</p>
             </div>
           </div>
           <Button variant="ghost" size="sm" onClick={fetchContent} disabled={loading}>
