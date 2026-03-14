@@ -80,6 +80,7 @@ const Storyboard = () => {
       if (data.imageUrl) {
         setFrames(prev => prev.map(f => f.id === frame.id ? { ...f, imageUrl: data.imageUrl } : f));
         toast({ title: "Thumbnail generated!", description: `Frame "${frame.description}" now has a visual.` });
+        trackEvent("storyboard_image_generated", { frame_scene: frame.scene });
       }
     } catch {
       toast({ title: "Error", description: "Failed to generate thumbnail.", variant: "destructive" });
