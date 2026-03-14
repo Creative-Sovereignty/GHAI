@@ -63,6 +63,18 @@ const Dashboard = () => {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [activeShot, setActiveShot] = useState<Shot | null>(null);
   const [generatedPrompt, setGeneratedPrompt] = useState("");
+  const [generatedClips, setGeneratedClips] = useState<GeneratedClip[]>([]);
+  const [playingClipId, setPlayingClipId] = useState<string | null>(null);
+
+  const handleClipGenerated = (clip: GeneratedClip) => {
+    setGeneratedClips(prev => [clip, ...prev]);
+  };
+
+  const handleClipReady = (clipId: string) => {
+    setGeneratedClips(prev =>
+      prev.map(c => c.id === clipId ? { ...c, status: "ready" } : c)
+    );
+  };
 
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [bannerDismissed, setBannerDismissed] = useState(() =>
