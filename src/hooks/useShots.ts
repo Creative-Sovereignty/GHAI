@@ -15,7 +15,7 @@ export function useScenes(scriptId: string | null) {
     queryKey: ["scenes", scriptId],
     queryFn: async () => {
       if (!scriptId) return [];
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("scenes")
         .select("*")
         .eq("script_id", scriptId)
@@ -36,7 +36,7 @@ export function useCreateScene() {
       slugline?: string;
       summary?: string;
     }) => {
-      const { data, error } = await supabase.from("scenes").insert(scene).select().single();
+      const { data, error } = await (supabase as any).from("scenes").insert(scene).select().single();
       if (error) throw error;
       return data as Scene;
     },
@@ -50,7 +50,7 @@ export function useDeleteScene() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, scriptId }: { id: string; scriptId: string }) => {
-      const { error } = await supabase.from("scenes").delete().eq("id", id);
+      const { error } = await (supabase as any).from("scenes").delete().eq("id", id);
       if (error) throw error;
       return scriptId;
     },
@@ -80,7 +80,7 @@ export function useShots(sceneId: string | null) {
     queryKey: ["shots", sceneId],
     queryFn: async () => {
       if (!sceneId) return [];
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("shots")
         .select("*")
         .eq("scene_id", sceneId)
@@ -97,36 +97,36 @@ export function useShotsByProject(projectId: string | null) {
   return useQuery({
     queryKey: ["shots-by-project", projectId],
     queryFn: async () => {
-      if (!projectId) return [];
+      if (!projectId) return [] as EnrichedShot[];
       // Get script
-      const { data: script } = await supabase
+      const { data: script } = await (supabase as any)
         .from("scripts")
         .select("id")
         .eq("project_id", projectId)
         .maybeSingle();
-      if (!script) return [];
+      if (!script) return [] as EnrichedShot[];
       // Get scenes
-      const { data: scenes } = await supabase
+      const { data: scenes } = await (supabase as any)
         .from("scenes")
         .select("id, scene_number, slugline")
         .eq("script_id", script.id)
         .order("scene_number", { ascending: true });
-      if (!scenes?.length) return [];
+      if (!scenes?.length) return [] as EnrichedShot[];
       // Get shots for all scenes
-      const sceneIds = scenes.map((s) => s.id);
-      const { data: shots, error } = await supabase
+      const sceneIds = scenes.map((s: any) => s.id);
+      const { data: shots, error } = await (supabase as any)
         .from("shots")
         .select("*")
         .in("scene_id", sceneIds)
         .order("order_index", { ascending: true });
       if (error) throw error;
       // Enrich with scene info
-      const sceneMap = Object.fromEntries(scenes.map((s) => [s.id, s]));
+      const sceneMap = Object.fromEntries(scenes.map((s: any) => [s.id, s]));
       return (shots as Shot[]).map((shot) => ({
         ...shot,
         scene_number: sceneMap[shot.scene_id]?.scene_number ?? 0,
         slugline: sceneMap[shot.scene_id]?.slugline ?? null,
-      }));
+      })) as EnrichedShot[];
     },
     enabled: !!projectId,
   });
@@ -146,7 +146,7 @@ export function useCreateShot() {
       motion_intensity?: number;
       status?: string;
     }) => {
-      const { data, error } = await supabase.from("shots").insert(shot).select().single();
+      const { data, error } = await (supabase as any).from("shots").insert(shot).select().single();
       if (error) throw error;
       return data as Shot;
     },
@@ -161,7 +161,7 @@ export function useUpdateShot() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, ...updates }: Partial<Shot> & { id: string }) => {
-      const { data, error } = await supabase.from("shots").update(updates).eq("id", id).select().single();
+      const { data, error } = await (supabase as any).from("shots").update(updates).eq("id", id).select().single();
       if (error) throw error;
       return data as Shot;
     },
@@ -176,7 +176,7 @@ export function useDeleteShot() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, sceneId }: { id: string; sceneId: string }) => {
-      const { error } = await supabase.from("shots").delete().eq("id", id);
+      const { error } = await (supabase as any).from("shots").delete().eq("id", id);
       if (error) throw error;
       return sceneId;
     },
