@@ -95,6 +95,21 @@ const Dashboard = () => {
 
   const showBanner = !isStandalone && !bannerDismissed;
 
+  // Auto-select first project for production
+  useEffect(() => {
+    if (projects?.length && !selectedProjectId) {
+      setSelectedProjectId(projects[0].id);
+    }
+  }, [projects, selectedProjectId]);
+
+  // Generate cinematic prompt from active shot
+  useEffect(() => {
+    if (activeShot) {
+      const cinematicPrompt = `Cinematic ${activeShot.shot_type}, ${activeShot.angle || "Eye Level"}. ${activeShot.description}. ${activeShot.movement || "Static"} camera movement. High-fidelity textures, professional lighting, 4K, shot on ${activeShot.lens || "50mm"} lens.`;
+      setGeneratedPrompt(cinematicPrompt);
+    }
+  }, [activeShot]);
+
   const dynamicStats = [
     { ...stats[0], value: String(projects?.length ?? 0), change: "" },
     ...stats.slice(1),
