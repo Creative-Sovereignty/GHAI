@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   LayoutDashboard, FileText, Image, ListChecks, Film, Video, Music, Settings,
-  ChevronLeft, ChevronRight, BarChart3,
+  ChevronLeft, ChevronRight, BarChart3, BookOpen,
 } from "lucide-react";
 import logoImg from "@/assets/logo.png";
 
@@ -16,6 +16,7 @@ const navItems = [
   { icon: Film, label: "Editor", path: "/editor", neon: "pink" },
   { icon: Music, label: "AI Music", path: "/music", neon: "purple" },
   { icon: Settings, label: "Settings", path: "/settings", neon: "pink" },
+  { icon: BookOpen, label: "Learn", path: "/learn", neon: "cyan" },
   { icon: BarChart3, label: "Analytics Docs", path: "/analytics-docs", neon: "cyan" },
 ];
 
