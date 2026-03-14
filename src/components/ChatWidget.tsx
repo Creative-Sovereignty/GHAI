@@ -84,6 +84,9 @@ const ChatWidget = () => {
     setIsLoading(false);
   };
 
+  // Hide on Director AI page to avoid overlap
+  if (location.pathname === "/director") return null;
+
   return (
     <>
       {/* Floating button */}
