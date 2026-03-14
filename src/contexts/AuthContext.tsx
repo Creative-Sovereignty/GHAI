@@ -39,6 +39,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signOut = async () => {
+    const { trackEvent } = await import("@/lib/analytics");
+    trackEvent("logout");
     await supabase.auth.signOut();
   };
 
