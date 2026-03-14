@@ -24,6 +24,7 @@ const FAQ = lazy(() => import("./pages/FAQ"));
 const Help = lazy(() => import("./pages/Help"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const AnalyticsDocs = lazy(() => import("./pages/AnalyticsDocs"));
 import ChatWidget from "./components/ChatWidget";
 
 const queryClient = new QueryClient();
@@ -58,6 +59,7 @@ const App = () => (
                 <Route path="/veo3" element={<ProtectedRoute><Veo3 /></ProtectedRoute>} />
                 <Route path="/music" element={<ProtectedRoute><AIMusic /></ProtectedRoute>} />
                 <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                <Route path="/analytics-docs" element={<ProtectedRoute><AnalyticsDocs /></ProtectedRoute>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
