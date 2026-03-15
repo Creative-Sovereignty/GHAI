@@ -1,13 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Download, Trophy, Info, Loader2 } from "lucide-react";
+import { Download, Trophy, Info, Loader2, Clapperboard } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+
+interface ShotOption {
+  id: string;
+  shot_code: string;
+  description: string;
+  scene_number: string;
+}
 
 interface ExportModalProps {
   open: boolean;
@@ -19,6 +27,37 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
   const { user } = useAuth();
   const [submitToFest, setSubmitToFest] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [selectedShotId, setSelectedShotId] = useState<string | null>(shotId ?? null);
+  const [shots, setShots] = useState<ShotOption[]>([]);
+  const [loadingShots, setLoadingShots] = useState(false);
+
+  // Sync external shotId prop
+  useEffect(() => {
+    if (shotId) setSelectedShotId(shotId);
+  }, [shotId]);
+
+  // Fetch user's shots when modal opens
+  useEffect(() => {
+    if (!open || !user) return;
+    const fetchShots = async () => {
+      setLoadingShots(true);
+      const { data: projects } = await supabase
+        .from("projects")
+        .select("id")
+        .eq("user_id", user.id);
+      if (!projects?.length) { setLoadingShots(false); return; }
+
+      const { data, error } = await supabase
+        .from("shots")
+        .select("id, shot_code, description, scene_number")
+        .in("project_id", projects.map((p) => p.id))
+        .order("scene_number", { ascending: true });
+
+      if (!error && data) setShots(data as ShotOption[]);
+      setLoadingShots(false);
+    };
+    fetchShots();
+  }, [open, user]);
 
   const handleExport = async () => {
     if (!user) {
