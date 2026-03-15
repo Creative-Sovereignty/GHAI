@@ -128,8 +128,20 @@ const Dashboard = () => {
     ...stats.slice(1),
   ];
 
+  const FREE_PROJECT_LIMIT = 1;
+  const isAtLimit = (projects?.length ?? 0) >= FREE_PROJECT_LIMIT;
+
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isAtLimit) {
+      toast({
+        title: "Project limit reached",
+        description: "Free accounts are limited to 1 project. Upgrade to Pro for unlimited projects — no credit card needed until your 2nd project.",
+        variant: "destructive",
+      });
+      setDialogOpen(false);
+      return;
+    }
     try {
       await createProject.mutateAsync({ title, description: description || undefined });
       setTitle("");
@@ -325,6 +337,7 @@ const Dashboard = () => {
               })}
 
               {/* New Project Card */}
+              {!isAtLimit && (
               <motion.div
                 variants={item}
                 whileHover={{ y: -4 }}
@@ -338,6 +351,21 @@ const Dashboard = () => {
                   Create New Short
                 </p>
               </motion.div>
+              )}
+              {isAtLimit && (
+              <motion.div
+                variants={item}
+                className="rounded-xl border border-dashed border-[var(--neon-purple-30)] p-5 flex flex-col items-center justify-center min-h-[180px] text-center"
+              >
+                <div className="w-12 h-12 rounded-full bg-[var(--neon-purple-10)] flex items-center justify-center">
+                  <Zap className="w-5 h-5 text-[var(--neon-purple)]" />
+                </div>
+                <p className="mt-3 text-sm font-semibold">Upgrade to Pro</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Unlock unlimited projects. No credit card until launch.
+                </p>
+              </motion.div>
+              )}
             </motion.div>
           )}
         </div>
