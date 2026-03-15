@@ -123,7 +123,7 @@ const AppSidebar = () => {
       className="h-screen sticky top-0 flex flex-col border-r border-border bg-sidebar-background text-sidebar-foreground"
     >
       {/* Logo */}
-      <div className="flex items-center gap-3 px-4 h-16 border-b border-[var(--neo-border)]">
+      <div className="flex items-center gap-3 px-4 h-16 border-b border-border">
         <img src={logoImg} alt="Golden Hour AI" className={`shrink-0 object-contain ${collapsed ? 'h-9' : 'h-10'}`} />
         {!collapsed && (
           <motion.span
