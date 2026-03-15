@@ -25,6 +25,7 @@ const VideoEditor = () => {
   const [playing, setPlaying] = useState(false);
   const [currentTime] = useState("00:01:24");
   const [zoom] = useState(100);
+  const [exportOpen, setExportOpen] = useState(false);
 
   return (
     <AppLayout>
