@@ -74,7 +74,7 @@ const AppSidebar = () => {
         {/* Mobile hamburger */}
         <button
           onClick={() => setMobileOpen(true)}
-          className="fixed top-4 left-4 z-50 p-2 rounded-lg bg-[var(--neo-surface)] border border-[var(--neo-border)] text-foreground shadow-lg"
+          className="fixed top-4 left-4 z-50 p-2 rounded-lg bg-sidebar-background border border-border text-sidebar-foreground shadow-lg"
           aria-label="Open menu"
         >
           <Menu className="w-5 h-5" />
@@ -96,9 +96,9 @@ const AppSidebar = () => {
                 animate={{ x: 0 }}
                 exit={{ x: -280 }}
                 transition={{ duration: 0.25, ease: "easeOut" }}
-                className="fixed inset-y-0 left-0 z-50 w-[260px] flex flex-col border-r border-[var(--neo-border)] bg-[var(--neo-surface)]"
+                className="fixed inset-y-0 left-0 z-50 w-[260px] flex flex-col border-r border-border bg-sidebar-background text-sidebar-foreground"
               >
-                <div className="flex items-center justify-between px-4 h-16 border-b border-[var(--neo-border)]">
+                <div className="flex items-center justify-between px-4 h-16 border-b border-border">
                   <div className="flex items-center gap-3">
                     <img src={logoImg} alt="Golden Hour AI" className="h-9 shrink-0 object-contain" />
                     <span className="font-display font-bold text-lg text-foreground truncate">Golden Hour AI</span>
@@ -120,10 +120,10 @@ const AppSidebar = () => {
     <motion.aside
       animate={{ width: collapsed ? 72 : 240 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
-      className="h-screen sticky top-0 flex flex-col border-r border-[var(--neo-border)] bg-[var(--neo-surface)]"
+      className="h-screen sticky top-0 flex flex-col border-r border-border bg-sidebar-background text-sidebar-foreground"
     >
       {/* Logo */}
-      <div className="flex items-center gap-3 px-4 h-16 border-b border-[var(--neo-border)]">
+      <div className="flex items-center gap-3 px-4 h-16 border-b border-border">
         <img src={logoImg} alt="Golden Hour AI" className={`shrink-0 object-contain ${collapsed ? 'h-9' : 'h-10'}`} />
         {!collapsed && (
           <motion.span
