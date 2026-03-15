@@ -93,7 +93,7 @@ Make it look like a professional storyboard panel with dramatic lighting and com
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const fileName = `frame-${frameId || Date.now()}-${Date.now()}.png`;
+    const fileName = `${userId}/frame-${frameId || Date.now()}-${Date.now()}.png`;
     const { error: uploadError } = await supabase.storage
       .from("storyboard-images")
       .upload(fileName, imageBytes, {
@@ -106,9 +106,14 @@ Make it look like a professional storyboard panel with dramatic lighting and com
       throw new Error("Failed to upload image");
     }
 
-    const { data: publicUrlData } = supabase.storage
+    // Generate a signed URL (valid for 1 hour)
+    const { data: signedUrlData, error: signedError } = await supabase.storage
       .from("storyboard-images")
-      .getPublicUrl(fileName);
+      .createSignedUrl(fileName, 3600);
+
+    if (signedError || !signedUrlData?.signedUrl) {
+      throw new Error("Failed to generate signed URL");
+    }
 
     return new Response(
       JSON.stringify({ imageUrl: publicUrlData.publicUrl }),
