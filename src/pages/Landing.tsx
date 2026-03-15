@@ -395,7 +395,7 @@ const Landing = () => {
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
             <Link to="/faq" className="hover:text-foreground transition-colors">FAQ</Link>
             <Link to="/help" className="hover:text-foreground transition-colors">Help</Link>
-            <Link to="/install" className="hover:text-foreground transition-colors">Install App</Link>
+            <Link to="/install" className="hover:text-foreground transition-colors text-gold-shimmer">Install App</Link>
           </div>
           <p className="text-xs text-muted-foreground">© 2026 Golden Hour AI. All rights reserved.</p>
         </div>
