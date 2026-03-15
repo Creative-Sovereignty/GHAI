@@ -212,7 +212,7 @@ const Dashboard = () => {
           <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background/80" />
           <div className="absolute inset-0 flex items-center justify-center px-8">
             <div className="text-center">
-              <h1 className="font-display text-3xl lg:text-4xl font-bold mb-2 drop-shadow-lg text-center mx-auto rainbow-text">
+              <h1 className="font-display text-3xl lg:text-4xl font-bold mb-2 drop-shadow-lg text-center mx-auto text-gold-shimmer">
                 Welcome to Golden Hour AI
               </h1>
               <p className="text-foreground/70 text-sm lg:text-base max-w-md mx-auto drop-shadow-sm">
@@ -221,7 +221,7 @@ const Dashboard = () => {
               <div className="flex flex-col items-center gap-2 mt-4">
                 <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button variant="glow" size="lg">
+                    <Button variant="glow" size="lg" className="text-gold-shimmer">
                       <Plus className="w-4 h-4" /> New Project
                     </Button>
                   </DialogTrigger>
@@ -244,7 +244,7 @@ const Dashboard = () => {
                     </form>
                   </DialogContent>
                 </Dialog>
-                <Button variant="ghost" size="sm" onClick={signOut}>
+                <Button variant="ghost" size="sm" onClick={signOut} className="text-gold-shimmer">
                   <LogOut className="w-4 h-4 mr-1" /> Sign Out
                 </Button>
               </div>
