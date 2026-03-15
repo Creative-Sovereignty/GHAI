@@ -110,6 +110,34 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
         </DialogHeader>
 
         <div className="space-y-5 py-4">
+          {/* Shot selector */}
+          <div className="space-y-2">
+            <Label className="text-sm text-muted-foreground flex items-center gap-1.5">
+              <Clapperboard className="w-3.5 h-3.5" />
+              Select Shot
+            </Label>
+            <Select
+              value={selectedShotId ?? ""}
+              onValueChange={(v) => setSelectedShotId(v)}
+              disabled={loadingShots}
+            >
+              <SelectTrigger className="w-full bg-secondary/30 border-[var(--neo-border)]">
+                <SelectValue placeholder={loadingShots ? "Loading shots…" : "Choose a shot to export"} />
+              </SelectTrigger>
+              <SelectContent>
+                {shots.map((s) => (
+                  <SelectItem key={s.id} value={s.id}>
+                    <span className="font-mono text-xs text-primary mr-1.5">S{s.scene_number}-{s.shot_code}</span>
+                    <span className="truncate">{s.description || "Untitled shot"}</span>
+                  </SelectItem>
+                ))}
+                {!loadingShots && shots.length === 0 && (
+                  <SelectItem value="__none" disabled>No shots found</SelectItem>
+                )}
+              </SelectContent>
+            </Select>
+          </div>
+
           {/* Format info */}
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Format</span>
@@ -141,15 +169,9 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
               id="fest-toggle"
               checked={submitToFest}
               onCheckedChange={setSubmitToFest}
-              disabled={!shotId}
+              disabled={!selectedShotId}
             />
           </div>
-
-          {!shotId && submitToFest === false && (
-            <p className="text-xs text-muted-foreground text-center">
-              Select a shot to enable festival submission.
-            </p>
-          )}
         </div>
 
         <DialogFooter>
