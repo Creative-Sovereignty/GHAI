@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   BookOpen, ArrowUp, ChevronRight, LayoutDashboard, FileText, ListChecks,
@@ -190,6 +191,7 @@ const wikiSections: WikiSection[] = [
 
 const Learn = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -334,8 +336,8 @@ const Learn = () => {
 
         {/* Footer nav */}
         <div className="flex justify-center pt-4 pb-8">
-          <Button variant="outline" size="sm" onClick={() => navigate("/dashboard")}>
-            ← Back to Dashboard
+          <Button variant="outline" size="sm" onClick={() => navigate(user ? "/dashboard" : "/")}>
+            ← {user ? "Back to Dashboard" : "Back to Home"}
           </Button>
         </div>
 
