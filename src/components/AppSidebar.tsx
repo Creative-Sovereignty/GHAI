@@ -17,6 +17,7 @@ const navItems = [
   { icon: Film, label: "Editor", path: "/editor", neon: "pink" },
   { icon: Music, label: "AI Music", path: "/music", neon: "purple" },
   { icon: Clapperboard, label: "Director AI", path: "/director", neon: "pink" },
+  { icon: Trophy, label: "Festival", path: "/festival", neon: "purple" },
   { icon: Settings, label: "Settings", path: "/settings", neon: "pink" },
   { icon: BookOpen, label: "Learn", path: "/learn", neon: "cyan" },
   { icon: BarChart3, label: "Analytics Docs", path: "/analytics-docs", neon: "cyan" },
