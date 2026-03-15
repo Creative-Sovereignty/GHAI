@@ -226,13 +226,8 @@
   }
 
   .light h1, .light h2, .light h3, .light h4, .light h5, .light h6 {
-    background: none;
-    -webkit-background-clip: unset;
-    background-clip: unset;
-    -webkit-text-fill-color: hsl(0 0% 0%);
-    color: hsl(0 0% 0%);
-    animation: none;
-    filter: none;
+    background: linear-gradient(90deg, #888, #e0e0e0, #aaa, #888);
+    filter: drop-shadow(0 0 4px rgba(200, 200, 200, 0.15));
   }
 
   a[href*="install"], a[href="/install"] {
