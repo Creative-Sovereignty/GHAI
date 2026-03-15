@@ -66,6 +66,9 @@ const Landing = () => {
   const logoY = useTransform(scrollYProgress, [0, 1], [0, -60]);
   const textY = useTransform(scrollYProgress, [0, 1], [0, -30]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  const orb1Y = useTransform(scrollYProgress, [0, 1], [0, -80]);
+  const orb2Y = useTransform(scrollYProgress, [0, 1], [0, -40]);
+  const orb3Y = useTransform(scrollYProgress, [0, 1], [0, -120]);
 
   const navLinks = [
     { href: "#features", label: "Features" },
