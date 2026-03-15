@@ -216,13 +216,13 @@
 
 @layer base {
   h1, h2, h3, h4, h5, h6 {
-    background: linear-gradient(90deg, var(--gold-dark), var(--gold-bright), var(--gold), var(--gold-dark));
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: shimmer 4s ease-in-out infinite;
-    filter: drop-shadow(0 0 6px rgba(212, 148, 10, 0.2));
+    color: hsl(0 0% 0%);
+    -webkit-text-fill-color: hsl(0 0% 0%);
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    animation: none;
+    filter: none;
   }
 
   .light h1, .light h2, .light h3, .light h4, .light h5, .light h6 {
@@ -254,11 +254,12 @@
     font-family: var(--font-heading);
     font-weight: 700;
     letter-spacing: 0.02em;
-    background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-bright), var(--gold));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 6px rgba(212, 148, 10, 0.3)) drop-shadow(0 0 20px rgba(212, 148, 10, 0.1));
+    color: hsl(0 0% 0%);
+    -webkit-text-fill-color: hsl(0 0% 0%);
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    filter: none;
   }
 }
 
