@@ -3,7 +3,7 @@ import { forwardRef } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Film, FileText, Music, Video, Image, ListChecks, Star, ArrowRight, Check, Sparkles, Zap, Shield, Menu, X } from "lucide-react";
-import logoImg from "@/assets/logo.png";
+import logoImg from "@/assets/logo-circle.png";
 import { useRef, useState } from "react";
 
 const features = [
@@ -186,7 +186,7 @@ const Landing = () => {
             <motion.img
               src={logoImg}
               alt="Golden Hour AI"
-              className="relative h-36 sm:h-44 md:h-52 mx-auto mb-6 object-contain drop-shadow-[0_0_24px_var(--gold-30)] opacity-90"
+              className="relative h-36 sm:h-44 md:h-52 mx-auto mb-6 object-contain drop-shadow-[0_0_24px_var(--gold-30)] opacity-90 rounded-full"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 0.9, scale: 1 }}
               transition={{ duration: 1, ease: "easeOut" }} />
