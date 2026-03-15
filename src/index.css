@@ -216,11 +216,12 @@
 
 @layer base {
   .light h1, .light h2, .light h3, .light h4, .light h5, .light h6 {
-    background: linear-gradient(135deg, #999999, #e0e0e0, #b0b0b0);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 6px rgba(200, 200, 200, 0.2));
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    -webkit-text-fill-color: #111111;
+    color: #111111;
+    filter: none;
   }
 
   * {
