@@ -216,12 +216,13 @@
 
 @layer base {
   .light h1, .light h2, .light h3, .light h4, .light h5, .light h6 {
-    background: none;
-    -webkit-background-clip: unset;
-    background-clip: unset;
-    -webkit-text-fill-color: #111111;
-    color: #111111;
-    filter: none;
+    background: linear-gradient(90deg, #888, #e0e0e0, #aaa, #888);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 4px rgba(200, 200, 200, 0.15));
   }
 
   * {
