@@ -74,7 +74,7 @@ const AppSidebar = () => {
         {/* Mobile hamburger */}
         <button
           onClick={() => setMobileOpen(true)}
-          className="fixed top-4 left-4 z-50 p-2 rounded-lg bg-[var(--neo-surface)] border border-[var(--neo-border)] text-foreground shadow-lg"
+          className="fixed top-4 left-4 z-50 p-2 rounded-lg bg-sidebar-background border border-border text-sidebar-foreground shadow-lg"
           aria-label="Open menu"
         >
           <Menu className="w-5 h-5" />
