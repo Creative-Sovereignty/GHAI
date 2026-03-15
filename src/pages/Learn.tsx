@@ -225,7 +225,7 @@ const Learn = () => {
               <BookOpen className="w-6 h-6 text-primary" />
             </div>
             <div>
-              <h1 className="font-display text-2xl font-bold">App Wiki</h1>
+              <h1 className="font-display text-2xl font-bold text-gold-blue-shimmer">App Wiki</h1>
               <p className="text-sm text-muted-foreground">
                 Everything you need to know about Golden Hour AI
               </p>

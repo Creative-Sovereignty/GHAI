@@ -161,7 +161,7 @@ const ShotList = () => {
           className="flex items-center justify-between mb-6"
         >
           <div>
-            <h1 className="font-display text-2xl font-bold">Shot List</h1>
+            <h1 className="font-display text-2xl font-bold text-gold-blue-shimmer">Shot List</h1>
             <div className="flex items-center gap-2 mt-1">
               <Badge className="bg-[var(--neon-pink-10)] text-[var(--neon-pink)] border-[var(--neon-pink-30)] text-[10px]">
                 {readyCount}/{shots.length} ready

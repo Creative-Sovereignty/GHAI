@@ -34,7 +34,7 @@ const VideoEditor = () => {
           animate={{ opacity: 1 }}
           className="border-b border-[var(--neo-border)] px-4 py-2 flex items-center justify-between"
         >
-          <h1 className="font-display font-semibold">Video Editor</h1>
+          <h1 className="font-display font-semibold text-gold-blue-shimmer">Video Editor</h1>
           <div className="flex items-center gap-2">
             <Button variant="cinema" size="sm" onClick={() => trackEvent("video_ai_edit")}><Wand2 className="w-4 h-4" /> AI Edit</Button>
             <Button variant="glow" size="sm" onClick={() => trackEvent("video_export")}>Export</Button>

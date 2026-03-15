@@ -213,7 +213,7 @@ const Dashboard = () => {
           <div className="absolute inset-0 bg-gradient-to-r from-background/40 via-transparent to-background/40" />
           <div className="absolute inset-0 flex items-center justify-center px-8">
             <div className="text-center">
-              <h1 className="font-display text-3xl lg:text-4xl font-bold mb-2 drop-shadow-lg text-center mx-auto text-gradient-shimmer">
+              <h1 className="font-display text-3xl lg:text-4xl font-bold mb-2 drop-shadow-lg text-center mx-auto text-gold-blue-shimmer">
                 Welcome to Golden Hour AI
               </h1>
               <p className="text-foreground/70 text-sm lg:text-base max-w-md mx-auto drop-shadow-sm">

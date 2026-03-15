@@ -142,7 +142,7 @@ const Settings = () => {
     <AppLayout>
       <div className="p-6 md:p-10 max-w-3xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <h1 className="font-display text-3xl font-bold tracking-wide text-foreground mb-1">
+          <h1 className="font-display text-3xl font-bold tracking-wide text-gold-blue-shimmer mb-1">
             Settings
           </h1>
           <p className="text-muted-foreground mb-8">Manage your profile and account</p>

@@ -108,7 +108,7 @@ const FestivalGallery = () => {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <Trophy className="w-7 h-7 text-[var(--neon-pink)]" />
-            <h1 className="text-3xl font-display font-bold text-foreground">Festival Gallery</h1>
+            <h1 className="text-3xl font-display font-bold text-gold-blue-shimmer">Festival Gallery</h1>
           </div>
           <p className="text-muted-foreground max-w-xl">
             Browse and vote on community submissions. The best shots rise to the top.
