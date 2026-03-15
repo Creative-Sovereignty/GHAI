@@ -215,14 +215,28 @@
 }
 
 @layer base {
-  .light h1, .light h2, .light h3, .light h4, .light h5, .light h6 {
-    background: linear-gradient(90deg, #888, #e0e0e0, #aaa, #888);
+  h1, h2, h3, h4, h5, h6 {
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold-bright), var(--gold), var(--gold-dark));
     background-size: 200% auto;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: shimmer 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 6px rgba(212, 148, 10, 0.2));
+  }
+
+  .light h1, .light h2, .light h3, .light h4, .light h5, .light h6 {
+    background: linear-gradient(90deg, #888, #e0e0e0, #aaa, #888);
     filter: drop-shadow(0 0 4px rgba(200, 200, 200, 0.15));
+  }
+
+  a[href*="install"], a[href="/install"] {
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold-bright), var(--gold), var(--gold-dark));
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 4s ease-in-out infinite;
   }
 
   * {
