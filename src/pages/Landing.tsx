@@ -88,7 +88,7 @@ const Landing = () => {
       <nav className="fixed top-0 w-full z-50 border-b border-border/30 bg-background/60 backdrop-blur-2xl">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <img src={logoImg} alt="Golden Hour AI" className="h-10 object-contain" />
+            <img src={logoImg} alt="Golden Hour AI" className="h-10 object-contain logo-gold-ring" />
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
             {navLinks.map((link) =>
@@ -186,7 +186,7 @@ const Landing = () => {
             <motion.img
               src={logoImg}
               alt="Golden Hour AI"
-              className="relative h-36 sm:h-44 md:h-52 mx-auto mb-6 object-contain drop-shadow-[0_0_24px_var(--gold-30)] opacity-90 rounded-full"
+              className="relative h-36 sm:h-44 md:h-52 mx-auto mb-6 object-contain drop-shadow-[0_0_24px_var(--gold-30)] opacity-90 logo-gold-ring"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 0.9, scale: 1 }}
               transition={{ duration: 1, ease: "easeOut" }} />
@@ -404,7 +404,7 @@ const Landing = () => {
       <footer className="border-t border-border py-12 px-6">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
-            <img src={logoImg} alt="Golden Hour AI" className="h-8 object-contain" />
+            <img src={logoImg} alt="Golden Hour AI" className="h-8 object-contain logo-gold-ring" />
           </div>
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
             <Link to="/faq" className="hover:text-foreground transition-colors">FAQ</Link>
