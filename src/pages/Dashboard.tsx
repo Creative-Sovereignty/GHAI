@@ -210,43 +210,45 @@ const Dashboard = () => {
         >
           <img src={heroBanner} alt="Golden Hour AI banner" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-r from-[var(--neo-black)]/95 via-[var(--neo-black)]/70 to-[var(--neon-purple-30)]" />
-          <div className="absolute inset-0 flex items-center justify-between px-8">
-            <div>
+          <div className="absolute inset-0 flex items-center justify-center px-8">
+            <div className="text-center">
               <h1 className="font-display text-3xl lg:text-4xl font-bold mb-2">
                 Welcome to <span className="rainbow-text">Golden Hour AI</span>
               </h1>
-              <p className="text-muted-foreground text-sm lg:text-base max-w-md">
+              <p className="text-muted-foreground text-sm lg:text-base max-w-md mx-auto">
                 Your AI-powered filmmaking studio. Create stunning shorts from script to screen.
               </p>
-              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button variant="glow" className="mt-4" size="lg">
-                    <Plus className="w-4 h-4" /> New Project
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="neo-card border-[var(--neon-pink-30)]">
-                  <DialogHeader>
-                    <DialogTitle className="font-display">Create New Project</DialogTitle>
-                  </DialogHeader>
-                  <form onSubmit={handleCreate} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="project-title">Title</Label>
-                      <Input id="project-title" placeholder="My Short Film" value={title} onChange={(e) => setTitle(e.target.value)} required maxLength={100} />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="project-desc">Description (optional)</Label>
-                      <Textarea id="project-desc" placeholder="A brief description..." value={description} onChange={(e) => setDescription(e.target.value)} maxLength={500} />
-                    </div>
-                    <Button type="submit" variant="glow" className="w-full" disabled={createProject.isPending}>
-                      {createProject.isPending ? "Creating..." : "Create Project"}
+              <div className="flex flex-col items-center gap-2 mt-4">
+                <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="glow" size="lg">
+                      <Plus className="w-4 h-4" /> New Project
                     </Button>
-                  </form>
-                </DialogContent>
-              </Dialog>
+                  </DialogTrigger>
+                  <DialogContent className="neo-card border-[var(--neon-pink-30)]">
+                    <DialogHeader>
+                      <DialogTitle className="font-display">Create New Project</DialogTitle>
+                    </DialogHeader>
+                    <form onSubmit={handleCreate} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="project-title">Title</Label>
+                        <Input id="project-title" placeholder="My Short Film" value={title} onChange={(e) => setTitle(e.target.value)} required maxLength={100} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="project-desc">Description (optional)</Label>
+                        <Textarea id="project-desc" placeholder="A brief description..." value={description} onChange={(e) => setDescription(e.target.value)} maxLength={500} />
+                      </div>
+                      <Button type="submit" variant="glow" className="w-full" disabled={createProject.isPending}>
+                        {createProject.isPending ? "Creating..." : "Create Project"}
+                      </Button>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+                <Button variant="ghost" size="sm" onClick={signOut}>
+                  <LogOut className="w-4 h-4 mr-1" /> Sign Out
+                </Button>
+              </div>
             </div>
-            <Button variant="ghost" size="sm" onClick={signOut} className="self-start">
-              <LogOut className="w-4 h-4 mr-1" /> Sign Out
-            </Button>
           </div>
         </motion.div>
 
