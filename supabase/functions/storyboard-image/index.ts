@@ -19,10 +19,11 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
     const supabaseAuth = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, { global: { headers: { Authorization: authHeader } } });
-    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(authHeader.replace("Bearer ", ""));
-    if (claimsError || !claimsData?.claims) {
+    const { data: { user }, error: userError } = await supabaseAuth.auth.getUser();
+    if (userError || !user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
+    const userId = user.id;
 
     const { scene, description, notes, frameId } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -92,7 +93,7 @@ Make it look like a professional storyboard panel with dramatic lighting and com
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const fileName = `frame-${frameId || Date.now()}-${Date.now()}.png`;
+    const fileName = `${userId}/frame-${frameId || Date.now()}-${Date.now()}.png`;
     const { error: uploadError } = await supabase.storage
       .from("storyboard-images")
       .upload(fileName, imageBytes, {
@@ -105,12 +106,17 @@ Make it look like a professional storyboard panel with dramatic lighting and com
       throw new Error("Failed to upload image");
     }
 
-    const { data: publicUrlData } = supabase.storage
+    // Generate a signed URL (valid for 1 hour)
+    const { data: signedUrlData, error: signedError } = await supabase.storage
       .from("storyboard-images")
-      .getPublicUrl(fileName);
+      .createSignedUrl(fileName, 3600);
+
+    if (signedError || !signedUrlData?.signedUrl) {
+      throw new Error("Failed to generate signed URL");
+    }
 
     return new Response(
-      JSON.stringify({ imageUrl: publicUrlData.publicUrl }),
+      JSON.stringify({ imageUrl: signedUrlData.signedUrl }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e) {
