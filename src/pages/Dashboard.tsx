@@ -128,20 +128,8 @@ const Dashboard = () => {
     ...stats.slice(1),
   ];
 
-  const FREE_PROJECT_LIMIT = 1;
-  const isAtLimit = (projects?.length ?? 0) >= FREE_PROJECT_LIMIT;
-
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isAtLimit) {
-      toast({
-        title: "Project limit reached",
-        description: "Free accounts are limited to 1 project. Upgrade to Pro for unlimited projects — no credit card needed until your 2nd project.",
-        variant: "destructive",
-      });
-      setDialogOpen(false);
-      return;
-    }
     try {
       await createProject.mutateAsync({ title, description: description || undefined });
       setTitle("");
