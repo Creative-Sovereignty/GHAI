@@ -157,7 +157,7 @@
     --background: 0 0% 10%;
     --foreground: 0 0% 88%;
 
-    --card: 0 0% 13%;
+    --card: 0 0% 22%;
     --card-foreground: 0 0% 88%;
 
     --popover: 0 0% 13%;
@@ -194,7 +194,7 @@
     --w3-void: #121212;
     --w3-deep: #181818;
     --w3-surface: #1e1e1e;
-    --w3-card: #222222;
+    --w3-card: #2e2e2e;
     --w3-border: #333333;
     --w3-border-light: #444444;
     --w3-text: #d8d8d8;
