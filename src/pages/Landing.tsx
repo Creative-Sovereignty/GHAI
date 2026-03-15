@@ -204,7 +204,7 @@ const Landing = () => {
                 <Sparkles className="w-4 h-4 inline mr-1 -mt-0.5" />
                 Next-Gen Filmmaking
               </p>
-              <h1 className="text-4xl sm:text-5xl md:text-7xl font-display font-bold tracking-tight leading-[1.1] mb-4 text-ring">
+              <h1 className="text-4xl sm:text-5xl md:text-7xl font-display font-bold tracking-tight leading-[1.1] mb-4 text-[var(--gold)]">
                 Your AI-Powered
               </h1>
               <div className="relative inline-block mb-6">
