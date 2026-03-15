@@ -212,8 +212,8 @@ const Dashboard = () => {
           <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background/80" />
           <div className="absolute inset-0 flex items-center justify-center px-8">
             <div className="text-center">
-              <h1 className="font-display text-3xl lg:text-4xl font-bold mb-2 drop-shadow-lg text-center mx-auto">
-                Welcome to <span className="rainbow-text">Golden Hour AI</span>
+              <h1 className="font-display text-3xl lg:text-4xl font-bold mb-2 drop-shadow-lg text-center mx-auto rainbow-text">
+                Welcome to Golden Hour AI
               </h1>
               <p className="text-foreground/70 text-sm lg:text-base max-w-md mx-auto drop-shadow-sm">
                 Your AI-powered filmmaking studio. Create stunning shorts from script to screen.
