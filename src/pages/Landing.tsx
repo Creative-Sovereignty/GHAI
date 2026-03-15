@@ -1,4 +1,5 @@
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { forwardRef } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Film, FileText, Music, Video, Image, ListChecks, Star, ArrowRight, Check, Sparkles, Zap, Shield, Menu, X } from "lucide-react";
@@ -33,17 +34,20 @@ const neonColors: Record<string, string> = {
 };
 
 /* Floating orb component */
-const Orb = ({ className, delay = 0 }: { className: string; delay?: number }) => (
-  <motion.div
-    className={`absolute rounded-full blur-3xl pointer-events-none ${className}`}
-    animate={{
-      y: [0, -30, 0],
-      x: [0, 15, 0],
-      scale: [1, 1.1, 1],
-      opacity: [0.3, 0.5, 0.3],
-    }}
-    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay }}
-  />
+const Orb = forwardRef<HTMLDivElement, { className: string; delay?: number }>(
+  ({ className, delay = 0 }, ref) => (
+    <motion.div
+      ref={ref}
+      className={`absolute rounded-full blur-3xl pointer-events-none ${className}`}
+      animate={{
+        y: [0, -30, 0],
+        x: [0, 15, 0],
+        scale: [1, 1.1, 1],
+        opacity: [0.3, 0.5, 0.3],
+      }}
+      transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay }}
+    />
+  )
 );
 
 /* Stat pill */
