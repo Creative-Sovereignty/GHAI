@@ -14,6 +14,38 @@ export type Database = {
   }
   public: {
     Tables: {
+      contest_entries: {
+        Row: {
+          created_at: string
+          id: string
+          shot_id: string
+          user_id: string
+          votes: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          shot_id: string
+          user_id: string
+          votes?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          shot_id?: string
+          user_id?: string
+          votes?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contest_entries_shot_id_fkey"
+            columns: ["shot_id"]
+            isOneToOne: true
+            referencedRelation: "shots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       credit_transactions: {
         Row: {
           action_type: string
