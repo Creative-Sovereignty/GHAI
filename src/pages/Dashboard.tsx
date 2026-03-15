@@ -265,15 +265,15 @@ const Dashboard = () => {
               <motion.div
                 key={stat.label}
                 variants={item}
-                className="neo-card rounded-xl p-4 transition-all hover:shadow-[0_0_20px_var(--neon-pink-10)]"
+                className="rounded-xl p-4 transition-all hover:shadow-[0_0_20px_var(--neon-pink-10)] bg-foreground/90 border"
                 style={{ borderColor: neonColors.border }}
               >
                 <div className="flex items-center justify-between mb-3">
                   <stat.icon className={`w-5 h-5 ${neonColors.icon}`} />
-                  <TrendingUp className="w-3 h-3 text-muted-foreground" />
+                  <TrendingUp className="w-3 h-3 text-background/60" />
                 </div>
-                <p className="font-display text-2xl font-bold">{stat.value}</p>
-                <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
+                <p className="font-display text-2xl font-bold text-background">{stat.value}</p>
+                <p className="text-xs text-background/60 mt-1">{stat.label}</p>
               </motion.div>
             );
           })}
