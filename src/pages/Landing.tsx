@@ -168,13 +168,14 @@ const Landing = () => {
         {/* Content */}
         <motion.div style={{ opacity }} className="relative z-10 max-w-5xl mx-auto text-center">
           {/* Logo with parallax */}
-          <motion.div style={{ y: logoY }}>
+          <motion.div style={{ y: logoY }} className="relative">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,var(--w3-void)_0%,transparent_70%)] scale-150 pointer-events-none" />
             <motion.img
               src={logoImg}
               alt="Golden Hour AI"
-              className="h-36 sm:h-44 md:h-52 mx-auto mb-6 object-contain drop-shadow-[0_0_40px_var(--gold-30)]"
+              className="relative h-36 sm:h-44 md:h-52 mx-auto mb-6 object-contain drop-shadow-[0_0_24px_var(--gold-30)] opacity-90"
               initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
+              animate={{ opacity: 0.9, scale: 1 }}
               transition={{ duration: 1, ease: "easeOut" }}
             />
           </motion.div>
