@@ -191,6 +191,7 @@ const wikiSections: WikiSection[] = [
 
 const Learn = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showScrollTop, setShowScrollTop] = useState(false);
