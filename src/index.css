@@ -301,6 +301,16 @@
     animation: shimmer 4s ease-in-out infinite;
   }
 
+  /* Gold/Blue shimmer text */
+  .text-gold-blue-shimmer {
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold-bright), hsl(217 91% 60%), var(--gold), hsl(217 91% 50%), var(--gold-dark));
+    background-size: 300% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 4s ease-in-out infinite;
+  }
+
   /* Legacy gradient utilities */
   .text-gradient {
     @apply bg-clip-text text-transparent;
