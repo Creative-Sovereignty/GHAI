@@ -7,61 +7,61 @@ import logoImg from "@/assets/logo.png";
 import { useRef, useState } from "react";
 
 const features = [
-  { icon: FileText, title: "AI Script Editor", desc: "Write professional screenplays with AI-powered formatting and suggestions.", neon: "pink" },
-  { icon: Image, title: "Storyboard Studio", desc: "Plan every scene visually with a drag-and-drop storyboard grid.", neon: "cyan" },
-  { icon: ListChecks, title: "Shot List Tracker", desc: "Organize shots, angles, and equipment for seamless production.", neon: "pink" },
-  { icon: Video, title: "Veo 3 Video Gen", desc: "Generate stunning AI video clips from text prompts.", neon: "cyan" },
-  { icon: Film, title: "Timeline Editor", desc: "Assemble your final cut with a professional video editor.", neon: "purple" },
-  { icon: Music, title: "AI Music Studio", desc: "Compose original soundtracks with mood and genre control.", neon: "pink" },
-];
+{ icon: FileText, title: "AI Script Editor", desc: "Write professional screenplays with AI-powered formatting and suggestions.", neon: "pink" },
+{ icon: Image, title: "Storyboard Studio", desc: "Plan every scene visually with a drag-and-drop storyboard grid.", neon: "cyan" },
+{ icon: ListChecks, title: "Shot List Tracker", desc: "Organize shots, angles, and equipment for seamless production.", neon: "pink" },
+{ icon: Video, title: "Veo 3 Video Gen", desc: "Generate stunning AI video clips from text prompts.", neon: "cyan" },
+{ icon: Film, title: "Timeline Editor", desc: "Assemble your final cut with a professional video editor.", neon: "purple" },
+{ icon: Music, title: "AI Music Studio", desc: "Compose original soundtracks with mood and genre control.", neon: "pink" }];
+
 
 const testimonials = [
-  { name: "Jordan K.", role: "Indie Filmmaker", text: "Golden Hour AI transformed my workflow. I went from script to final cut in a weekend.", avatar: "JK" },
-  { name: "Samira P.", role: "Content Creator", text: "The AI music generator alone is worth it. Every track feels custom-made for my videos.", avatar: "SP" },
-  { name: "Marcus T.", role: "Film Student", text: "I had zero editing experience. Now I'm producing short films that look professional.", avatar: "MT" },
-];
+{ name: "Jordan K.", role: "Indie Filmmaker", text: "Golden Hour AI transformed my workflow. I went from script to final cut in a weekend.", avatar: "JK" },
+{ name: "Samira P.", role: "Content Creator", text: "The AI music generator alone is worth it. Every track feels custom-made for my videos.", avatar: "SP" },
+{ name: "Marcus T.", role: "Film Student", text: "I had zero editing experience. Now I'm producing short films that look professional.", avatar: "MT" }];
+
 
 const plans = [
-  { name: "Starter", price: "Free", features: ["1 Project", "Basic Script Editor", "5 AI Generations/mo", "No Credit Card Required"], cta: "Get Started", popular: false },
-  { name: "Pro", price: "$19/mo", features: ["Unlimited Projects", "Full Toolkit Access", "100 AI Generations/mo", "Priority Support", "HD Export"], cta: "Go Pro", popular: true },
-  { name: "Studio", price: "$49/mo", features: ["Everything in Pro", "Unlimited AI Generations", "4K Export", "Team Collaboration", "Dedicated Support"], cta: "Contact Sales", popular: false },
-];
+{ name: "Starter", price: "Free", features: ["1 Project", "Basic Script Editor", "5 AI Generations/mo", "No Credit Card Required"], cta: "Get Started", popular: false },
+{ name: "Pro", price: "$19/mo", features: ["Unlimited Projects", "Full Toolkit Access", "100 AI Generations/mo", "Priority Support", "HD Export"], cta: "Go Pro", popular: true },
+{ name: "Studio", price: "$49/mo", features: ["Everything in Pro", "Unlimited AI Generations", "4K Export", "Team Collaboration", "Dedicated Support"], cta: "Contact Sales", popular: false }];
+
 
 const neonColors: Record<string, string> = {
   pink: "text-[var(--gold)]",
   cyan: "text-[var(--electric-blue)]",
-  purple: "text-[var(--deep-blue-bright)]",
+  purple: "text-[var(--deep-blue-bright)]"
 };
 
 /* Floating orb component */
-const Orb = forwardRef<HTMLDivElement, { className: string; delay?: number }>(
-  ({ className, delay = 0 }, ref) => (
-    <motion.div
-      ref={ref}
-      className={`absolute rounded-full blur-3xl pointer-events-none ${className}`}
-      animate={{
-        y: [0, -30, 0],
-        x: [0, 15, 0],
-        scale: [1, 1.1, 1],
-        opacity: [0.3, 0.5, 0.3],
-      }}
-      transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay }}
-    />
-  )
+const Orb = forwardRef<HTMLDivElement, {className: string;delay?: number;}>(
+  ({ className, delay = 0 }, ref) =>
+  <motion.div
+    ref={ref}
+    className={`absolute rounded-full blur-3xl pointer-events-none ${className}`}
+    animate={{
+      y: [0, -30, 0],
+      x: [0, 15, 0],
+      scale: [1, 1.1, 1],
+      opacity: [0.3, 0.5, 0.3]
+    }}
+    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay }} />
+
+
 );
 
 /* Stat pill */
-const StatPill = ({ value, label, delay }: { value: string; label: string; delay: number }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.6, delay }}
-    className="glass-panel-strong rounded-xl px-5 py-3 text-center"
-  >
+const StatPill = ({ value, label, delay }: {value: string;label: string;delay: number;}) =>
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.6, delay }}
+  className="glass-panel-strong rounded-xl px-5 py-3 text-center">
+  
     <p className="text-2xl font-bold text-gold-shimmer font-display">{value}</p>
     <p className="text-xs text-muted-foreground mt-0.5">{label}</p>
-  </motion.div>
-);
+  </motion.div>;
+
 
 const Landing = () => {
   const heroRef = useRef<HTMLElement>(null);
@@ -75,12 +75,12 @@ const Landing = () => {
   const orb3Y = useTransform(scrollYProgress, [0, 1], [0, -120]);
 
   const navLinks = [
-    { href: "#features", label: "Features" },
-    { href: "#pricing", label: "Pricing" },
-    { href: "#testimonials", label: "Testimonials" },
-    { href: "/faq", label: "FAQ", isRoute: true },
-    { href: "/help", label: "Help", isRoute: true },
-  ];
+  { href: "#features", label: "Features" },
+  { href: "#pricing", label: "Pricing" },
+  { href: "#testimonials", label: "Testimonials" },
+  { href: "/faq", label: "FAQ", isRoute: true },
+  { href: "/help", label: "Help", isRoute: true }];
+
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
@@ -92,11 +92,11 @@ const Landing = () => {
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
             {navLinks.map((link) =>
-              link.isRoute ? (
-                <Link key={link.href} to={link.href} className="hover:text-foreground transition-colors">{link.label}</Link>
-              ) : (
-                <a key={link.href} href={link.href} className="hover:text-foreground transition-colors">{link.label}</a>
-              )
+            link.isRoute ?
+            <Link key={link.href} to={link.href} className="hover:text-foreground transition-colors">{link.label}</Link> :
+
+            <a key={link.href} href={link.href} className="hover:text-foreground transition-colors">{link.label}</a>
+
             )}
           </div>
           <div className="flex items-center gap-3">
@@ -111,8 +111,8 @@ const Landing = () => {
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="md:hidden p-2 text-muted-foreground hover:text-foreground transition-colors"
-              aria-label="Toggle menu"
-            >
+              aria-label="Toggle menu">
+              
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
@@ -120,42 +120,42 @@ const Landing = () => {
 
         {/* Mobile menu */}
         <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="md:hidden overflow-hidden border-t border-border/30 bg-background/95 backdrop-blur-2xl"
-            >
+          {mobileMenuOpen &&
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="md:hidden overflow-hidden border-t border-border/30 bg-background/95 backdrop-blur-2xl">
+            
               <div className="px-6 py-4 flex flex-col gap-3">
                 {navLinks.map((link) =>
-                  link.isRoute ? (
-                    <Link
-                      key={link.href}
-                      to={link.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
-                    >
+              link.isRoute ?
+              <Link
+                key={link.href}
+                to={link.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2">
+                
                       {link.label}
-                    </Link>
-                  ) : (
-                    <a
-                      key={link.href}
-                      href={link.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
-                    >
+                    </Link> :
+
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2">
+                
                       {link.label}
                     </a>
-                  )
-                )}
+
+              )}
                 <Link to="/auth" onClick={() => setMobileMenuOpen(false)} className="sm:hidden">
                   <Button variant="ghost" size="sm" className="w-full text-muted-foreground hover:text-foreground">Sign In</Button>
                 </Link>
               </div>
             </motion.div>
-          )}
+          }
         </AnimatePresence>
       </nav>
 
@@ -189,8 +189,8 @@ const Landing = () => {
               className="relative h-36 sm:h-44 md:h-52 mx-auto mb-6 object-contain drop-shadow-[0_0_24px_var(--gold-30)] opacity-90"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 0.9, scale: 1 }}
-              transition={{ duration: 1, ease: "easeOut" }}
-            />
+              transition={{ duration: 1, ease: "easeOut" }} />
+            
           </motion.div>
 
           {/* Headline with parallax */}
@@ -198,13 +198,13 @@ const Landing = () => {
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-            >
+              transition={{ duration: 0.8, delay: 0.3 }}>
+              
               <p className="neo-label text-[var(--gold)] mb-4 tracking-[0.15em]">
                 <Sparkles className="w-4 h-4 inline mr-1 -mt-0.5" />
                 Next-Gen Filmmaking
               </p>
-              <h1 className="text-4xl sm:text-5xl md:text-7xl font-display font-bold tracking-tight leading-[1.1] mb-4">
+              <h1 className="text-4xl sm:text-5xl md:text-7xl font-display font-bold tracking-tight leading-[1.1] mb-4 text-ring">
                 Your AI-Powered
               </h1>
               <div className="relative inline-block mb-6">
@@ -214,9 +214,9 @@ const Landing = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.6, delay: 0.6 }}
                   style={{
-                    boxShadow: "0 0 40px var(--gold-30), 0 0 80px rgba(212, 148, 10, 0.1), inset 0 1px 0 rgba(255,255,255,0.2)",
-                  }}
-                >
+                    boxShadow: "0 0 40px var(--gold-30), 0 0 80px rgba(212, 148, 10, 0.1), inset 0 1px 0 rgba(255,255,255,0.2)"
+                  }}>
+                  
                   Movie Studio
                 </motion.span>
               </div>
@@ -226,8 +226,8 @@ const Landing = () => {
               className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-            >
+              transition={{ duration: 0.8, delay: 0.5 }}>
+              
               From script to screen — write, storyboard, shoot, edit, and score your films
               with cutting-edge AI tools, all in one place.
             </motion.p>
@@ -237,13 +237,13 @@ const Landing = () => {
               className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.7 }}
-            >
+              transition={{ duration: 0.8, delay: 0.7 }}>
+              
               <Link to="/auth">
                 <Button
                   size="lg"
-                  className="relative text-lg px-8 py-6 bg-gradient-to-r from-[var(--gold-dark)] via-[var(--gold)] to-[var(--amber)] text-[var(--w3-void)] font-bold shadow-[0_0_30px_var(--gold-30)] hover:shadow-[0_0_50px_var(--gold-30)] transition-shadow"
-                >
+                  className="relative text-lg px-8 py-6 bg-gradient-to-r from-[var(--gold-dark)] via-[var(--gold)] to-[var(--amber)] text-[var(--w3-void)] font-bold shadow-[0_0_30px_var(--gold-30)] hover:shadow-[0_0_50px_var(--gold-30)] transition-shadow">
+                  
                   Start Creating Free <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>
@@ -260,8 +260,8 @@ const Landing = () => {
             className="grid grid-cols-3 gap-3 sm:gap-6 max-w-md sm:max-w-lg mx-auto"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.9 }}
-          >
+            transition={{ duration: 0.8, delay: 0.9 }}>
+            
             <StatPill value="6" label="AI Tools" delay={1.0} />
             <StatPill value="4K" label="Export" delay={1.1} />
             <StatPill value="∞" label="Creativity" delay={1.2} />
@@ -279,8 +279,8 @@ const Landing = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
-          >
+            className="text-center mb-16">
+            
             <h2 className="text-3xl sm:text-4xl font-display font-bold mb-4">
               Everything You Need to <span className="rainbow-text">Create</span>
             </h2>
@@ -289,20 +289,20 @@ const Landing = () => {
             </p>
           </motion.div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feat, i) => (
-              <motion.div
-                key={feat.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="neo-card rounded-xl p-6 hover:border-primary/30 transition-all duration-300 group"
-              >
+            {features.map((feat, i) =>
+            <motion.div
+              key={feat.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className="neo-card rounded-xl p-6 hover:border-primary/30 transition-all duration-300 group">
+              
                 <feat.icon className={`w-8 h-8 mb-4 ${neonColors[feat.neon]} group-hover:drop-shadow-[0_0_8px_currentColor] transition-all`} />
                 <h3 className="font-display font-semibold text-lg mb-2">{feat.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{feat.desc}</p>
               </motion.div>
-            ))}
+            )}
           </div>
         </div>
       </section>
@@ -314,26 +314,26 @@ const Landing = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
-          >
+            className="text-center mb-16">
+            
             <h2 className="text-3xl sm:text-4xl font-display font-bold mb-4">
               Loved by <span className="rainbow-text">Creators</span>
             </h2>
           </motion.div>
           <div className="grid md:grid-cols-3 gap-6">
-            {testimonials.map((t, i) => (
-              <motion.div
-                key={t.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="neo-card rounded-xl p-6"
-              >
+            {testimonials.map((t, i) =>
+            <motion.div
+              key={t.name}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className="neo-card rounded-xl p-6">
+              
                 <div className="flex items-center gap-1 mb-4">
-                  {[...Array(5)].map((_, j) => (
-                    <Star key={j} className="w-4 h-4 fill-[var(--neon-yellow-raw)] text-[var(--neon-yellow-raw)]" />
-                  ))}
+                  {[...Array(5)].map((_, j) =>
+                <Star key={j} className="w-4 h-4 fill-[var(--neon-yellow-raw)] text-[var(--neon-yellow-raw)]" />
+                )}
                 </div>
                 <p className="text-sm text-muted-foreground mb-4 leading-relaxed">"{t.text}"</p>
                 <div className="flex items-center gap-3">
@@ -346,7 +346,7 @@ const Landing = () => {
                   </div>
                 </div>
               </motion.div>
-            ))}
+            )}
           </div>
         </div>
       </section>
@@ -358,36 +358,36 @@ const Landing = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
-          >
+            className="text-center mb-16">
+            
             <h2 className="text-3xl sm:text-4xl font-display font-bold mb-4">
               Simple <span className="rainbow-text">Pricing</span>
             </h2>
             <p className="text-muted-foreground">Start free. Upgrade when you're ready.</p>
           </motion.div>
           <div className="grid md:grid-cols-3 gap-6">
-            {plans.map((plan, i) => (
-              <motion.div
-                key={plan.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className={`neo-card rounded-xl p-6 relative ${plan.popular ? "border-primary/50 shadow-[0_0_30px_var(--neon-pink-10)]" : ""}`}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs font-bold px-4 py-1 rounded-full shadow-[0_0_15px_var(--neon-pink-30)]">
+            {plans.map((plan, i) =>
+            <motion.div
+              key={plan.name}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className={`neo-card rounded-xl p-6 relative ${plan.popular ? "border-primary/50 shadow-[0_0_30px_var(--neon-pink-10)]" : ""}`}>
+              
+                {plan.popular &&
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs font-bold px-4 py-1 rounded-full shadow-[0_0_15px_var(--neon-pink-30)]">
                     Most Popular
                   </div>
-                )}
+              }
                 <h3 className="font-display font-bold text-xl mb-1">{plan.name}</h3>
                 <p className="text-3xl font-bold mb-6">{plan.price}</p>
                 <ul className="space-y-3 mb-8">
-                  {plan.features.map((f) => (
-                    <li key={f} className="flex items-center gap-2 text-sm text-muted-foreground">
+                  {plan.features.map((f) =>
+                <li key={f} className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Check className="w-4 h-4 text-primary shrink-0" /> {f}
                     </li>
-                  ))}
+                )}
                 </ul>
                 <Link to="/auth">
                   <Button className={`w-full ${plan.popular ? "bg-primary hover:bg-primary/90 shadow-[0_0_15px_var(--neon-pink-30)]" : "bg-secondary hover:bg-secondary/80"}`}>
@@ -395,7 +395,7 @@ const Landing = () => {
                   </Button>
                 </Link>
               </motion.div>
-            ))}
+            )}
           </div>
         </div>
       </section>
@@ -414,8 +414,8 @@ const Landing = () => {
           <p className="text-xs text-muted-foreground">© 2026 Golden Hour AI. All rights reserved.</p>
         </div>
       </footer>
-    </div>
-  );
+    </div>);
+
 };
 
 export default Landing;
