@@ -39,9 +39,11 @@ const VideoEditor = () => {
           <h1 className="font-display font-semibold text-gold-blue-shimmer">Video Editor</h1>
           <div className="flex items-center gap-2">
             <Button variant="cinema" size="sm" onClick={() => trackEvent("video_ai_edit")}><Wand2 className="w-4 h-4" /> AI Edit</Button>
-            <Button variant="glow" size="sm" onClick={() => trackEvent("video_export")}>Export</Button>
+            <Button variant="glow" size="sm" onClick={() => { trackEvent("video_export"); setExportOpen(true); }}>Export</Button>
           </div>
         </motion.div>
+
+        <ExportModal open={exportOpen} onOpenChange={setExportOpen} />
 
         {/* Preview + panels */}
         <div className="flex-1 flex overflow-hidden">
