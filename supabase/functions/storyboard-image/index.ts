@@ -116,7 +116,7 @@ Make it look like a professional storyboard panel with dramatic lighting and com
     }
 
     return new Response(
-      JSON.stringify({ imageUrl: publicUrlData.publicUrl }),
+      JSON.stringify({ imageUrl: signedUrlData.signedUrl }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e) {
