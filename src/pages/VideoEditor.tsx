@@ -7,6 +7,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
 import AppLayout from "@/components/AppLayout";
+import ExportModal from "@/components/production/ExportModal";
 
 const tracks = [
   { id: 1, name: "Scene 1 - Apartment", type: "video", color: "bg-primary/60", width: "35%" },
