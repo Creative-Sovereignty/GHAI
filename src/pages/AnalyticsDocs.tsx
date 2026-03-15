@@ -75,7 +75,7 @@ const AnalyticsDocs = () => (
   <AppLayout>
     <div className="max-w-4xl mx-auto space-y-8">
       <div>
-        <h1 className="font-display text-2xl font-bold">Analytics Event Reference</h1>
+        <h1 className="font-display text-2xl font-bold text-gold-blue-shimmer">Analytics Event Reference</h1>
         <p className="text-muted-foreground mt-1">
           All custom <code className="text-xs bg-muted px-1.5 py-0.5 rounded">dataLayer</code> events pushed to Google Tag Manager.
         </p>

@@ -228,7 +228,7 @@ const DirectorAI = () => {
               <Clapperboard className="w-5 h-5 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="font-display text-lg font-bold flex items-center gap-2">
+              <h1 className="font-display text-lg font-bold flex items-center gap-2 text-gold-blue-shimmer">
                 Director AI
                 <Badge className="bg-[var(--neon-green-10)] text-[var(--neon-green-raw)] border-[var(--neon-green-30)] text-[9px] font-mono">
                   <Sparkles className="w-2.5 h-2.5 mr-0.5" /> LIVE

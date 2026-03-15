@@ -182,7 +182,7 @@ const Storyboard = () => {
           className="flex items-center justify-between mb-8 border-b border-[var(--neo-border)] pb-6"
         >
           <div>
-            <h1 className="font-display text-2xl font-bold flex items-center gap-2">
+            <h1 className="font-display text-2xl font-bold flex items-center gap-2 text-gold-blue-shimmer">
               <Video className="w-5 h-5 text-primary" /> Storyboard Canvas
             </h1>
             <p className="text-[10px] text-muted-foreground mt-1 uppercase tracking-widest">
