@@ -1,13 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Download, Trophy, Info, Loader2 } from "lucide-react";
+import { Download, Trophy, Info, Loader2, Clapperboard } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+
+interface ShotOption {
+  id: string;
+  shot_code: string;
+  description: string;
+  scene_number: string;
+}
 
 interface ExportModalProps {
   open: boolean;
@@ -19,6 +27,37 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
   const { user } = useAuth();
   const [submitToFest, setSubmitToFest] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [selectedShotId, setSelectedShotId] = useState<string | null>(shotId ?? null);
+  const [shots, setShots] = useState<ShotOption[]>([]);
+  const [loadingShots, setLoadingShots] = useState(false);
+
+  // Sync external shotId prop
+  useEffect(() => {
+    if (shotId) setSelectedShotId(shotId);
+  }, [shotId]);
+
+  // Fetch user's shots when modal opens
+  useEffect(() => {
+    if (!open || !user) return;
+    const fetchShots = async () => {
+      setLoadingShots(true);
+      const { data: projects } = await supabase
+        .from("projects")
+        .select("id")
+        .eq("user_id", user.id);
+      if (!projects?.length) { setLoadingShots(false); return; }
+
+      const { data, error } = await supabase
+        .from("shots")
+        .select("id, shot_code, description, scene_number")
+        .in("project_id", projects.map((p) => p.id))
+        .order("scene_number", { ascending: true });
+
+      if (!error && data) setShots(data as ShotOption[]);
+      setLoadingShots(false);
+    };
+    fetchShots();
+  }, [open, user]);
 
   const handleExport = async () => {
     if (!user) {
@@ -30,10 +69,10 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
 
     try {
       // If festival submission is toggled and we have a shot
-      if (submitToFest && shotId) {
+      if (submitToFest && selectedShotId) {
         const { error } = await supabase
           .from("contest_entries")
-          .insert({ shot_id: shotId, user_id: user.id });
+          .insert({ shot_id: selectedShotId, user_id: user.id });
 
         if (error) {
           if (error.code === "23505") {
@@ -71,6 +110,34 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
         </DialogHeader>
 
         <div className="space-y-5 py-4">
+          {/* Shot selector */}
+          <div className="space-y-2">
+            <Label className="text-sm text-muted-foreground flex items-center gap-1.5">
+              <Clapperboard className="w-3.5 h-3.5" />
+              Select Shot
+            </Label>
+            <Select
+              value={selectedShotId ?? ""}
+              onValueChange={(v) => setSelectedShotId(v)}
+              disabled={loadingShots}
+            >
+              <SelectTrigger className="w-full bg-secondary/30 border-[var(--neo-border)]">
+                <SelectValue placeholder={loadingShots ? "Loading shots…" : "Choose a shot to export"} />
+              </SelectTrigger>
+              <SelectContent>
+                {shots.map((s) => (
+                  <SelectItem key={s.id} value={s.id}>
+                    <span className="font-mono text-xs text-primary mr-1.5">S{s.scene_number}-{s.shot_code}</span>
+                    <span className="truncate">{s.description || "Untitled shot"}</span>
+                  </SelectItem>
+                ))}
+                {!loadingShots && shots.length === 0 && (
+                  <SelectItem value="__none" disabled>No shots found</SelectItem>
+                )}
+              </SelectContent>
+            </Select>
+          </div>
+
           {/* Format info */}
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Format</span>
@@ -102,15 +169,9 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
               id="fest-toggle"
               checked={submitToFest}
               onCheckedChange={setSubmitToFest}
-              disabled={!shotId}
+              disabled={!selectedShotId}
             />
           </div>
-
-          {!shotId && submitToFest === false && (
-            <p className="text-xs text-muted-foreground text-center">
-              Select a shot to enable festival submission.
-            </p>
-          )}
         </div>
 
         <DialogFooter>
