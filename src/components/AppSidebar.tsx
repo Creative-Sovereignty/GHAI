@@ -101,7 +101,7 @@ const AppSidebar = () => {
               >
                 <div className="flex items-center justify-between px-4 h-16 border-b border-border">
                   <div className="flex items-center gap-3">
-                    <img src={logoImg} alt="Golden Hour AI" className="h-9 shrink-0 object-contain" />
+                    <img src={logoImg} alt="Golden Hour AI" className="h-9 shrink-0 object-contain logo-gold-ring" />
                     <span className="font-display font-bold text-lg text-foreground truncate">Golden Hour AI</span>
                   </div>
                   <button onClick={() => setMobileOpen(false)} className="text-muted-foreground hover:text-foreground">
