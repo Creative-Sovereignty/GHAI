@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Download, Smartphone, Monitor, Share, MoreVertical, PlusSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import logoImg from "@/assets/logo.png";
+import logoImg from "@/assets/logo-circle.png";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;

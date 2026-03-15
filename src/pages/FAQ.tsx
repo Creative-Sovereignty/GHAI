@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import logoImg from "@/assets/logo.png";
+import logoImg from "@/assets/logo-circle.png";
 import {
   Accordion,
   AccordionContent,
