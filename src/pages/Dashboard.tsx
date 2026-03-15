@@ -208,8 +208,8 @@ const Dashboard = () => {
           transition={{ duration: 0.6 }}
           className="relative rounded-2xl overflow-hidden h-48 lg:h-56 border border-border"
         >
-          <img src={heroBanner} alt="Golden Hour AI banner" className="w-full h-full object-cover opacity-40" />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/80 to-background/95" />
+          <img src={heroBanner} alt="Golden Hour AI banner" className="w-full h-full object-cover opacity-60" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background/80" />
           <div className="absolute inset-0 flex items-center justify-center px-8">
             <div className="text-center">
               <h1 className="font-display text-3xl lg:text-4xl font-bold mb-2 drop-shadow-lg">
