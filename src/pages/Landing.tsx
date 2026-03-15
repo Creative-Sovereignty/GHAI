@@ -66,6 +66,9 @@ const Landing = () => {
   const logoY = useTransform(scrollYProgress, [0, 1], [0, -60]);
   const textY = useTransform(scrollYProgress, [0, 1], [0, -30]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  const orb1Y = useTransform(scrollYProgress, [0, 1], [0, -80]);
+  const orb2Y = useTransform(scrollYProgress, [0, 1], [0, -40]);
+  const orb3Y = useTransform(scrollYProgress, [0, 1], [0, -120]);
 
   const navLinks = [
     { href: "#features", label: "Features" },
@@ -155,9 +158,15 @@ const Landing = () => {
       {/* ══════════ HERO ══════════ */}
       <section ref={heroRef} className="relative min-h-[100vh] flex items-center justify-center px-6 overflow-hidden">
         {/* Ambient orbs */}
-        <Orb className="w-[500px] h-[500px] bg-[var(--gold)]/15 -top-32 -left-40" delay={0} />
-        <Orb className="w-[400px] h-[400px] bg-[var(--electric-blue)]/10 top-1/4 -right-32" delay={2} />
-        <Orb className="w-[350px] h-[350px] bg-[var(--amber)]/10 bottom-20 left-1/4" delay={4} />
+        <motion.div style={{ y: orb1Y }} className="absolute -top-32 -left-40 pointer-events-none">
+          <Orb className="w-[500px] h-[500px] bg-[var(--gold)]/15" delay={0} />
+        </motion.div>
+        <motion.div style={{ y: orb2Y }} className="absolute top-1/4 -right-32 pointer-events-none">
+          <Orb className="w-[400px] h-[400px] bg-[var(--electric-blue)]/10" delay={2} />
+        </motion.div>
+        <motion.div style={{ y: orb3Y }} className="absolute bottom-20 left-1/4 pointer-events-none">
+          <Orb className="w-[350px] h-[350px] bg-[var(--amber)]/10" delay={4} />
+        </motion.div>
 
         {/* Grid overlay */}
         <div className="absolute inset-0 grid-bg opacity-40" />
