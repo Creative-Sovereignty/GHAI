@@ -96,7 +96,7 @@ const AppSidebar = () => {
                 animate={{ x: 0 }}
                 exit={{ x: -280 }}
                 transition={{ duration: 0.25, ease: "easeOut" }}
-                className="fixed inset-y-0 left-0 z-50 w-[260px] flex flex-col border-r border-[var(--neo-border)] bg-[var(--neo-surface)]"
+                className="fixed inset-y-0 left-0 z-50 w-[260px] flex flex-col border-r border-border bg-sidebar-background text-sidebar-foreground"
               >
                 <div className="flex items-center justify-between px-4 h-16 border-b border-[var(--neo-border)]">
                   <div className="flex items-center gap-3">
