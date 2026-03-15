@@ -27,6 +27,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const AnalyticsDocs = lazy(() => import("./pages/AnalyticsDocs"));
 const Learn = lazy(() => import("./pages/Learn"));
 const DirectorAI = lazy(() => import("./pages/DirectorAI"));
+const FestivalGallery = lazy(() => import("./pages/FestivalGallery"));
 import ChatWidget from "./components/ChatWidget";
 
 const queryClient = new QueryClient();
@@ -64,6 +65,7 @@ const App = () => (
                 <Route path="/analytics-docs" element={<ProtectedRoute><AnalyticsDocs /></ProtectedRoute>} />
                 <Route path="/learn" element={<Learn />} />
                 <Route path="/director" element={<DirectorAI />} />
+                <Route path="/festival" element={<ProtectedRoute><FestivalGallery /></ProtectedRoute>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
