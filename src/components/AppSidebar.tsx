@@ -120,7 +120,7 @@ const AppSidebar = () => {
     <motion.aside
       animate={{ width: collapsed ? 72 : 240 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
-      className="h-screen sticky top-0 flex flex-col border-r border-[var(--neo-border)] bg-[var(--neo-surface)]"
+      className="h-screen sticky top-0 flex flex-col border-r border-border bg-sidebar-background text-sidebar-foreground"
     >
       {/* Logo */}
       <div className="flex items-center gap-3 px-4 h-16 border-b border-[var(--neo-border)]">
