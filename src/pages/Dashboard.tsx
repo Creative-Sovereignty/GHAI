@@ -206,7 +206,7 @@ const Dashboard = () => {
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6 }}
-          className="relative rounded-2xl overflow-hidden h-48 lg:h-56 border border-border"
+          className="relative rounded-2xl overflow-hidden h-64 sm:h-56 lg:h-64 border border-border"
         >
           <img src={heroBanner} alt="Golden Hour AI banner" className="w-full h-full object-cover opacity-60" />
           <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background/80" />
