@@ -29,7 +29,7 @@ const FAQ = () => {
           className="text-center space-y-3"
         >
           <div className="flex items-center justify-center mb-4">
-            <img src={logoImg} alt="Golden Hour AI" className="h-14 object-contain" />
+            <img src={logoImg} alt="Golden Hour AI" className="h-14 object-contain logo-gold-ring" />
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold font-display tracking-tight">
             Frequently Asked <span className="rainbow-text">Questions</span>

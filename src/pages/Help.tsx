@@ -93,7 +93,7 @@ const Help = () => {
         <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="w-5 h-5" />
         </Link>
-        <img src={logoImg} alt="Golden Hour AI" className="h-8 object-contain" />
+        <img src={logoImg} alt="Golden Hour AI" className="h-8 object-contain logo-gold-ring" />
         <div>
           <h1 className="font-display font-bold text-lg">Help Desk</h1>
           <p className="text-xs text-muted-foreground">AI-powered support</p>
