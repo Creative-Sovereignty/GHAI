@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, FileText, Image, ListChecks, Film, Video, Music, Settings,
-  ChevronLeft, ChevronRight, BarChart3, BookOpen, Menu, X, Clapperboard,
+  ChevronLeft, ChevronRight, BarChart3, BookOpen, Menu, X, Clapperboard, Trophy,
 } from "lucide-react";
 import logoImg from "@/assets/logo.png";
 import { useIsMobile } from "@/hooks/use-mobile";
