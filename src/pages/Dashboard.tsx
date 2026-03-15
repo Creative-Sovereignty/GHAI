@@ -221,7 +221,7 @@ const Dashboard = () => {
               <div className="flex flex-col items-center gap-2 mt-4">
                 <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button variant="glow" size="lg">
+                    <Button variant="glow" size="lg" className="text-gold-shimmer">
                       <Plus className="w-4 h-4" /> New Project
                     </Button>
                   </DialogTrigger>
