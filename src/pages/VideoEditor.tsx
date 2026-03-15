@@ -7,6 +7,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
 import AppLayout from "@/components/AppLayout";
+import ExportModal from "@/components/production/ExportModal";
 
 const tracks = [
   { id: 1, name: "Scene 1 - Apartment", type: "video", color: "bg-primary/60", width: "35%" },
@@ -24,6 +25,7 @@ const VideoEditor = () => {
   const [playing, setPlaying] = useState(false);
   const [currentTime] = useState("00:01:24");
   const [zoom] = useState(100);
+  const [exportOpen, setExportOpen] = useState(false);
 
   return (
     <AppLayout>
@@ -37,9 +39,11 @@ const VideoEditor = () => {
           <h1 className="font-display font-semibold text-gold-blue-shimmer">Video Editor</h1>
           <div className="flex items-center gap-2">
             <Button variant="cinema" size="sm" onClick={() => trackEvent("video_ai_edit")}><Wand2 className="w-4 h-4" /> AI Edit</Button>
-            <Button variant="glow" size="sm" onClick={() => trackEvent("video_export")}>Export</Button>
+            <Button variant="glow" size="sm" onClick={() => { trackEvent("video_export"); setExportOpen(true); }}>Export</Button>
           </div>
         </motion.div>
+
+        <ExportModal open={exportOpen} onOpenChange={setExportOpen} />
 
         {/* Preview + panels */}
         <div className="flex-1 flex overflow-hidden">
