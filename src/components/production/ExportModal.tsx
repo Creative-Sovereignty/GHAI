@@ -69,10 +69,10 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
 
     try {
       // If festival submission is toggled and we have a shot
-      if (submitToFest && shotId) {
+      if (submitToFest && selectedShotId) {
         const { error } = await supabase
           .from("contest_entries")
-          .insert({ shot_id: shotId, user_id: user.id });
+          .insert({ shot_id: selectedShotId, user_id: user.id });
 
         if (error) {
           if (error.code === "23505") {
