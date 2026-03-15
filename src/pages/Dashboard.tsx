@@ -206,16 +206,16 @@ const Dashboard = () => {
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6 }}
-          className="relative rounded-2xl overflow-hidden h-48 lg:h-56 border border-[var(--neon-pink-30)]"
+          className="relative rounded-2xl overflow-hidden h-48 lg:h-56 border border-border"
         >
-          <img src={heroBanner} alt="Golden Hour AI banner" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[var(--neo-black)]/95 via-[var(--neo-black)]/70 to-[var(--neon-purple-30)]" />
+          <img src={heroBanner} alt="Golden Hour AI banner" className="w-full h-full object-cover opacity-40" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/80 to-background/95" />
           <div className="absolute inset-0 flex items-center justify-center px-8">
             <div className="text-center">
-              <h1 className="font-display text-3xl lg:text-4xl font-bold mb-2">
+              <h1 className="font-display text-3xl lg:text-4xl font-bold mb-2 drop-shadow-lg">
                 Welcome to <span className="rainbow-text">Golden Hour AI</span>
               </h1>
-              <p className="text-muted-foreground text-sm lg:text-base max-w-md mx-auto">
+              <p className="text-foreground/70 text-sm lg:text-base max-w-md mx-auto drop-shadow-sm">
                 Your AI-powered filmmaking studio. Create stunning shorts from script to screen.
               </p>
               <div className="flex flex-col items-center gap-2 mt-4">
