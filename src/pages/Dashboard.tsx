@@ -189,7 +189,7 @@ const Dashboard = () => {
                     Install
                   </Button>
                 ) : (
-                  <Button variant="cinema" size="sm" asChild className="text-gold-shimmer">
+                  <Button variant="glow" size="sm" asChild className="animate-[glow-pulse-gold_2s_ease-in-out_infinite] text-gold-shimmer">
                     <a href="/install">How to Install</a>
                   </Button>
                 )}
