@@ -46,6 +46,35 @@ export type Database = {
           },
         ]
       }
+      contest_votes: {
+        Row: {
+          created_at: string
+          entry_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          entry_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          entry_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contest_votes_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "contest_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       credit_transactions: {
         Row: {
           action_type: string
@@ -530,6 +559,7 @@ export type Database = {
           read_ct: number
         }[]
       }
+      toggle_contest_vote: { Args: { _entry_id: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
