@@ -98,7 +98,7 @@ const AppSidebar = () => {
                 transition={{ duration: 0.25, ease: "easeOut" }}
                 className="fixed inset-y-0 left-0 z-50 w-[260px] flex flex-col border-r border-border bg-sidebar-background text-sidebar-foreground"
               >
-                <div className="flex items-center justify-between px-4 h-16 border-b border-[var(--neo-border)]">
+                <div className="flex items-center justify-between px-4 h-16 border-b border-border">
                   <div className="flex items-center gap-3">
                     <img src={logoImg} alt="Golden Hour AI" className="h-9 shrink-0 object-contain" />
                     <span className="font-display font-bold text-lg text-foreground truncate">Golden Hour AI</span>
