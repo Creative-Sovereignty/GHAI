@@ -163,6 +163,10 @@ const Settings = () => {
                 <Palette className="w-4 h-4 mr-2" />
                 Appearance
               </TabsTrigger>
+              <TabsTrigger value="notifications" className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary">
+                <Bell className="w-4 h-4 mr-2" />
+                Notifications
+              </TabsTrigger>
             </TabsList>
 
             {/* ─── APPEARANCE TAB ─── */}
