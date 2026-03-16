@@ -154,7 +154,7 @@ const FestivalGallery = () => {
         (e) =>
           e.shot?.description?.toLowerCase().includes(q) ||
           e.shot?.shot_code?.toLowerCase().includes(q) ||
-          e.profile?.display_name?.toLowerCase().includes(q)
+          e.director_name?.toLowerCase().includes(q)
       );
     }
     const sorted = [...filtered];
