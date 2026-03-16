@@ -132,13 +132,36 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { userId, title, body, url } = await req.json();
+    const { userId, title, body, url, event_type } = await req.json();
     if (!userId || !title) throw new Error("userId and title are required");
 
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
+
+    // Check notification preferences if event_type is specified
+    if (event_type) {
+      const { data: prefs } = await supabaseAdmin
+        .from("notification_preferences")
+        .select("render_complete, script_updates, contest_votes")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      // Map event_type to preference column
+      const prefMap: Record<string, string> = {
+        render_complete: "render_complete",
+        script_updates: "script_updates",
+        contest_votes: "contest_votes",
+      };
+
+      const prefKey = prefMap[event_type];
+      if (prefKey && prefs && !(prefs as any)[prefKey]) {
+        return new Response(JSON.stringify({ sent: 0, message: "User has disabled this notification type" }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
 
     const { data: subs, error } = await supabaseAdmin
       .from("push_subscriptions")

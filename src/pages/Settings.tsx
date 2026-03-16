@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { User, Camera, Lock, LogOut, Save, Loader2, Sun, Moon, Palette, Bell, BellOff, Send } from "lucide-react";
+import { User, Camera, Lock, LogOut, Save, Loader2, Sun, Moon, Palette, Bell, BellOff, Send, Video, FileText, Trophy } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,11 +16,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 import { useNotifications } from "@/hooks/useNotifications";
+import { useNotificationPreferences } from "@/hooks/useNotificationPreferences";
 
 const Settings = () => {
   const { theme, toggleTheme } = useTheme();
   const { user, signOut } = useAuth();
   const { permission, isSubscribed, loading: notifLoading, subscribe, unsubscribe, sendTestNotification, supported: pushSupported } = useNotifications();
+  const { prefs, loading: prefsLoading, updatePref } = useNotificationPreferences();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -342,13 +344,14 @@ const Settings = () => {
                   </div>
                 ) : (
                   <>
+                    {/* Master toggle */}
                     <div className="flex items-center justify-between p-4 rounded-lg bg-secondary/30 border border-border">
                       <div className="flex items-center gap-3">
                         {isSubscribed ? <Bell className="w-5 h-5 text-primary" /> : <BellOff className="w-5 h-5 text-muted-foreground" />}
                         <div>
                           <p className="text-foreground font-medium">Push Notifications</p>
                           <p className="text-muted-foreground text-sm">
-                            {isSubscribed ? "You'll be notified when renders complete" : "Enable to get alerts for completed renders"}
+                            {isSubscribed ? "Notifications are enabled" : "Enable to get background alerts"}
                           </p>
                         </div>
                       </div>
@@ -366,6 +369,68 @@ const Settings = () => {
                       </div>
                     )}
 
+                    {/* Per-event preferences */}
+                    {isSubscribed && (
+                      <div className="space-y-1">
+                        <h3 className="text-foreground font-medium text-sm mb-3">Notify me about</h3>
+
+                        <div className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary/20 transition-colors">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
+                              <Video className="w-4 h-4 text-accent" />
+                            </div>
+                            <div>
+                              <p className="text-foreground text-sm font-medium">Render Complete</p>
+                              <p className="text-muted-foreground text-xs">When a video generation finishes</p>
+                            </div>
+                          </div>
+                          <Switch
+                            checked={prefs.render_complete}
+                            disabled={prefsLoading}
+                            onCheckedChange={(v) => updatePref("render_complete", v)}
+                            aria-label="Render complete notifications"
+                          />
+                        </div>
+
+                        <div className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary/20 transition-colors">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                              <FileText className="w-4 h-4 text-primary" />
+                            </div>
+                            <div>
+                              <p className="text-foreground text-sm font-medium">Script Updates</p>
+                              <p className="text-muted-foreground text-xs">When AI completes a script suggestion</p>
+                            </div>
+                          </div>
+                          <Switch
+                            checked={prefs.script_updates}
+                            disabled={prefsLoading}
+                            onCheckedChange={(v) => updatePref("script_updates", v)}
+                            aria-label="Script update notifications"
+                          />
+                        </div>
+
+                        <div className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary/20 transition-colors">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-[var(--neon-pink-10)] flex items-center justify-center">
+                              <Trophy className="w-4 h-4 text-[var(--gold)]" />
+                            </div>
+                            <div>
+                              <p className="text-foreground text-sm font-medium">Contest Votes</p>
+                              <p className="text-muted-foreground text-xs">When someone votes on your festival entry</p>
+                            </div>
+                          </div>
+                          <Switch
+                            checked={prefs.contest_votes}
+                            disabled={prefsLoading}
+                            onCheckedChange={(v) => updatePref("contest_votes", v)}
+                            aria-label="Contest vote notifications"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Test & info */}
                     {isSubscribed && (
                       <Button
                         variant="outline"
@@ -379,8 +444,7 @@ const Settings = () => {
                     )}
 
                     <div className="text-xs text-muted-foreground space-y-1">
-                      <p>• Notifications are sent when your video renders complete</p>
-                      <p>• Works even when the app is in the background</p>
+                      <p>• Notifications work even when the app is in the background</p>
                       <p>• You can disable notifications at any time</p>
                     </div>
                   </>
