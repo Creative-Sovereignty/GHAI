@@ -173,6 +173,28 @@ const FestivalGallery = () => {
     return sorted;
   }, [entries, sortMode, searchQuery]);
 
+  const leaderboard = useMemo(() => {
+    const dirMap = new Map<string, { name: string; avatar: string | null; totalVotes: number; entries: number }>();
+    entries.forEach((e) => {
+      const key = e.user_id;
+      const existing = dirMap.get(key);
+      if (existing) {
+        existing.totalVotes += e.votes;
+        existing.entries += 1;
+      } else {
+        dirMap.set(key, {
+          name: e.profile?.display_name || "Anonymous",
+          avatar: e.profile?.avatar_url || null,
+          totalVotes: e.votes,
+          entries: 1,
+        });
+      }
+    });
+    return Array.from(dirMap.values())
+      .sort((a, b) => b.totalVotes - a.totalVotes)
+      .slice(0, 10);
+  }, [entries]);
+
   return (
     <AppLayout>
       <div className="flex-1 overflow-auto">
