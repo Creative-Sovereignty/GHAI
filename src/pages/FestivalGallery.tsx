@@ -12,9 +12,10 @@ import AppLayout from "@/components/AppLayout";
 interface ContestEntry {
   id: string;
   shot_id: string;
-  user_id: string;
   votes: number;
   created_at: string;
+  director_name: string | null;
+  director_avatar: string | null;
   shot: {
     description: string;
     shot_type: string;
@@ -22,10 +23,6 @@ interface ContestEntry {
     shot_code: string;
     thumbnail_url: string | null;
     video_url: string | null;
-  } | null;
-  profile: {
-    display_name: string | null;
-    avatar_url: string | null;
   } | null;
   hasVoted: boolean;
 }
