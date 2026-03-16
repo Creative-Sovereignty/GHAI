@@ -301,8 +301,8 @@
     animation: shimmer 4s ease-in-out infinite;
   }
 
-  /* Global H2 blue-to-gold shimmer */
-  h2 {
+  /* Global H2 & H3 blue-to-gold shimmer */
+  h2, h3 {
     background: linear-gradient(90deg, var(--gold-dark), var(--gold-bright), hsl(217 91% 60%), var(--gold), hsl(217 91% 50%), var(--gold-dark));
     background-size: 300% auto;
     -webkit-background-clip: text;
