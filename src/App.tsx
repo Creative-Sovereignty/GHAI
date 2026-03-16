@@ -71,6 +71,7 @@ const App = () => (
               </Routes>
             </Suspense>
             <ChatWidget />
+            <ScrollToTop />
           </BrowserRouter>
         </TooltipProvider>
       </AuthProvider>
