@@ -99,6 +99,7 @@ const VeoVideoEngine = ({ initialPrompt, isSyncing, shotData, onGenerate, onGene
               title: "🎬 Render Complete",
               body: `Shot ${shotLabel || "clip"} is ready for preview`,
               url: "/dashboard",
+              event_type: "render_complete",
             }),
           });
         }
