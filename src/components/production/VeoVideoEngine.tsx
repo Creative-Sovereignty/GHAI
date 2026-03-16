@@ -77,10 +77,34 @@ const VeoVideoEngine = ({ initialPrompt, isSyncing, shotData, onGenerate, onGene
       prompt_length: prompt.length,
     });
 
-    setTimeout(() => {
+    setTimeout(async () => {
       setIsGenerating(false);
       onGenerateComplete?.(clipId);
       toast({ title: "Generation complete", description: "Your video clip is ready for preview." });
+
+      // Send push notification for background users
+      try {
+        const { supabase } = await import("@/integrations/supabase/client");
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+          fetch(`https://${projectId}.supabase.co/functions/v1/send-notification`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session.access_token}`,
+            },
+            body: JSON.stringify({
+              userId: session.user.id,
+              title: "🎬 Render Complete",
+              body: `Shot ${shotLabel || "clip"} is ready for preview`,
+              url: "/dashboard",
+            }),
+          });
+        }
+      } catch {
+        // Push notification is best-effort
+      }
     }, 5000);
   };
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { User, Camera, Lock, LogOut, Save, Loader2, Sun, Moon, Palette } from "lucide-react";
+import { User, Camera, Lock, LogOut, Save, Loader2, Sun, Moon, Palette, Bell, BellOff, Send } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,10 +15,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
+import { useNotifications } from "@/hooks/useNotifications";
 
 const Settings = () => {
   const { theme, toggleTheme } = useTheme();
   const { user, signOut } = useAuth();
+  const { permission, isSubscribed, loading: notifLoading, subscribe, unsubscribe, sendTestNotification, supported: pushSupported } = useNotifications();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -160,6 +162,10 @@ const Settings = () => {
               <TabsTrigger value="appearance" className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary">
                 <Palette className="w-4 h-4 mr-2" />
                 Appearance
+              </TabsTrigger>
+              <TabsTrigger value="notifications" className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary">
+                <Bell className="w-4 h-4 mr-2" />
+                Notifications
               </TabsTrigger>
             </TabsList>
 
@@ -324,6 +330,61 @@ const Settings = () => {
                     Sign Out
                   </Button>
                 </div>
+              </div>
+            </TabsContent>
+
+            {/* ─── NOTIFICATIONS TAB ─── */}
+            <TabsContent value="notifications">
+              <div className="space-y-6">
+                {!pushSupported ? (
+                  <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive text-sm">
+                    Push notifications are not supported in this browser.
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex items-center justify-between p-4 rounded-lg bg-secondary/30 border border-border">
+                      <div className="flex items-center gap-3">
+                        {isSubscribed ? <Bell className="w-5 h-5 text-primary" /> : <BellOff className="w-5 h-5 text-muted-foreground" />}
+                        <div>
+                          <p className="text-foreground font-medium">Push Notifications</p>
+                          <p className="text-muted-foreground text-sm">
+                            {isSubscribed ? "You'll be notified when renders complete" : "Enable to get alerts for completed renders"}
+                          </p>
+                        </div>
+                      </div>
+                      <Switch
+                        checked={isSubscribed}
+                        disabled={notifLoading}
+                        onCheckedChange={(checked) => checked ? subscribe() : unsubscribe()}
+                        aria-label="Toggle push notifications"
+                      />
+                    </div>
+
+                    {permission === "denied" && (
+                      <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive text-sm">
+                        Notifications are blocked. Please allow them in your browser settings.
+                      </div>
+                    )}
+
+                    {isSubscribed && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => { sendTestNotification(); toast.success("Test notification sent"); }}
+                        className="border-border"
+                      >
+                        <Send className="w-4 h-4 mr-2" />
+                        Send Test Notification
+                      </Button>
+                    )}
+
+                    <div className="text-xs text-muted-foreground space-y-1">
+                      <p>• Notifications are sent when your video renders complete</p>
+                      <p>• Works even when the app is in the background</p>
+                      <p>• You can disable notifications at any time</p>
+                    </div>
+                  </>
+                )}
               </div>
             </TabsContent>
           </Tabs>

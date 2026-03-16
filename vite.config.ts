@@ -21,6 +21,7 @@ export default defineConfig(({ mode }) => ({
       workbox: {
         navigateFallback: "/offline.html",
         navigateFallbackDenylist: [/^\/~oauth/],
+        importScripts: ["/custom-sw.js"],
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
         runtimeCaching: [
           {
