@@ -332,6 +332,61 @@ const Settings = () => {
                 </div>
               </div>
             </TabsContent>
+
+            {/* ─── NOTIFICATIONS TAB ─── */}
+            <TabsContent value="notifications">
+              <div className="space-y-6">
+                {!pushSupported ? (
+                  <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive text-sm">
+                    Push notifications are not supported in this browser.
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex items-center justify-between p-4 rounded-lg bg-secondary/30 border border-border">
+                      <div className="flex items-center gap-3">
+                        {isSubscribed ? <Bell className="w-5 h-5 text-primary" /> : <BellOff className="w-5 h-5 text-muted-foreground" />}
+                        <div>
+                          <p className="text-foreground font-medium">Push Notifications</p>
+                          <p className="text-muted-foreground text-sm">
+                            {isSubscribed ? "You'll be notified when renders complete" : "Enable to get alerts for completed renders"}
+                          </p>
+                        </div>
+                      </div>
+                      <Switch
+                        checked={isSubscribed}
+                        disabled={notifLoading}
+                        onCheckedChange={(checked) => checked ? subscribe() : unsubscribe()}
+                        aria-label="Toggle push notifications"
+                      />
+                    </div>
+
+                    {permission === "denied" && (
+                      <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive text-sm">
+                        Notifications are blocked. Please allow them in your browser settings.
+                      </div>
+                    )}
+
+                    {isSubscribed && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => { sendTestNotification(); toast.success("Test notification sent"); }}
+                        className="border-border"
+                      >
+                        <Send className="w-4 h-4 mr-2" />
+                        Send Test Notification
+                      </Button>
+                    )}
+
+                    <div className="text-xs text-muted-foreground space-y-1">
+                      <p>• Notifications are sent when your video renders complete</p>
+                      <p>• Works even when the app is in the background</p>
+                      <p>• You can disable notifications at any time</p>
+                    </div>
+                  </>
+                )}
+              </div>
+            </TabsContent>
           </Tabs>
         </motion.div>
       </div>
