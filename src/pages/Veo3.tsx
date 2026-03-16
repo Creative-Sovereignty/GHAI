@@ -28,7 +28,7 @@ const Veo3 = () => {
       <div className="p-6 lg:p-8 space-y-8">
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-3">
-            <h1 className="font-display text-2xl font-bold !text-black ![-webkit-text-fill-color:black]">Veo 3</h1>
+            <h1 className="font-display text-2xl font-bold">Veo 3</h1>
             <Badge className="bg-[var(--neon-cyan-10)] text-[var(--neon-cyan)] border-[var(--neon-cyan-30)] shadow-[0_0_8px_var(--neon-cyan-10)]">
               AI Video
             </Badge>
