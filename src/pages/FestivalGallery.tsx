@@ -196,6 +196,22 @@ const FestivalGallery = () => {
               </h1>
             </div>
 
+            {/* Countdown Timer */}
+            <div className="flex items-center gap-1.5">
+              <Clock className="w-4 h-4 text-muted-foreground mr-1" />
+              {[
+                { label: "D", value: countdown.days },
+                { label: "H", value: countdown.hours },
+                { label: "M", value: countdown.minutes },
+                { label: "S", value: countdown.seconds },
+              ].map((unit) => (
+                <div key={unit.label} className="text-center px-2.5 py-2 rounded-lg border border-border bg-card/80 backdrop-blur-sm min-w-[44px]">
+                  <p className="text-lg font-mono font-bold text-foreground leading-none">{String(unit.value).padStart(2, "0")}</p>
+                  <p className="text-[9px] font-mono uppercase tracking-wider text-muted-foreground mt-0.5">{unit.label}</p>
+                </div>
+              ))}
+            </div>
+
             <div className="flex items-center gap-4">
               <div className="text-center px-5 py-3 rounded-xl border border-border bg-card/80 backdrop-blur-sm">
                 <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Your Power</p>
