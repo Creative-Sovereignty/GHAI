@@ -181,15 +181,15 @@ const FestivalGallery = () => {
   const leaderboard = useMemo(() => {
     const dirMap = new Map<string, { name: string; avatar: string | null; totalVotes: number; entries: number }>();
     entries.forEach((e) => {
-      const key = e.user_id;
+      const key = e.director_name || "Anonymous";
       const existing = dirMap.get(key);
       if (existing) {
         existing.totalVotes += e.votes;
         existing.entries += 1;
       } else {
         dirMap.set(key, {
-          name: e.profile?.display_name || "Anonymous",
-          avatar: e.profile?.avatar_url || null,
+          name: e.director_name || "Anonymous",
+          avatar: e.director_avatar || null,
           totalVotes: e.votes,
           entries: 1,
         });
