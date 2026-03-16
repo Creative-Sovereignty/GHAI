@@ -30,6 +30,7 @@ const DirectorAI = lazy(() => import("./pages/DirectorAI"));
 const FestivalGallery = lazy(() => import("./pages/FestivalGallery"));
 import ChatWidget from "./components/ChatWidget";
 import ScrollToTop from "./components/ScrollToTop";
+import PWAInstallBanner from "./components/PWAInstallBanner";
 
 const queryClient = new QueryClient();
 
@@ -72,6 +73,7 @@ const App = () => (
             </Suspense>
             <ChatWidget />
             <ScrollToTop />
+            <PWAInstallBanner />
           </BrowserRouter>
         </TooltipProvider>
       </AuthProvider>
