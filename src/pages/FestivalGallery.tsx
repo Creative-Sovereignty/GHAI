@@ -205,7 +205,76 @@ const FestivalGallery = () => {
 
   return (
     <AppLayout>
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto relative">
+
+        {/* ── Confetti Overlay ── */}
+        <AnimatePresence>
+          {showConfetti && (
+            <motion.div
+              className="fixed inset-0 pointer-events-none z-50 overflow-hidden"
+              initial={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1 }}
+            >
+              {Array.from({ length: 60 }).map((_, i) => {
+                const colors = [
+                  "hsl(var(--primary))",
+                  "hsl(var(--primary) / 0.7)",
+                  "hsl(45, 100%, 60%)",
+                  "hsl(200, 80%, 60%)",
+                  "hsl(340, 80%, 60%)",
+                  "hsl(120, 60%, 50%)",
+                ];
+                const color = colors[i % colors.length];
+                const left = Math.random() * 100;
+                const delay = Math.random() * 2;
+                const duration = 2.5 + Math.random() * 2;
+                const size = 6 + Math.random() * 8;
+                const rotation = Math.random() * 720 - 360;
+                const isCircle = i % 3 === 0;
+                return (
+                  <motion.div
+                    key={i}
+                    className="absolute"
+                    style={{
+                      left: `${left}%`,
+                      top: -20,
+                      width: size,
+                      height: isCircle ? size : size * 0.6,
+                      borderRadius: isCircle ? "50%" : "2px",
+                      backgroundColor: color,
+                    }}
+                    initial={{ y: -20, opacity: 1, rotate: 0 }}
+                    animate={{
+                      y: "100vh",
+                      opacity: [1, 1, 0],
+                      rotate: rotation,
+                      x: [0, (Math.random() - 0.5) * 120, (Math.random() - 0.5) * 80],
+                    }}
+                    transition={{
+                      duration,
+                      delay,
+                      ease: [0.25, 0.46, 0.45, 0.94],
+                    }}
+                  />
+                );
+              })}
+              <motion.div
+                className="absolute top-1/4 left-1/2 -translate-x-1/2 text-center"
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                transition={{ delay: 0.3, type: "spring", stiffness: 200, damping: 15 }}
+              >
+                <div className="px-8 py-5 rounded-2xl bg-card/90 backdrop-blur-xl border border-primary/30 shadow-[0_0_40px_hsl(var(--primary)/0.3)]">
+                  <Trophy className="w-10 h-10 text-primary mx-auto mb-2" />
+                  <p className="text-2xl font-display font-bold text-gold-blue-shimmer">Round Complete!</p>
+                  <p className="text-sm text-muted-foreground mt-1">A new round has begun</p>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* ── Festival Header ── */}
         <div className="relative overflow-hidden border-b border-border bg-gradient-to-br from-card via-card to-primary/5">
