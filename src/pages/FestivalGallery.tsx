@@ -12,9 +12,10 @@ import AppLayout from "@/components/AppLayout";
 interface ContestEntry {
   id: string;
   shot_id: string;
-  user_id: string;
   votes: number;
   created_at: string;
+  director_name: string | null;
+  director_avatar: string | null;
   shot: {
     description: string;
     shot_type: string;
@@ -22,10 +23,6 @@ interface ContestEntry {
     shot_code: string;
     thumbnail_url: string | null;
     video_url: string | null;
-  } | null;
-  profile: {
-    display_name: string | null;
-    avatar_url: string | null;
   } | null;
   hasVoted: boolean;
 }
@@ -83,8 +80,8 @@ const FestivalGallery = () => {
   const fetchEntries = async () => {
     setLoading(true);
     const { data: contestData, error } = await supabase
-      .from("contest_entries")
-      .select("*, shots(description, shot_type, scene_number, shot_code, thumbnail_url, video_url), profiles(display_name, avatar_url)")
+      .from("contest_entries_public" as any)
+      .select("*")
       .order("votes", { ascending: false });
 
     if (error) {
@@ -105,11 +102,18 @@ const FestivalGallery = () => {
     const mapped: ContestEntry[] = (contestData || []).map((e: any) => ({
       id: e.id,
       shot_id: e.shot_id,
-      user_id: e.user_id,
       votes: e.votes,
       created_at: e.created_at,
-      shot: e.shots,
-      profile: e.profiles,
+      director_name: e.director_name,
+      director_avatar: e.director_avatar,
+      shot: {
+        description: e.shot_description,
+        shot_type: e.shot_type,
+        scene_number: e.shot_scene_number,
+        shot_code: e.shot_code,
+        thumbnail_url: e.shot_thumbnail_url,
+        video_url: e.shot_video_url,
+      },
       hasVoted: userVotes.has(e.id),
     }));
 
@@ -157,7 +161,7 @@ const FestivalGallery = () => {
         (e) =>
           e.shot?.description?.toLowerCase().includes(q) ||
           e.shot?.shot_code?.toLowerCase().includes(q) ||
-          e.profile?.display_name?.toLowerCase().includes(q)
+          e.director_name?.toLowerCase().includes(q)
       );
     }
     const sorted = [...filtered];
@@ -184,15 +188,15 @@ const FestivalGallery = () => {
   const leaderboard = useMemo(() => {
     const dirMap = new Map<string, { name: string; avatar: string | null; totalVotes: number; entries: number }>();
     entries.forEach((e) => {
-      const key = e.user_id;
+      const key = e.director_name || "Anonymous";
       const existing = dirMap.get(key);
       if (existing) {
         existing.totalVotes += e.votes;
         existing.entries += 1;
       } else {
         dirMap.set(key, {
-          name: e.profile?.display_name || "Anonymous",
-          avatar: e.profile?.avatar_url || null,
+          name: e.director_name || "Anonymous",
+          avatar: e.director_avatar || null,
           totalVotes: e.votes,
           entries: 1,
         });
@@ -459,7 +463,7 @@ const FestivalGallery = () => {
                           {entry.shot?.description || "Untitled Shot"}
                         </p>
                         <p className="text-xs text-muted-foreground mt-0.5">
-                          Dir. @{entry.profile?.display_name || "Anonymous"}
+                          Dir. @{entry.director_name || "Anonymous"}
                         </p>
                         <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
                           <span className="flex items-center gap-1">

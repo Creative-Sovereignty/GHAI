@@ -73,6 +73,13 @@ export type Database = {
             referencedRelation: "contest_entries"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "contest_votes_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "contest_entries_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       credit_transactions: {
@@ -529,7 +536,31 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      contest_entries_public: {
+        Row: {
+          created_at: string | null
+          director_avatar: string | null
+          director_name: string | null
+          id: string | null
+          shot_code: string | null
+          shot_description: string | null
+          shot_id: string | null
+          shot_scene_number: string | null
+          shot_thumbnail_url: string | null
+          shot_type: string | null
+          shot_video_url: string | null
+          votes: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contest_entries_shot_id_fkey"
+            columns: ["shot_id"]
+            isOneToOne: true
+            referencedRelation: "shots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       delete_email: {
