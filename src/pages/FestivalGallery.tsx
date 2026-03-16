@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, Trophy, Film, Sparkles, Play, Share2, Filter, Search } from "lucide-react";
+import { Heart, Trophy, Film, Sparkles, Play, Share2, Filter, Search, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
