@@ -204,6 +204,33 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_preferences: {
+        Row: {
+          contest_votes: boolean
+          created_at: string
+          render_complete: boolean
+          script_updates: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          contest_votes?: boolean
+          created_at?: string
+          render_complete?: boolean
+          script_updates?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          contest_votes?: boolean
+          created_at?: string
+          render_complete?: boolean
+          script_updates?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
