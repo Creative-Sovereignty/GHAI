@@ -20,6 +20,7 @@ import { useNotifications } from "@/hooks/useNotifications";
 const Settings = () => {
   const { theme, toggleTheme } = useTheme();
   const { user, signOut } = useAuth();
+  const { permission, isSubscribed, loading: notifLoading, subscribe, unsubscribe, sendTestNotification, supported: pushSupported } = useNotifications();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
