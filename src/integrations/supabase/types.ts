@@ -542,7 +542,13 @@ export type Database = {
           director_avatar: string | null
           director_name: string | null
           id: string | null
+          shot_code: string | null
+          shot_description: string | null
           shot_id: string | null
+          shot_scene_number: string | null
+          shot_thumbnail_url: string | null
+          shot_type: string | null
+          shot_video_url: string | null
           votes: number | null
         }
         Relationships: [
