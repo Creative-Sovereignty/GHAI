@@ -423,6 +423,50 @@ const FestivalGallery = () => {
               ))}
             </motion.div>
           )}
+          </div>
+
+          {/* ── Leaderboard Sidebar ── */}
+          <div className="hidden lg:block w-72 shrink-0 border-l border-border bg-card/50 p-5">
+            <div className="flex items-center gap-2 mb-4">
+              <Crown className="w-4 h-4 text-primary" />
+              <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">Top Directors</h3>
+            </div>
+            {leaderboard.length === 0 ? (
+              <p className="text-xs text-muted-foreground">No entries yet.</p>
+            ) : (
+              <div className="space-y-2">
+                {leaderboard.map((dir, i) => (
+                  <div
+                    key={i}
+                    className={`flex items-center gap-3 p-2.5 rounded-lg transition-colors ${
+                      i === 0 ? "bg-primary/10 border border-primary/20" : "hover:bg-secondary/30"
+                    }`}
+                  >
+                    <span className={`text-xs font-mono font-bold w-5 text-center shrink-0 ${
+                      i === 0 ? "text-primary" : i < 3 ? "text-foreground" : "text-muted-foreground"
+                    }`}>
+                      {i + 1}
+                    </span>
+                    <div className="w-7 h-7 rounded-full bg-secondary/50 border border-border overflow-hidden shrink-0 flex items-center justify-center">
+                      {dir.avatar ? (
+                        <img src={dir.avatar} alt={dir.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-[10px] font-bold text-muted-foreground">{dir.name.charAt(0).toUpperCase()}</span>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-medium text-foreground truncate">@{dir.name}</p>
+                      <p className="text-[10px] text-muted-foreground">{dir.entries} {dir.entries === 1 ? "entry" : "entries"}</p>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <Heart className="w-3 h-3 text-primary" />
+                      <span className="text-xs font-mono font-bold text-primary">{dir.totalVotes.toLocaleString()}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </AppLayout>
