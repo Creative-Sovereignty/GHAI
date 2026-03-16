@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { User, Camera, Lock, LogOut, Save, Loader2, Sun, Moon, Palette, Bell, BellOff, Send } from "lucide-react";
+import { User, Camera, Lock, LogOut, Save, Loader2, Sun, Moon, Palette, Bell, BellOff, Send, Video, FileText, Trophy } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
