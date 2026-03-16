@@ -43,6 +43,8 @@ const FestivalGallery = () => {
   const [showSearch, setShowSearch] = useState(false);
 
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [showConfetti, setShowConfetti] = useState(false);
+  const prevDiffRef = useRef<number | null>(null);
 
   const getNextSunday = useCallback(() => {
     const now = new Date();
@@ -54,6 +56,12 @@ const FestivalGallery = () => {
   useEffect(() => {
     const tick = () => {
       const diff = Math.max(0, getNextSunday() - Date.now());
+      // Detect when countdown hits zero (previous was >0, now is 0)
+      if (prevDiffRef.current !== null && prevDiffRef.current > 0 && diff === 0) {
+        setShowConfetti(true);
+        setTimeout(() => setShowConfetti(false), 5000);
+      }
+      prevDiffRef.current = diff;
       setCountdown({
         days: Math.floor(diff / 86400000),
         hours: Math.floor((diff % 86400000) / 3600000),
