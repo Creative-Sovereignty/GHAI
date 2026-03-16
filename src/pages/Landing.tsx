@@ -361,7 +361,7 @@ const Landing = () => {
             className="text-center mb-16">
             
             <h2 className="text-3xl sm:text-4xl font-display font-bold mb-4">
-              Simple <span className="rainbow-text">Pricing</span>
+              Simple <span className="text-gold-blue-shimmer">Pricing</span>
             </h2>
             <p className="text-muted-foreground">Start free. Upgrade when you're ready.</p>
           </motion.div>
