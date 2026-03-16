@@ -45,7 +45,7 @@ const Veo3 = () => {
         >
           <div className="flex items-center gap-2 mb-4">
             <Sparkles className="w-5 h-5 text-accent" />
-            <h2 className="font-display font-semibold !text-black ![-webkit-text-fill-color:black]">Generate Video</h2>
+            <h2 className="font-display font-semibold">Generate Video</h2>
           </div>
 
           <textarea
