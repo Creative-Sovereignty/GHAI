@@ -282,7 +282,7 @@ const Landing = () => {
             className="text-center mb-16">
             
             <h2 className="text-3xl sm:text-4xl font-display font-bold mb-4">
-              Everything You Need to <span className="rainbow-text">Create</span>
+              Everything You Need to <span className="text-gold-blue-shimmer">Create</span>
             </h2>
             <p className="text-muted-foreground max-w-xl mx-auto">
               A complete filmmaking toolkit powered by AI — from your first draft to final export.
