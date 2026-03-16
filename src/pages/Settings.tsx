@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 import { useNotifications } from "@/hooks/useNotifications";
+import { useNotificationPreferences } from "@/hooks/useNotificationPreferences";
 
 const Settings = () => {
   const { theme, toggleTheme } = useTheme();
