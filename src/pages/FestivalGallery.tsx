@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Trophy, Film, Sparkles, Play, Share2, Filter, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
