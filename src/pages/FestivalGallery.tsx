@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, Trophy, Film, Sparkles, Play, Share2, Filter, Search, Clock } from "lucide-react";
+import { Heart, Trophy, Film, Sparkles, Play, Share2, Filter, Search, Clock, Crown, Medal } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
@@ -173,6 +173,28 @@ const FestivalGallery = () => {
     return sorted;
   }, [entries, sortMode, searchQuery]);
 
+  const leaderboard = useMemo(() => {
+    const dirMap = new Map<string, { name: string; avatar: string | null; totalVotes: number; entries: number }>();
+    entries.forEach((e) => {
+      const key = e.user_id;
+      const existing = dirMap.get(key);
+      if (existing) {
+        existing.totalVotes += e.votes;
+        existing.entries += 1;
+      } else {
+        dirMap.set(key, {
+          name: e.profile?.display_name || "Anonymous",
+          avatar: e.profile?.avatar_url || null,
+          totalVotes: e.votes,
+          entries: 1,
+        });
+      }
+    });
+    return Array.from(dirMap.values())
+      .sort((a, b) => b.totalVotes - a.totalVotes)
+      .slice(0, 10);
+  }, [entries]);
+
   return (
     <AppLayout>
       <div className="flex-1 overflow-auto">
@@ -272,8 +294,10 @@ const FestivalGallery = () => {
           </div>
         </div>
 
-        {/* ── Submission Grid ── */}
-        <div className="p-6 md:p-8">
+        {/* ── Main Content + Leaderboard ── */}
+        <div className="flex gap-0">
+          {/* ── Submission Grid ── */}
+          <div className="flex-1 p-6 md:p-8 min-w-0">
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {Array.from({ length: 6 }).map((_, i) => (
@@ -399,6 +423,50 @@ const FestivalGallery = () => {
               ))}
             </motion.div>
           )}
+          </div>
+
+          {/* ── Leaderboard Sidebar ── */}
+          <div className="hidden lg:block w-72 shrink-0 border-l border-border bg-card/50 p-5">
+            <div className="flex items-center gap-2 mb-4">
+              <Crown className="w-4 h-4 text-primary" />
+              <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">Top Directors</h3>
+            </div>
+            {leaderboard.length === 0 ? (
+              <p className="text-xs text-muted-foreground">No entries yet.</p>
+            ) : (
+              <div className="space-y-2">
+                {leaderboard.map((dir, i) => (
+                  <div
+                    key={i}
+                    className={`flex items-center gap-3 p-2.5 rounded-lg transition-colors ${
+                      i === 0 ? "bg-primary/10 border border-primary/20" : "hover:bg-secondary/30"
+                    }`}
+                  >
+                    <span className={`text-xs font-mono font-bold w-5 text-center shrink-0 ${
+                      i === 0 ? "text-primary" : i < 3 ? "text-foreground" : "text-muted-foreground"
+                    }`}>
+                      {i + 1}
+                    </span>
+                    <div className="w-7 h-7 rounded-full bg-secondary/50 border border-border overflow-hidden shrink-0 flex items-center justify-center">
+                      {dir.avatar ? (
+                        <img src={dir.avatar} alt={dir.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-[10px] font-bold text-muted-foreground">{dir.name.charAt(0).toUpperCase()}</span>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-medium text-foreground truncate">@{dir.name}</p>
+                      <p className="text-[10px] text-muted-foreground">{dir.entries} {dir.entries === 1 ? "entry" : "entries"}</p>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <Heart className="w-3 h-3 text-primary" />
+                      <span className="text-xs font-mono font-bold text-primary">{dir.totalVotes.toLocaleString()}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </AppLayout>
