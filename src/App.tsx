@@ -73,6 +73,7 @@ const App = () => (
             </Suspense>
             <ChatWidget />
             <ScrollToTop />
+            <PWAInstallBanner />
           </BrowserRouter>
         </TooltipProvider>
       </AuthProvider>
