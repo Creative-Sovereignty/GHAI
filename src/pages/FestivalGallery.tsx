@@ -456,7 +456,7 @@ const FestivalGallery = () => {
                           {entry.shot?.description || "Untitled Shot"}
                         </p>
                         <p className="text-xs text-muted-foreground mt-0.5">
-                          Dir. @{entry.profile?.display_name || "Anonymous"}
+                          Dir. @{entry.director_name || "Anonymous"}
                         </p>
                         <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
                           <span className="flex items-center gap-1">
