@@ -80,8 +80,8 @@ const FestivalGallery = () => {
   const fetchEntries = async () => {
     setLoading(true);
     const { data: contestData, error } = await supabase
-      .from("contest_entries")
-      .select("*, shots(description, shot_type, scene_number, shot_code, thumbnail_url, video_url), profiles(display_name, avatar_url)")
+      .from("contest_entries_public" as any)
+      .select("*, shots(description, shot_type, scene_number, shot_code, thumbnail_url, video_url)")
       .order("votes", { ascending: false });
 
     if (error) {
@@ -102,11 +102,11 @@ const FestivalGallery = () => {
     const mapped: ContestEntry[] = (contestData || []).map((e: any) => ({
       id: e.id,
       shot_id: e.shot_id,
-      user_id: e.user_id,
       votes: e.votes,
       created_at: e.created_at,
+      director_name: e.director_name,
+      director_avatar: e.director_avatar,
       shot: e.shots,
-      profile: e.profiles,
       hasVoted: userVotes.has(e.id),
     }));
 
