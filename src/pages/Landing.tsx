@@ -187,20 +187,17 @@ const Landing = () => {
         {/* Radial vignette */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_40%,transparent_30%,var(--w3-void)_80%)]" />
 
+        {/* Watermark logo */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <img
+            src={logoImg}
+            alt=""
+            className="w-[80vw] h-[80vw] max-w-[700px] max-h-[700px] object-contain opacity-[0.06]"
+          />
+        </div>
+
         {/* Content */}
         <motion.div style={{ opacity }} className="relative z-10 max-w-5xl mx-auto text-center">
-          {/* Logo with parallax */}
-          <motion.div style={{ y: logoY }} className="relative">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,var(--w3-void)_0%,transparent_70%)] scale-150 pointer-events-none" />
-            <motion.img
-              src={logoImg}
-              alt="Golden Hour AI"
-              className="relative h-20 sm:h-28 md:h-36 mx-auto mb-6 object-contain drop-shadow-[0_0_24px_var(--gold-30)] opacity-90 logo-gold-ring"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 0.9, scale: 1 }}
-              transition={{ duration: 1, ease: "easeOut" }} />
-            
-          </motion.div>
 
           {/* Headline with parallax */}
           <motion.div style={{ y: textY }}>
