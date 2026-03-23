@@ -216,8 +216,11 @@
 
 @layer base {
   h1, h2, h3, h4, h5, h6 {
-    color: hsl(0 0% 0%);
-    -webkit-text-fill-color: hsl(0 0% 0%);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: hsl(var(--foreground));
+    -webkit-text-fill-color: hsl(var(--foreground));
     background: none;
     -webkit-background-clip: unset;
     background-clip: unset;
@@ -227,7 +230,21 @@
 
   .light h1, .light h2, .light h3, .light h4, .light h5, .light h6 {
     background: linear-gradient(90deg, #888, #e0e0e0, #aaa, #888);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
     filter: drop-shadow(0 0 4px rgba(200, 200, 200, 0.15));
+  }
+
+  .light [class*="bg-primary"] h1, .light [class*="bg-primary"] h2, .light [class*="bg-primary"] h3,
+  .light [class*="bg-primary"] h4, .light [class*="bg-primary"] h5, .light [class*="bg-primary"] h6,
+  .light [class*="bg-primary"] p, .light [class*="bg-primary"] span, .light [class*="bg-primary"] li {
+    color: hsl(0 0% 5%) !important;
+    -webkit-text-fill-color: hsl(0 0% 5%) !important;
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    background-clip: unset !important;
   }
 
   a[href*="install"], a[href="/install"] {
@@ -248,18 +265,6 @@
     font-family: var(--font-body);
     background-image: var(--gradient-mesh);
     background-attachment: fixed;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-heading);
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    color: hsl(0 0% 0%);
-    -webkit-text-fill-color: hsl(0 0% 0%);
-    background: none;
-    -webkit-background-clip: unset;
-    background-clip: unset;
-    filter: none;
   }
 }
 
