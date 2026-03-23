@@ -180,7 +180,7 @@ const Settings = () => {
                     <div>
                       <p className="text-foreground font-medium">Theme</p>
                       <p className="text-muted-foreground text-sm">
-                        {theme === "dark" ? "Dark mode" : "Light mode"} is active
+                        {theme === "dark" ? "Dark mode" : "Darker mode"} is active
                       </p>
                     </div>
                   </div>
