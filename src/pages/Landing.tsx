@@ -67,6 +67,7 @@ const StatPill = ({ value, label, delay }: {value: string;label: string;delay: n
 const Landing = () => {
   const heroRef = useRef<HTMLElement>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const logoY = useTransform(scrollYProgress, [0, 1], [0, -60]);
   const textY = useTransform(scrollYProgress, [0, 1], [0, -30]);
