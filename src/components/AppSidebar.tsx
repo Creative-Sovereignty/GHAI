@@ -31,6 +31,21 @@ const neonStyles: Record<string, { bg: string; text: string; bar: string; glow: 
   purple: { bg: "bg-[var(--neon-purple-10)]", text: "text-[var(--neon-purple)]", bar: "bg-[var(--neon-purple)]", glow: "shadow-[0_0_10px_var(--neon-purple-30)]" },
 };
 
+const ThemeToggle = ({ collapsed }: { collapsed: boolean }) => {
+  const { theme, toggleTheme } = useTheme();
+  const isDark = theme === "dark";
+  return (
+    <button
+      onClick={toggleTheme}
+      className="flex items-center gap-3 px-3 py-2.5 mx-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-[var(--neon-pink-05)] transition-all duration-200"
+      aria-label="Toggle theme"
+    >
+      {isDark ? <Sun className="w-5 h-5 shrink-0" /> : <Moon className="w-5 h-5 shrink-0" />}
+      {!collapsed && <span className="truncate">{isDark ? "Light Mode" : "Dark Mode"}</span>}
+    </button>
+  );
+};
+
 const NavContent = ({ collapsed, location, onNavigate }: { collapsed: boolean; location: ReturnType<typeof useLocation>; onNavigate?: () => void }) => (
   <nav className="flex-1 py-4 px-2 space-y-1 overflow-y-auto">
     {navItems.map((item) => {
