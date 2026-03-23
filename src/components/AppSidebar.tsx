@@ -129,6 +129,7 @@ const AppSidebar = () => {
                 <div className="border-t border-border py-2">
                   <ThemeToggle collapsed={false} />
                 </div>
+              </motion.aside>
             </>
           )}
         </AnimatePresence>
