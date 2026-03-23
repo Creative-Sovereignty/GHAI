@@ -159,13 +159,16 @@ const AppSidebar = () => {
 
       <NavContent collapsed={collapsed} location={location} />
 
-      {/* Collapse toggle */}
-      <button
-        onClick={() => setCollapsed(!collapsed)}
-        className="mx-2 mb-4 p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-[var(--neon-pink-05)] transition-colors flex items-center justify-center"
-      >
-        {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-      </button>
+      {/* Theme toggle + Collapse toggle */}
+      <div className="border-t border-border py-2 space-y-1">
+        <ThemeToggle collapsed={collapsed} />
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="mx-2 p-2 mb-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-[var(--neon-pink-05)] transition-colors flex items-center justify-center"
+        >
+          {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+        </button>
+      </div>
     </motion.aside>
   );
 };
