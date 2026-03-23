@@ -126,7 +126,9 @@ const AppSidebar = () => {
                   </button>
                 </div>
                 <NavContent collapsed={false} location={location} onNavigate={() => setMobileOpen(false)} />
-              </motion.aside>
+                <div className="border-t border-border py-2">
+                  <ThemeToggle collapsed={false} />
+                </div>
             </>
           )}
         </AnimatePresence>
