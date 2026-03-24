@@ -243,6 +243,22 @@ serve(async (req) => {
       );
     }
     const userId = claimsData.claims.sub as string;
+    const userEmail = claimsData.claims.email as string;
+
+    // Server-side subscription check
+    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+    if (stripeKey && userEmail) {
+      const { default: Stripe } = await import("https://esm.sh/stripe@18.5.0");
+      const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
+      const customers = await stripe.customers.list({ email: userEmail, limit: 1 });
+      if (customers.data.length === 0) {
+        return new Response(JSON.stringify({ error: "Subscription required. Please upgrade to Pro or Studio." }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      const subs = await stripe.subscriptions.list({ customer: customers.data[0].id, status: "active", limit: 1 });
+      if (subs.data.length === 0) {
+        return new Response(JSON.stringify({ error: "Subscription required. Please upgrade to Pro or Studio." }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+    }
 
     const { messages, projectContext, projectId } = await req.json();
 
