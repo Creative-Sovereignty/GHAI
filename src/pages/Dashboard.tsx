@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Play, Pause, Clock, Film, Music, FileText, TrendingUp, Trash2, LogOut, Download, X, Zap, ChevronDown, Video, Move, Maximize2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
