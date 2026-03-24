@@ -182,6 +182,7 @@ const AIMusic = () => {
           </div>
         </div>
       </div>
+      </PaywallGate>
     </AppLayout>
   );
 };

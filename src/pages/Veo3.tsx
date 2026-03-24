@@ -198,6 +198,7 @@ const Veo3 = () => {
           </div>
         </div>
       </div>
+      </PaywallGate>
     </AppLayout>
   );
 };
