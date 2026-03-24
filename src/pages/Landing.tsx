@@ -1,11 +1,14 @@
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { forwardRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Film, FileText, Music, Video, Image, ListChecks, Star, ArrowRight, Check, Sparkles, Zap, Shield, Menu, X, Sun, Moon } from "lucide-react";
 import logoImg from "@/assets/logo-circle.png";
 import { useRef, useState } from "react";
 import { useTheme } from "@/hooks/useTheme";
+import { useSubscription, TIERS } from "@/hooks/useSubscription";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const features = [
 { icon: FileText, title: "AI Script Editor", desc: "Write professional screenplays with AI-powered formatting and suggestions.", neon: "pink" },
