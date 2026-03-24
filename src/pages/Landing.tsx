@@ -1,11 +1,14 @@
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { forwardRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Film, FileText, Music, Video, Image, ListChecks, Star, ArrowRight, Check, Sparkles, Zap, Shield, Menu, X, Sun, Moon } from "lucide-react";
 import logoImg from "@/assets/logo-circle.png";
 import { useRef, useState } from "react";
 import { useTheme } from "@/hooks/useTheme";
+import { useSubscription, TIERS } from "@/hooks/useSubscription";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const features = [
 { icon: FileText, title: "AI Script Editor", desc: "Write professional screenplays with AI-powered formatting and suggestions.", neon: "pink" },
@@ -23,9 +26,9 @@ const testimonials = [
 
 
 const plans = [
-{ name: "Starter", price: "Free", features: ["1 Project", "Basic Script Editor", "5 AI Generations/mo", "No Credit Card Required"], cta: "Get Started", popular: false },
-{ name: "Pro", price: "$19/mo", features: ["Unlimited Projects", "Full Toolkit Access", "100 AI Generations/mo", "Priority Support", "HD Export"], cta: "Go Pro", popular: true },
-{ name: "Studio", price: "$49/mo", features: ["Everything in Pro", "Unlimited AI Generations", "4K Export", "Team Collaboration", "Dedicated Support"], cta: "Contact Sales", popular: false }];
+{ name: "Starter", price: "Free", features: ["1 Project", "Basic Script Editor", "5 AI Generations/mo", "No Credit Card Required"], cta: "Get Started", popular: false, priceId: null },
+{ name: "Pro", price: "$29/mo", features: ["Unlimited Projects", "Full Toolkit Access", "500 AI Generations/mo", "Veo 3 & AI Music", "HD Export"], cta: "Go Pro", popular: true, priceId: "price_1TEJMZ7pm1sWSXu2cMZxcH3J" },
+{ name: "Studio", price: "$79/mo", features: ["Everything in Pro", "Unlimited AI Generations", "4K Export", "Director AI", "Priority Support"], cta: "Go Studio", popular: false, priceId: "price_1TEJN07pm1sWSXu2GWmTPF5r" }];
 
 
 const neonColors: Record<string, string> = {
@@ -63,6 +66,45 @@ const StatPill = ({ value, label, delay }: {value: string;label: string;delay: n
     <p className="text-xs text-muted-foreground mt-0.5">{label}</p>
   </motion.div>;
 
+
+const PricingCTA = ({ plan }: { plan: typeof plans[number] }) => {
+  const { user } = useAuth();
+  const { startCheckout } = useSubscription();
+  const [loading, setLoading] = useState(false);
+
+  const handleClick = async () => {
+    if (!plan.priceId) return; // free tier → just link to auth
+    if (!user) {
+      window.location.href = "/auth";
+      return;
+    }
+    setLoading(true);
+    try {
+      await startCheckout(plan.priceId);
+    } catch {
+      toast.error("Could not start checkout. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!plan.priceId) {
+    return (
+      <Link to="/auth">
+        <Button className="w-full bg-secondary hover:bg-secondary/80">{plan.cta}</Button>
+      </Link>
+    );
+  }
+
+  return (
+    <Button
+      onClick={handleClick}
+      disabled={loading}
+      className={`w-full ${plan.popular ? "bg-primary hover:bg-primary/90 shadow-[0_0_15px_var(--neon-pink-30)]" : "bg-secondary hover:bg-secondary/80"}`}>
+      {loading ? "Redirecting…" : plan.cta}
+    </Button>
+  );
+};
 
 const Landing = () => {
   const heroRef = useRef<HTMLElement>(null);
@@ -395,11 +437,7 @@ const Landing = () => {
                     </li>
                 )}
                 </ul>
-                <Link to="/auth">
-                  <Button className={`w-full ${plan.popular ? "bg-primary hover:bg-primary/90 shadow-[0_0_15px_var(--neon-pink-30)]" : "bg-secondary hover:bg-secondary/80"}`}>
-                    {plan.cta}
-                  </Button>
-                </Link>
+                <PricingCTA plan={plan} />
               </motion.div>
             )}
           </div>

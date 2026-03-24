@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
 import { Badge } from "@/components/ui/badge";
 import AppLayout from "@/components/AppLayout";
+import PaywallGate from "@/components/PaywallGate";
 
 const styles = ["Cinematic", "Anime", "Photorealistic", "Surreal", "Documentary", "Noir", "Fantasy", "Abstract"];
 const aspectRatios = ["16:9", "9:16", "1:1", "4:3"];
@@ -25,6 +26,7 @@ const Veo3 = () => {
 
   return (
     <AppLayout>
+      <PaywallGate>
       <div className="p-6 lg:p-8 space-y-8">
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-3">
@@ -196,6 +198,7 @@ const Veo3 = () => {
           </div>
         </div>
       </div>
+      </PaywallGate>
     </AppLayout>
   );
 };

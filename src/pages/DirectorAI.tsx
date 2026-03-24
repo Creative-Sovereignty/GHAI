@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import AppLayout from "@/components/AppLayout";
+import PaywallGate from "@/components/PaywallGate";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useProjects } from "@/hooks/useProjects";
@@ -220,6 +221,7 @@ const DirectorAI = () => {
 
   return (
     <AppLayout>
+      <PaywallGate requiredTier={["studio"]}>
       <div className="flex flex-col h-[calc(100vh-2rem)] max-h-[calc(100vh-2rem)]">
         {/* Header */}
         <div className="shrink-0 p-4 border-b border-border">
@@ -359,6 +361,7 @@ const DirectorAI = () => {
           </div>
         </div>
       </div>
+      </PaywallGate>
     </AppLayout>
   );
 };
