@@ -62,8 +62,11 @@ export function useSubscription() {
     const { data, error } = await supabase.functions.invoke("create-checkout", {
       body: { priceId },
     });
+    console.log("create-checkout response:", { data, error });
     if (error) throw error;
-    if (data?.url) window.open(data.url, "_blank");
+    const parsed = typeof data === "string" ? JSON.parse(data) : data;
+    if (parsed?.error) throw new Error(parsed.error);
+    if (parsed?.url) window.open(parsed.url, "_blank");
   };
 
   const openPortal = async () => {
