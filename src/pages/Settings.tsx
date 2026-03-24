@@ -24,6 +24,7 @@ const Settings = () => {
   const { user, signOut } = useAuth();
   const { permission, isSubscribed, loading: notifLoading, subscribe, unsubscribe, sendTestNotification, supported: pushSupported } = useNotifications();
   const { prefs, loading: prefsLoading, updatePref } = useNotificationPreferences();
+  const { subscribed: hasSub, tier, subscriptionEnd, loading: subLoading, openPortal, startCheckout } = useSubscription();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
