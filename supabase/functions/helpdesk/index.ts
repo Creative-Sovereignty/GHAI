@@ -39,6 +39,21 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
+    // Try to get user from auth header
+    let userId: string | null = null;
+    let userEmail: string | null = null;
+    const authHeader = req.headers.get("Authorization");
+    if (authHeader?.startsWith("Bearer ")) {
+      try {
+        const supabaseAuth = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, { global: { headers: { Authorization: authHeader } } });
+        const { data: { user } } = await supabaseAuth.auth.getUser();
+        if (user) {
+          userId = user.id;
+          userEmail = user.email || null;
+        }
+      } catch { /* anonymous access ok for helpdesk */ }
+    }
+
     // Handle ticket creation
     if (createTicket) {
       const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -48,7 +63,8 @@ serve(async (req) => {
       const { error } = await supabase.from("support_tickets").insert({
         subject: createTicket.subject,
         description: createTicket.description,
-        email: createTicket.email || null,
+        email: createTicket.email || userEmail || null,
+        user_id: userId,
         status: "open",
       });
 
