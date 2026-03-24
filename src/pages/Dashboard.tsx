@@ -49,11 +49,25 @@ interface BeforeInstallPromptEvent extends Event {
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { data: projects, isLoading } = useProjects();
   const createProject = useCreateProject();
   const deleteProject = useDeleteProject();
   const { signOut } = useAuth();
   const { toast } = useToast();
+
+  useEffect(() => {
+    const checkout = searchParams.get("checkout");
+    if (checkout === "success") {
+      toast({ title: "🎉 Subscription activated!", description: "Welcome to the premium experience." });
+      searchParams.delete("checkout");
+      setSearchParams(searchParams, { replace: true });
+    } else if (checkout === "canceled") {
+      toast({ title: "Checkout canceled", description: "No charges were made." });
+      searchParams.delete("checkout");
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, []);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
