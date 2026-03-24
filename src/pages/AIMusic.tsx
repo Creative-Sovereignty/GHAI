@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
 import { Badge } from "@/components/ui/badge";
 import AppLayout from "@/components/AppLayout";
+import PaywallGate from "@/components/PaywallGate";
 
 const genres = ["Cinematic", "Ambient", "Electronic", "Orchestral", "Lo-Fi", "Suspense", "Action", "Romantic"];
 const moods = ["Tense", "Uplifting", "Melancholic", "Mysterious", "Energetic", "Peaceful", "Dark", "Triumphant"];
