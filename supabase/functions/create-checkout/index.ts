@@ -32,16 +32,18 @@ serve(async (req) => {
     });
 
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
-    let customerId: string | undefined;
+    let customerId: string;
     if (customers.data.length > 0) {
       customerId = customers.data[0].id;
+    } else {
+      const newCustomer = await stripe.customers.create({ email: user.email });
+      customerId = newCustomer.id;
     }
 
     const origin = req.headers.get("origin") || "https://gldhourai.lovable.app";
 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
-      customer_email: customerId ? undefined : user.email,
       line_items: [{ price: priceId, quantity: 1 }],
       mode: "subscription",
       success_url: `${origin}/dashboard?checkout=success`,
