@@ -221,6 +221,7 @@ const DirectorAI = () => {
 
   return (
     <AppLayout>
+      <PaywallGate requiredTier={["studio"]}>
       <div className="flex flex-col h-[calc(100vh-2rem)] max-h-[calc(100vh-2rem)]">
         {/* Header */}
         <div className="shrink-0 p-4 border-b border-border">
