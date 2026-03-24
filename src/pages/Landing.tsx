@@ -67,6 +67,45 @@ const StatPill = ({ value, label, delay }: {value: string;label: string;delay: n
   </motion.div>;
 
 
+const PricingCTA = ({ plan }: { plan: typeof plans[number] }) => {
+  const { user } = useAuth();
+  const { startCheckout } = useSubscription();
+  const [loading, setLoading] = useState(false);
+
+  const handleClick = async () => {
+    if (!plan.priceId) return; // free tier → just link to auth
+    if (!user) {
+      window.location.href = "/auth";
+      return;
+    }
+    setLoading(true);
+    try {
+      await startCheckout(plan.priceId);
+    } catch {
+      toast.error("Could not start checkout. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!plan.priceId) {
+    return (
+      <Link to="/auth">
+        <Button className="w-full bg-secondary hover:bg-secondary/80">{plan.cta}</Button>
+      </Link>
+    );
+  }
+
+  return (
+    <Button
+      onClick={handleClick}
+      disabled={loading}
+      className={`w-full ${plan.popular ? "bg-primary hover:bg-primary/90 shadow-[0_0_15px_var(--neon-pink-30)]" : "bg-secondary hover:bg-secondary/80"}`}>
+      {loading ? "Redirecting…" : plan.cta}
+    </Button>
+  );
+};
+
 const Landing = () => {
   const heroRef = useRef<HTMLElement>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
