@@ -398,11 +398,7 @@ const Landing = () => {
                     </li>
                 )}
                 </ul>
-                <Link to="/auth">
-                  <Button className={`w-full ${plan.popular ? "bg-primary hover:bg-primary/90 shadow-[0_0_15px_var(--neon-pink-30)]" : "bg-secondary hover:bg-secondary/80"}`}>
-                    {plan.cta}
-                  </Button>
-                </Link>
+                <PricingCTA plan={plan} />
               </motion.div>
             )}
           </div>
