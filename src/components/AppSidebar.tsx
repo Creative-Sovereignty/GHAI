@@ -4,11 +4,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, FileText, Image, ListChecks, Film, Video, Music, Settings,
   ChevronLeft, ChevronRight, BarChart3, BookOpen, Menu, X, Clapperboard, Trophy,
-  Sun, Moon,
+  Sun, Moon, Crown,
 } from "lucide-react";
 import logoImg from "@/assets/logo-circle.png";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTheme } from "@/hooks/useTheme";
+import { useSubscription } from "@/hooks/useSubscription";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard", neon: "pink" },
@@ -29,6 +30,28 @@ const neonStyles: Record<string, { bg: string; text: string; bar: string; glow: 
   pink: { bg: "bg-[var(--neon-pink-10)]", text: "text-[var(--neon-pink)]", bar: "bg-[var(--neon-pink)]", glow: "shadow-[0_0_10px_var(--neon-pink-30)]" },
   cyan: { bg: "bg-[var(--neon-cyan-10)]", text: "text-[var(--neon-cyan)]", bar: "bg-[var(--neon-cyan)]", glow: "shadow-[0_0_10px_var(--neon-cyan-30)]" },
   purple: { bg: "bg-[var(--neon-purple-10)]", text: "text-[var(--neon-purple)]", bar: "bg-[var(--neon-purple)]", glow: "shadow-[0_0_10px_var(--neon-purple-30)]" },
+};
+
+const tierBadgeStyles: Record<string, { bg: string; text: string; glow: string }> = {
+  free: { bg: "bg-muted", text: "text-muted-foreground", glow: "" },
+  pro: { bg: "bg-[var(--neon-pink-10)]", text: "text-[var(--neon-pink)]", glow: "shadow-[0_0_8px_var(--neon-pink-30)]" },
+  studio: { bg: "bg-[var(--neon-purple-10)]", text: "text-[var(--neon-purple)]", glow: "shadow-[0_0_8px_var(--neon-purple-30)]" },
+};
+
+const PlanBadge = ({ collapsed }: { collapsed: boolean }) => {
+  const { tier, loading } = useSubscription();
+  if (loading) return null;
+  const label = tier === "free" ? "Free" : tier === "pro" ? "Pro" : "Studio";
+  const styles = tierBadgeStyles[tier] || tierBadgeStyles.free;
+  return (
+    <Link
+      to="/settings"
+      className={`flex items-center gap-2 px-3 py-2 mx-2 rounded-lg text-xs font-semibold transition-all duration-200 hover:opacity-80 ${styles.bg} ${styles.text} ${styles.glow}`}
+    >
+      <Crown className="w-4 h-4 shrink-0" />
+      {!collapsed && <span className="truncate">{label} Plan</span>}
+    </Link>
+  );
 };
 
 const ThemeToggle = ({ collapsed }: { collapsed: boolean }) => {
@@ -126,7 +149,8 @@ const AppSidebar = () => {
                   </button>
                 </div>
                 <NavContent collapsed={false} location={location} onNavigate={() => setMobileOpen(false)} />
-                <div className="border-t border-border py-2">
+                <div className="border-t border-border py-2 space-y-1">
+                  <PlanBadge collapsed={false} />
                   <ThemeToggle collapsed={false} />
                 </div>
               </motion.aside>
@@ -161,7 +185,7 @@ const AppSidebar = () => {
 
       {/* Theme toggle + Collapse toggle */}
       <div className="border-t border-border py-2 space-y-1">
-        <ThemeToggle collapsed={collapsed} />
+        <PlanBadge collapsed={collapsed} />
         <button
           onClick={() => setCollapsed(!collapsed)}
           className="mx-2 p-2 mb-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-[var(--neon-pink-05)] transition-colors flex items-center justify-center"
