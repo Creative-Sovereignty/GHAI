@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
 import { Badge } from "@/components/ui/badge";
 import AppLayout from "@/components/AppLayout";
+import PaywallGate from "@/components/PaywallGate";
 
 const styles = ["Cinematic", "Anime", "Photorealistic", "Surreal", "Documentary", "Noir", "Fantasy", "Abstract"];
 const aspectRatios = ["16:9", "9:16", "1:1", "4:3"];
