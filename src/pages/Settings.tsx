@@ -457,6 +457,54 @@ const Settings = () => {
                 )}
               </div>
             </TabsContent>
+
+            {/* ─── SUBSCRIPTION TAB ─── */}
+            <TabsContent value="subscription">
+              <div className="space-y-6">
+                {subLoading ? (
+                  <div className="flex items-center justify-center py-12">
+                    <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                  </div>
+                ) : hasSub ? (
+                  <div className="space-y-4">
+                    <div className="p-4 rounded-lg bg-primary/10 border border-primary/30">
+                      <p className="text-foreground font-medium">
+                        Current Plan: <span className="text-primary capitalize">{tier}</span>
+                      </p>
+                      {subscriptionEnd && (
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Renews on {new Date(subscriptionEnd).toLocaleDateString()}
+                        </p>
+                      )}
+                    </div>
+                    <Button onClick={openPortal} variant="outline" className="border-border">
+                      <CreditCard className="w-4 h-4 mr-2" />
+                      Manage Subscription
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <p className="text-muted-foreground">You're on the free plan. Upgrade to unlock premium AI tools.</p>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div className="p-4 rounded-lg bg-secondary/30 border border-border space-y-3">
+                        <h3 className="font-bold text-foreground">Pro</h3>
+                        <p className="text-2xl font-bold text-foreground">{TIERS.pro.price}</p>
+                        <Button onClick={() => startCheckout(TIERS.pro.price_id)} className="w-full bg-primary hover:bg-primary/90">
+                          Upgrade to Pro
+                        </Button>
+                      </div>
+                      <div className="p-4 rounded-lg bg-secondary/30 border border-border space-y-3">
+                        <h3 className="font-bold text-foreground">Studio</h3>
+                        <p className="text-2xl font-bold text-foreground">{TIERS.studio.price}</p>
+                        <Button onClick={() => startCheckout(TIERS.studio.price_id)} variant="outline" className="w-full border-border">
+                          Upgrade to Studio
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </TabsContent>
           </Tabs>
         </motion.div>
       </div>
