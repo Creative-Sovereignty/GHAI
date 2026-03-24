@@ -149,7 +149,8 @@ const AppSidebar = () => {
                   </button>
                 </div>
                 <NavContent collapsed={false} location={location} onNavigate={() => setMobileOpen(false)} />
-                <div className="border-t border-border py-2">
+                <div className="border-t border-border py-2 space-y-1">
+                  <PlanBadge collapsed={false} />
                   <ThemeToggle collapsed={false} />
                 </div>
               </motion.aside>
