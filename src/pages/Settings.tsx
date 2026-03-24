@@ -171,6 +171,10 @@ const Settings = () => {
                 <Bell className="w-4 h-4 mr-2" />
                 Notifications
               </TabsTrigger>
+              <TabsTrigger value="subscription" className="data-[state=active]:bg-primary/20 data-[state=active]:text-primary">
+                <CreditCard className="w-4 h-4 mr-2" />
+                Plan
+              </TabsTrigger>
             </TabsList>
 
             {/* ─── APPEARANCE TAB ─── */}
