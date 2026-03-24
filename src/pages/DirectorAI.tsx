@@ -361,6 +361,7 @@ const DirectorAI = () => {
           </div>
         </div>
       </div>
+      </PaywallGate>
     </AppLayout>
   );
 };
