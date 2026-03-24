@@ -4,11 +4,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, FileText, Image, ListChecks, Film, Video, Music, Settings,
   ChevronLeft, ChevronRight, BarChart3, BookOpen, Menu, X, Clapperboard, Trophy,
-  Sun, Moon,
+  Sun, Moon, Crown,
 } from "lucide-react";
 import logoImg from "@/assets/logo-circle.png";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTheme } from "@/hooks/useTheme";
+import { useSubscription } from "@/hooks/useSubscription";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard", neon: "pink" },
