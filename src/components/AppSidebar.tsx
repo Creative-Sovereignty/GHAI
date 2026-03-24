@@ -32,6 +32,28 @@ const neonStyles: Record<string, { bg: string; text: string; bar: string; glow: 
   purple: { bg: "bg-[var(--neon-purple-10)]", text: "text-[var(--neon-purple)]", bar: "bg-[var(--neon-purple)]", glow: "shadow-[0_0_10px_var(--neon-purple-30)]" },
 };
 
+const tierBadgeStyles: Record<string, { bg: string; text: string; glow: string }> = {
+  free: { bg: "bg-muted", text: "text-muted-foreground", glow: "" },
+  pro: { bg: "bg-[var(--neon-pink-10)]", text: "text-[var(--neon-pink)]", glow: "shadow-[0_0_8px_var(--neon-pink-30)]" },
+  studio: { bg: "bg-[var(--neon-purple-10)]", text: "text-[var(--neon-purple)]", glow: "shadow-[0_0_8px_var(--neon-purple-30)]" },
+};
+
+const PlanBadge = ({ collapsed }: { collapsed: boolean }) => {
+  const { tier, loading } = useSubscription();
+  if (loading) return null;
+  const label = tier === "free" ? "Free" : tier === "pro" ? "Pro" : "Studio";
+  const styles = tierBadgeStyles[tier] || tierBadgeStyles.free;
+  return (
+    <Link
+      to="/settings"
+      className={`flex items-center gap-2 px-3 py-2 mx-2 rounded-lg text-xs font-semibold transition-all duration-200 hover:opacity-80 ${styles.bg} ${styles.text} ${styles.glow}`}
+    >
+      <Crown className="w-4 h-4 shrink-0" />
+      {!collapsed && <span className="truncate">{label} Plan</span>}
+    </Link>
+  );
+};
+
 const ThemeToggle = ({ collapsed }: { collapsed: boolean }) => {
   const { theme, toggleTheme } = useTheme();
   const isDark = theme === "dark";
