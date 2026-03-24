@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useNotificationPreferences } from "@/hooks/useNotificationPreferences";
+import { useSubscription, TIERS } from "@/hooks/useSubscription";
 
 const Settings = () => {
   const { theme, toggleTheme } = useTheme();
