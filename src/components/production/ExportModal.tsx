@@ -178,7 +178,7 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
               <Share2 className="w-3.5 h-3.5" />
               Share to Social
             </Label>
-            <div className="flex items-center gap-2">
+            <div className="grid grid-cols-2 gap-2">
               {[
                 { icon: Youtube, label: "YouTube", color: "hover:text-red-500", url: "https://studio.youtube.com/channel/upload" },
                 { icon: Instagram, label: "Instagram", color: "hover:text-pink-500", url: "https://www.instagram.com/" },
