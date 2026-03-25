@@ -5,7 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Download, Trophy, Info, Loader2, Clapperboard } from "lucide-react";
+import { Download, Trophy, Info, Loader2, Clapperboard, Share2, Youtube, Instagram, Twitter } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
@@ -171,6 +171,39 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
               onCheckedChange={setSubmitToFest}
               disabled={!selectedShotId}
             />
+          </div>
+          {/* Share to Social */}
+          <div className="space-y-2">
+            <Label className="text-sm text-muted-foreground flex items-center gap-1.5">
+              <Share2 className="w-3.5 h-3.5" />
+              Share to Social
+            </Label>
+            <div className="flex items-center gap-2">
+              {[
+                { icon: Youtube, label: "YouTube", color: "hover:text-red-500", url: "https://studio.youtube.com/channel/upload" },
+                { icon: Instagram, label: "Instagram", color: "hover:text-pink-500", url: "https://www.instagram.com/" },
+                { icon: Twitter, label: "X / Twitter", color: "hover:text-sky-400", url: "https://twitter.com/compose/tweet" },
+              ].map((platform) => (
+                <TooltipProvider key={platform.label} delayDuration={200}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={`flex-1 gap-1.5 ${platform.color} transition-colors`}
+                        onClick={() => window.open(platform.url, "_blank")}
+                      >
+                        <platform.icon className="w-4 h-4" />
+                        <span className="text-xs">{platform.label}</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="text-xs">
+                      Open {platform.label} to upload
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              ))}
+            </div>
           </div>
         </div>
 
