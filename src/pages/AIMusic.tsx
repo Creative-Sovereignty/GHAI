@@ -1,27 +1,115 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Music, Play, Pause, Download, Wand2, Clock, RefreshCw, Volume2, Sparkles } from "lucide-react";
+import { Music, Play, Pause, Download, Wand2, Clock, RefreshCw, Volume2, Sparkles, Loader2, Square } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
 import { Badge } from "@/components/ui/badge";
 import AppLayout from "@/components/AppLayout";
 import PaywallGate from "@/components/PaywallGate";
+import { toast } from "sonner";
 
 const genres = ["Cinematic", "Ambient", "Electronic", "Orchestral", "Lo-Fi", "Suspense", "Action", "Romantic"];
 const moods = ["Tense", "Uplifting", "Melancholic", "Mysterious", "Energetic", "Peaceful", "Dark", "Triumphant"];
 
-const generatedTracks = [
-  { id: 1, name: "Neon Pulse", genre: "Electronic", mood: "Tense", duration: "1:32", bpm: 128 },
-  { id: 2, name: "Midnight Rain", genre: "Ambient", mood: "Melancholic", duration: "2:15", bpm: 80 },
-  { id: 3, name: "City Chase", genre: "Action", mood: "Energetic", duration: "1:48", bpm: 145 },
-  { id: 4, name: "Quiet Resolve", genre: "Cinematic", mood: "Mysterious", duration: "2:30", bpm: 92 },
-];
+interface GeneratedTrack {
+  id: string;
+  name: string;
+  genre: string;
+  mood: string;
+  duration: string;
+  bpm: number;
+  audioUrl: string;
+  prompt: string;
+}
 
 const AIMusic = () => {
   const [prompt, setPrompt] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("Cinematic");
   const [selectedMood, setSelectedMood] = useState("Tense");
-  const [playingId, setPlayingId] = useState<number | null>(null);
+  const [selectedDuration, setSelectedDuration] = useState(30);
+  const [bpm, setBpm] = useState(120);
+  const [playingId, setPlayingId] = useState<string | null>(null);
+  const [generating, setGenerating] = useState(false);
+  const [tracks, setTracks] = useState<GeneratedTrack[]>([]);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const buildPrompt = () => {
+    const parts = [prompt || "background music"];
+    parts.push(`${selectedGenre} genre`);
+    parts.push(`${selectedMood.toLowerCase()} mood`);
+    parts.push(`${bpm} BPM`);
+    return parts.join(", ");
+  };
+
+  const handleGenerate = async () => {
+    setGenerating(true);
+    const fullPrompt = buildPrompt();
+
+    try {
+      trackEvent("music_generate", { genre: selectedGenre, mood: selectedMood, prompt_length: prompt.length });
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-music`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({ prompt: fullPrompt, duration: selectedDuration, type: "music" }),
+        }
+      );
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({ error: "Generation failed" }));
+        throw new Error(err.error || "Generation failed");
+      }
+
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+
+      const newTrack: GeneratedTrack = {
+        id: `t-${Date.now()}`,
+        name: prompt ? prompt.substring(0, 30) : `${selectedMood} ${selectedGenre}`,
+        genre: selectedGenre,
+        mood: selectedMood,
+        duration: `${Math.floor(selectedDuration / 60)}:${(selectedDuration % 60).toString().padStart(2, "0")}`,
+        bpm,
+        audioUrl,
+        prompt: fullPrompt,
+      };
+
+      setTracks((prev) => [newTrack, ...prev]);
+      toast.success("Track generated successfully!");
+    } catch (error: any) {
+      console.error("Music generation error:", error);
+      toast.error(error.message || "Failed to generate music");
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const togglePlay = (track: GeneratedTrack) => {
+    if (playingId === track.id) {
+      audioRef.current?.pause();
+      setPlayingId(null);
+    } else {
+      if (audioRef.current) audioRef.current.pause();
+      const audio = new Audio(track.audioUrl);
+      audio.onended = () => setPlayingId(null);
+      audio.play();
+      audioRef.current = audio;
+      setPlayingId(track.id);
+    }
+  };
+
+  const handleDownload = (track: GeneratedTrack) => {
+    const a = document.createElement("a");
+    a.href = track.audioUrl;
+    a.download = `${track.name.replace(/\s+/g, "_")}.mp3`;
+    a.click();
+  };
 
   return (
     <AppLayout>
@@ -29,10 +117,7 @@ const AIMusic = () => {
       <div className="p-6 lg:p-8 space-y-8">
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
           <h1 className="font-display text-2xl font-bold text-gold-blue-shimmer">AI Music Generator</h1>
-          <div className="flex items-center gap-2 mt-1">
-            <p className="text-sm text-muted-foreground">Generate custom soundtracks for your shorts</p>
-            <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/20">Coming Soon</span>
-          </div>
+          <p className="text-sm text-muted-foreground mt-1">Generate custom soundtracks for your shorts — powered by ElevenLabs</p>
         </motion.div>
 
         {/* Generator Panel */}
@@ -95,95 +180,106 @@ const AIMusic = () => {
           </div>
 
           {/* Duration + Generate */}
-          <div className="mt-6 flex items-center justify-between">
+          <div className="mt-6 flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-4">
               <div>
                 <p className="text-xs text-muted-foreground mb-1">Duration</p>
-                <select className="bg-secondary text-foreground border border-[var(--neo-border)] rounded-lg px-3 py-1.5 text-sm outline-none focus:border-[var(--neon-purple-30)]">
-                  <option>30 seconds</option>
-                  <option>1 minute</option>
-                  <option>2 minutes</option>
-                  <option>3 minutes</option>
+                <select
+                  value={selectedDuration}
+                  onChange={(e) => setSelectedDuration(Number(e.target.value))}
+                  className="bg-secondary text-foreground border border-[var(--neo-border)] rounded-lg px-3 py-1.5 text-sm outline-none focus:border-[var(--neon-purple-30)]"
+                >
+                  <option value={15}>15 seconds</option>
+                  <option value={30}>30 seconds</option>
+                  <option value={60}>1 minute</option>
+                  <option value={120}>2 minutes</option>
                 </select>
               </div>
               <div>
                 <p className="text-xs text-muted-foreground mb-1">BPM</p>
                 <input
                   type="number"
-                  defaultValue={120}
+                  value={bpm}
+                  onChange={(e) => setBpm(Number(e.target.value))}
                   className="w-20 bg-secondary text-foreground border border-[var(--neo-border)] rounded-lg px-3 py-1.5 text-sm outline-none focus:border-[var(--neon-purple-30)]"
                 />
               </div>
             </div>
-            <Button variant="glow" size="lg" disabled onClick={() => trackEvent("music_generate", { genre: selectedGenre, mood: selectedMood, prompt_length: prompt.length })}>
-              <Wand2 className="w-4 h-4" /> Coming Soon
+            <Button
+              variant="glow"
+              size="lg"
+              disabled={generating}
+              onClick={handleGenerate}
+            >
+              {generating ? (
+                <><Loader2 className="w-4 h-4 animate-spin" /> Generating…</>
+              ) : (
+                <><Wand2 className="w-4 h-4" /> Generate Track</>
+              )}
             </Button>
           </div>
         </motion.div>
 
         {/* Generated Tracks Library */}
-        <div>
-          <h2 className="font-display text-lg font-semibold mb-4">Generated Tracks</h2>
-          <div className="space-y-3">
-            {generatedTracks.map((track, index) => (
-              <motion.div
-                key={track.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.05 }}
-                className="neo-card rounded-xl p-4 flex items-center gap-4 hover:border-[var(--neon-purple-30)] hover:shadow-[0_0_20px_var(--neon-purple-10)] transition-all group"
-              >
-                <button
-                  onClick={() => setPlayingId(playingId === track.id ? null : track.id)}
-                  className="w-10 h-10 rounded-full bg-[var(--neon-purple-10)] flex items-center justify-center shrink-0 group-hover:bg-[var(--neon-purple-30)] group-hover:shadow-[0_0_12px_var(--neon-purple-30)] transition-all"
+        {tracks.length > 0 && (
+          <div>
+            <h2 className="font-display text-lg font-semibold mb-4">Generated Tracks</h2>
+            <div className="space-y-3">
+              {tracks.map((track, index) => (
+                <motion.div
+                  key={track.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="neo-card rounded-xl p-4 flex items-center gap-4 hover:border-[var(--neon-purple-30)] hover:shadow-[0_0_20px_var(--neon-purple-10)] transition-all group"
                 >
-                  {playingId === track.id ? (
-                    <Pause className="w-4 h-4 text-[var(--neon-purple)]" />
-                  ) : (
-                    <Play className="w-4 h-4 text-[var(--neon-purple)] ml-0.5" />
-                  )}
-                </button>
+                  <button
+                    onClick={() => togglePlay(track)}
+                    className="w-10 h-10 rounded-full bg-[var(--neon-purple-10)] flex items-center justify-center shrink-0 group-hover:bg-[var(--neon-purple-30)] group-hover:shadow-[0_0_12px_var(--neon-purple-30)] transition-all"
+                  >
+                    {playingId === track.id ? (
+                      <Pause className="w-4 h-4 text-[var(--neon-purple)]" />
+                    ) : (
+                      <Play className="w-4 h-4 text-[var(--neon-purple)] ml-0.5" />
+                    )}
+                  </button>
 
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-medium text-sm">{track.name}</h3>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Badge className="bg-[var(--neon-purple-10)] text-[var(--neon-purple)] border-[var(--neon-purple-30)] text-[10px]">{track.genre}</Badge>
-                    <Badge className="bg-[var(--neon-cyan-10)] text-[var(--neon-cyan)] border-[var(--neon-cyan-30)] text-[10px]">{track.mood}</Badge>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-medium text-sm truncate">{track.name}</h3>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Badge className="bg-[var(--neon-purple-10)] text-[var(--neon-purple)] border-[var(--neon-purple-30)] text-[10px]">{track.genre}</Badge>
+                      <Badge className="bg-[var(--neon-cyan-10)] text-[var(--neon-cyan)] border-[var(--neon-cyan-30)] text-[10px]">{track.mood}</Badge>
+                    </div>
                   </div>
-                </div>
 
-                {/* Waveform placeholder */}
-                <div className="hidden md:flex items-center gap-[2px] h-8 flex-1 max-w-xs">
-                  {Array.from({ length: 40 }).map((_, i) => (
-                    <div
-                      key={i}
-                      className={`w-1 rounded-full transition-all ${
-                        playingId === track.id ? "bg-[var(--neon-purple)]" : "bg-muted-foreground/20"
-                      }`}
-                      style={{ height: `${Math.random() * 80 + 20}%`, animationDelay: `${i * 50}ms` }}
-                    />
-                  ))}
-                </div>
+                  <div className="flex items-center gap-4 shrink-0">
+                    <span className="text-xs text-muted-foreground flex items-center gap-1">
+                      <Clock className="w-3 h-3" /> {track.duration}
+                    </span>
+                    <span className="text-xs text-muted-foreground">{track.bpm} BPM</span>
+                  </div>
 
-                <div className="flex items-center gap-4 shrink-0">
-                  <span className="text-xs text-muted-foreground flex items-center gap-1">
-                    <Clock className="w-3 h-3" /> {track.duration}
-                  </span>
-                  <span className="text-xs text-muted-foreground">{track.bpm} BPM</span>
-                </div>
-
-                <div className="flex items-center gap-1 shrink-0">
-                  <button className="p-2 rounded-lg hover:bg-[var(--neon-purple-10)] text-muted-foreground hover:text-foreground transition-colors">
-                    <RefreshCw className="w-4 h-4" />
-                  </button>
-                  <button className="p-2 rounded-lg hover:bg-[var(--neon-purple-10)] text-muted-foreground hover:text-foreground transition-colors">
-                    <Download className="w-4 h-4" />
-                  </button>
-                </div>
-              </motion.div>
-            ))}
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      onClick={() => handleDownload(track)}
+                      className="p-2 rounded-lg hover:bg-[var(--neon-purple-10)] text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      <Download className="w-4 h-4" />
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
+
+        {tracks.length === 0 && (
+          <div className="text-center py-12 text-muted-foreground/50">
+            <Music className="w-10 h-10 mx-auto mb-3 opacity-30" />
+            <p className="text-sm">No tracks generated yet</p>
+            <p className="text-xs mt-1">Describe your music above and hit Generate</p>
+          </div>
+        )}
       </div>
       </PaywallGate>
     </AppLayout>
