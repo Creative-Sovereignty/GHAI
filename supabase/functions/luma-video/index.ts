@@ -8,6 +8,7 @@ const corsHeaders = {
 };
 
 const LUMA_API_BASE = "https://api.lumalabs.ai/dream-machine/v1";
+const CREDIT_COST = 10;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -30,22 +31,22 @@ serve(async (req) => {
       { global: { headers: { Authorization: authHeader } } }
     );
 
-    const token = authHeader.replace("Bearer ", "");
-    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims) {
+    const { data: { user }, error: userError } = await supabaseAuth.auth.getUser();
+    if (userError || !user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    const userId = claimsData.claims.sub;
+    const userId = user.id;
 
-    // Credit check (10 credits for video)
+    // Service role client for credit operations
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    // Credit check
     const { data: credits } = await supabase
       .from("user_credits")
       .select("balance")
@@ -53,9 +54,9 @@ serve(async (req) => {
       .maybeSingle();
 
     const balance = credits?.balance ?? 100;
-    if (balance < 10) {
+    if (balance < CREDIT_COST) {
       return new Response(
-        JSON.stringify({ error: "Insufficient credits. Video generation costs 10 credits." }),
+        JSON.stringify({ error: `Insufficient credits. Video generation costs ${CREDIT_COST} credits.` }),
         { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -65,13 +66,7 @@ serve(async (req) => {
       throw new Error("LUMA_API_KEY is not configured");
     }
 
-    const { prompt, style, aspectRatio, action } = await req.json();
-
-    // Poll action — check generation status
-    if (action === "poll") {
-      const { generationId } = await req.json().catch(() => ({ generationId: null }));
-      // Re-parse since we already consumed the body
-    }
+    const { prompt, style, aspectRatio } = await req.json();
 
     if (!prompt || typeof prompt !== "string" || prompt.trim().length === 0) {
       return new Response(JSON.stringify({ error: "Prompt is required" }), {
@@ -165,13 +160,13 @@ serve(async (req) => {
     // Deduct credits
     await supabase
       .from("user_credits")
-      .update({ balance: balance - 10 })
+      .update({ balance: balance - CREDIT_COST })
       .eq("user_id", userId);
 
     // Log transaction
     await supabase.from("credit_transactions").insert({
       user_id: userId,
-      amount: -10,
+      amount: -CREDIT_COST,
       action_type: "video_generation",
     });
 
