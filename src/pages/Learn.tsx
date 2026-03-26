@@ -337,8 +337,11 @@ const Learn = () => {
         </div>
 
         {/* Footer nav */}
-        <div className="flex justify-center pt-4 pb-8">
-          <Button variant="outline" size="sm" onClick={() => navigate(user ? "/dashboard" : "/")}>
+        <div className="flex flex-col items-center gap-2 pt-4 pb-8">
+          <Button variant="outline" size="sm" onClick={() => navigate("/faq")}>
+            ❓ View Frequently Asked Questions
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => navigate(user ? "/dashboard" : "/")}>
             ← {user ? "Back to Dashboard" : "Back to Home"}
           </Button>
         </div>
