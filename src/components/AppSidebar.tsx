@@ -17,8 +17,8 @@ const navItems = [
   { icon: ListChecks, label: "Shot List", path: "/shots", neon: "pink" },
   { icon: Image, label: "Storyboard", path: "/storyboard", neon: "cyan" },
   { icon: Video, label: "Scene Gen", path: "/veo3", neon: "cyan" },
-  { icon: Film, label: "Editor", path: "/editor", neon: "pink" },
-  { icon: Music, label: "AI Music", path: "/music", neon: "purple" },
+  { icon: Film, label: "Editor", path: "/editor", neon: "pink", comingSoon: true },
+  { icon: Music, label: "AI Music", path: "/music", neon: "purple", comingSoon: true },
   { icon: Clapperboard, label: "Director AI", path: "/director", neon: "pink" },
   { icon: Trophy, label: "Festival", path: "/festival", neon: "purple" },
   { icon: Settings, label: "Settings", path: "/settings", neon: "pink" },
@@ -75,7 +75,7 @@ const NavContent = ({ collapsed, location, onNavigate }: { collapsed: boolean; l
       const isActive = location.pathname === item.path;
       const colors = neonStyles[item.neon];
       return (
-        <Link
+          <Link
           key={item.path}
           to={item.path}
           onClick={onNavigate}
@@ -93,8 +93,11 @@ const NavContent = ({ collapsed, location, onNavigate }: { collapsed: boolean; l
           )}
           <item.icon className={`w-5 h-5 shrink-0 ${isActive ? colors.text : ""}`} />
           {!collapsed && (
-            <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="truncate">
+            <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="truncate flex items-center gap-2">
               {item.label}
+              {(item as any).comingSoon && (
+                <span className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/20 leading-none">Soon</span>
+              )}
             </motion.span>
           )}
         </Link>

@@ -68,7 +68,7 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
     setExporting(true);
 
     try {
-      // If festival submission is toggled and we have a shot
+      // Festival submission (this is real — writes to DB)
       if (submitToFest && selectedShotId) {
         const { error } = await supabase
           .from("contest_entries")
@@ -85,9 +85,7 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
         }
       }
 
-      // Simulate export
-      await new Promise((r) => setTimeout(r, 1200));
-      toast.success("Export complete — MP4 ready for download.");
+      toast.info("Video export is coming soon — festival submission saved!");
       onOpenChange(false);
     } catch (err: any) {
       toast.error(err.message || "Export failed.");
@@ -102,10 +100,11 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
         <DialogHeader>
           <DialogTitle className="font-display flex items-center gap-2">
             <Download className="w-5 h-5 text-primary" />
-            Export Video
+            Export & Submit
+            <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/20 ml-1">Export Coming Soon</span>
           </DialogTitle>
           <DialogDescription>
-            Export your timeline as a high-quality MP4 file.
+            Submit your shot to the festival. Video file export is coming soon.
           </DialogDescription>
         </DialogHeader>
 
@@ -141,7 +140,7 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
           {/* Format info */}
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Format</span>
-            <span className="font-mono text-foreground">MP4 · H.264 · 4K</span>
+            <span className="font-mono text-muted-foreground/60">MP4 · H.264 — coming soon</span>
           </div>
 
           {/* Festival toggle */}
@@ -213,16 +212,16 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={exporting}>
             Cancel
           </Button>
-          <Button variant="glow" onClick={handleExport} disabled={exporting}>
+          <Button variant="glow" onClick={handleExport} disabled={exporting || !submitToFest || !selectedShotId}>
             {exporting ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Exporting…
+                Submitting…
               </>
             ) : (
               <>
-                <Download className="w-4 h-4" />
-                Export
+                <Trophy className="w-4 h-4" />
+                Submit to Festival
               </>
             )}
           </Button>
