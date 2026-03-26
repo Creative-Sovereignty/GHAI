@@ -341,11 +341,52 @@ const Veo3 = () => {
               </div>
             </div>
 
+            {/* Video Generation Progress */}
+            {isGenerating && activeTab === "video" && generationState && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-4 neo-card rounded-xl p-4 border border-[var(--neon-pink-30)] bg-[var(--neon-pink-10)]/5">
+                <div className="flex items-center gap-3 mb-3">
+                  <Loader2 className="w-4 h-4 animate-spin text-[var(--neon-pink)]" />
+                  <span className="text-sm font-medium">
+                    {generationState === "submitting" && "Submitting to Luma..."}
+                    {generationState === "queued" && "Queued — waiting to start..."}
+                    {generationState === "dreaming" && `Dreaming — generating your video... (${pollCount * 5}s)`}
+                    {generationState === "completed" && "Complete!"}
+                    {!["submitting", "queued", "dreaming", "completed", "failed"].includes(generationState) && `Processing (${generationState})...`}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  {["queued", "dreaming", "completed"].map((stage, i) => {
+                    const stageOrder = ["queued", "dreaming", "completed"];
+                    const currentIdx = stageOrder.indexOf(generationState);
+                    const isActive = i <= currentIdx;
+                    const isCurrent = stageOrder[i] === generationState;
+                    return (
+                      <div key={stage} className="flex items-center gap-1.5 flex-1">
+                        <div className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${
+                          isActive
+                            ? "bg-[var(--neon-pink)] shadow-[0_0_6px_var(--neon-pink)]"
+                            : "bg-secondary"
+                        } ${isCurrent ? "animate-pulse" : ""}`} />
+                        <span className={`text-[9px] uppercase tracking-wider whitespace-nowrap ${
+                          isActive ? "text-[var(--neon-pink)]" : "text-muted-foreground"
+                        }`}>{stage}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            )}
+
             {/* Generate */}
             <div className="mt-6 flex items-center justify-between">
-              {isGenerating && (
+              {isGenerating && !generationState && (
                 <p className="text-xs text-muted-foreground animate-pulse">
-                  {activeTab === "video" ? "Generating video (~1-2 min)..." : "Generating scene..."}
+                  Generating scene...
+                </p>
+              )}
+              {isGenerating && activeTab === "image" && (
+                <p className="text-xs text-muted-foreground animate-pulse">
+                  Generating scene...
                 </p>
               )}
               <div className="ml-auto">
