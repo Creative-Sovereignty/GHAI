@@ -277,8 +277,8 @@ const Landing = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5 }}>
               
-              From script to screen — write, storyboard, shoot, edit, and score your films
-              with cutting-edge AI tools, all in one place.
+              From script to screen — write, storyboard, and visualize your films
+              with AI tools that actually work, all in one place.
             </motion.p>
 
             {/* CTA buttons */}
