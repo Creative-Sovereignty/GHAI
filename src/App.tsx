@@ -62,6 +62,7 @@ const App = () => (
                 <Route path="/shots" element={<ProtectedRoute><ShotList /></ProtectedRoute>} />
                 <Route path="/editor" element={<ProtectedRoute><VideoEditor /></ProtectedRoute>} />
                 <Route path="/veo3" element={<ProtectedRoute><Veo3 /></ProtectedRoute>} />
+                <Route path="/ai-studio" element={<ProtectedRoute><Veo3 /></ProtectedRoute>} />
                 <Route path="/music" element={<ProtectedRoute><AIMusic /></ProtectedRoute>} />
                 <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                 <Route path="/analytics-docs" element={<ProtectedRoute><AnalyticsDocs /></ProtectedRoute>} />
