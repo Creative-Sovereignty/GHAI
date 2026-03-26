@@ -472,7 +472,7 @@ const Veo3 = () => {
             </motion.div>
           )}
         </AnimatePresence>
-      {/* /PaywallGate */}
+      </PaywallGate>
     </AppLayout>
   );
 };
