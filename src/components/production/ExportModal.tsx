@@ -140,7 +140,7 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
           {/* Format info */}
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Format</span>
-            <span className="font-mono text-foreground">MP4 · H.264 · 4K</span>
+            <span className="font-mono text-muted-foreground/60">MP4 · H.264 — coming soon</span>
           </div>
 
           {/* Festival toggle */}
