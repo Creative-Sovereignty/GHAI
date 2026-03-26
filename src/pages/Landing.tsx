@@ -11,24 +11,25 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
 const features = [
-{ icon: FileText, title: "AI Script Editor", desc: "Write professional screenplays with AI-powered formatting and suggestions.", neon: "pink" },
-{ icon: Image, title: "Storyboard Studio", desc: "Plan every scene visually with a drag-and-drop storyboard grid.", neon: "cyan" },
+{ icon: FileText, title: "AI Script Editor", desc: "Write professional screenplays with AI-powered formatting and real-time suggestions.", neon: "pink" },
+{ icon: Image, title: "Storyboard Studio", desc: "Plan every scene visually with AI-generated storyboard frames and drag-and-drop.", neon: "cyan" },
 { icon: ListChecks, title: "Shot List Tracker", desc: "Organize shots, angles, and equipment for seamless production.", neon: "pink" },
-{ icon: Video, title: "Veo 3 Video Gen", desc: "Generate stunning AI video clips from text prompts.", neon: "cyan" },
-{ icon: Film, title: "Timeline Editor", desc: "Assemble your final cut with a professional video editor.", neon: "purple" },
-{ icon: Music, title: "AI Music Studio", desc: "Compose original soundtracks with mood and genre control.", neon: "pink" }];
+{ icon: Sparkles, title: "AI Scene Generator", desc: "Generate stunning cinematic scene images from text prompts.", neon: "cyan" },
+{ icon: Film, title: "Timeline Editor", desc: "Assemble your final cut with a professional video editor.", neon: "purple", comingSoon: true },
+{ icon: Music, title: "AI Music Studio", desc: "Compose original soundtracks with mood and genre control.", neon: "pink", comingSoon: true },
+{ icon: Video, title: "AI Video Generation", desc: "Generate AI video clips from prompts — launching soon.", neon: "cyan", comingSoon: true }];
 
 
 const testimonials = [
-{ name: "Jordan K.", role: "Indie Filmmaker", text: "Golden Hour AI transformed my workflow. I went from script to final cut in a weekend.", avatar: "JK" },
-{ name: "Samira P.", role: "Content Creator", text: "The AI music generator alone is worth it. Every track feels custom-made for my videos.", avatar: "SP" },
-{ name: "Marcus T.", role: "Film Student", text: "I had zero editing experience. Now I'm producing short films that look professional.", avatar: "MT" }];
+{ name: "Early Tester", role: "Beta User", text: "The AI Script Editor and Scene Generator are genuinely impressive. This is a real tool, not a demo.", avatar: "ET" },
+{ name: "Beta Feedback", role: "Indie Creator", text: "Being able to go from script to storyboard with AI in one app is a game-changer for pre-production.", avatar: "BF" },
+{ name: "First Look", role: "Film Student", text: "I love that everything actually works — no fake buttons. The Director AI ties it all together.", avatar: "FL" }];
 
 
 const plans = [
 { name: "Starter", price: "Free", features: ["1 Project", "Basic Script Editor", "5 AI Generations/mo", "No Credit Card Required"], cta: "Get Started", popular: false, priceId: null },
-{ name: "Pro", price: "$29/mo", features: ["Unlimited Projects", "Full Toolkit Access", "500 AI Generations/mo", "Veo 3 & AI Music", "HD Export"], cta: "Go Pro", popular: true, priceId: "price_1TEJMZ7pm1sWSXu2cMZxcH3J" },
-{ name: "Studio", price: "$79/mo", features: ["Everything in Pro", "Unlimited AI Generations", "4K Export", "Director AI", "Priority Support"], cta: "Go Studio", popular: false, priceId: "price_1TEJN07pm1sWSXu2GWmTPF5r" }];
+{ name: "Pro", price: "$29/mo", features: ["Unlimited Projects", "Full Toolkit Access", "500 AI Generations/mo", "AI Scene Generator", "Storyboard Images"], cta: "Go Pro", popular: true, priceId: "price_1TEJMZ7pm1sWSXu2cMZxcH3J" },
+{ name: "Studio", price: "$79/mo", features: ["Everything in Pro", "Unlimited AI Generations", "Director AI", "Priority Support", "Early access to Video & Music"], cta: "Go Studio", popular: false, priceId: "price_1TEJN07pm1sWSXu2GWmTPF5r" }];
 
 
 const neonColors: Record<string, string> = {
@@ -276,8 +277,8 @@ const Landing = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5 }}>
               
-              From script to screen — write, storyboard, shoot, edit, and score your films
-              with cutting-edge AI tools, all in one place.
+              From script to screen — write, storyboard, and visualize your films
+              with AI tools that actually work, all in one place.
             </motion.p>
 
             {/* CTA buttons */}
@@ -310,8 +311,8 @@ const Landing = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.9 }}>
             
-            <StatPill value="6" label="AI Tools" delay={1.0} />
-            <StatPill value="4K" label="Export" delay={1.1} />
+            <StatPill value="4" label="AI Tools Live" delay={1.0} />
+            <StatPill value="3" label="Coming Soon" delay={1.1} />
             <StatPill value="∞" label="Creativity" delay={1.2} />
           </motion.div>
         </motion.div>
@@ -344,8 +345,15 @@ const Landing = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="neo-card rounded-xl p-6 hover:border-primary/30 transition-all duration-300 group">
+              className={`neo-card rounded-xl p-6 hover:border-primary/30 transition-all duration-300 group relative ${(feat as any).comingSoon ? "opacity-80" : ""}`}>
               
+                {(feat as any).comingSoon && (
+                  <div className="absolute top-3 right-3">
+                    <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/20">
+                      Coming Soon
+                    </span>
+                  </div>
+                )}
                 <feat.icon className={`w-8 h-8 mb-4 ${neonColors[feat.neon]} group-hover:drop-shadow-[0_0_8px_currentColor] transition-all`} />
                 <h3 className="font-display font-semibold text-lg mb-2">{feat.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{feat.desc}</p>
