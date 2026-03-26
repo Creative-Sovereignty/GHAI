@@ -157,6 +157,7 @@ const Veo3 = () => {
       }, ...prev]);
       setPrompt("");
       trackEvent("video_generate_complete", { style: selectedStyle });
+      refetchCredits();
       toast({ title: "Video generated!", description: "Your AI video is ready. (10 credits used)" });
     } catch (err) {
       console.error("Video generation error:", err);
