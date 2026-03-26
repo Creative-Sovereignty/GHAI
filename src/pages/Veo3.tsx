@@ -163,6 +163,7 @@ const Veo3 = () => {
       const maxPolls = 30; // 30 * 5s = 150s
       for (let i = 0; i < maxPolls; i++) {
         await new Promise((r) => setTimeout(r, 5000));
+        setPollCount(i + 1);
 
         const pollResp = await fetch(VIDEO_GEN_URL, {
           method: "POST",
@@ -172,6 +173,7 @@ const Veo3 = () => {
 
         if (!pollResp.ok) continue;
         const pollData = await pollResp.json();
+        setGenerationState(pollData.state);
 
         if (pollData.state === "completed") {
           setVideos(prev => [{
