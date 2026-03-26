@@ -128,37 +128,70 @@ const Veo3 = () => {
   const generateVideo = async () => {
     if (!prompt.trim() || isGenerating) return;
     setIsGenerating(true);
+    const savedPrompt = prompt.trim();
     trackEvent("video_generate_start", { style: selectedStyle, aspect: selectedAspect });
 
     try {
       const headers = await getAuthHeaders();
-      const resp = await fetch(VIDEO_GEN_URL, {
+
+      // Step 1: Submit generation (returns immediately with generationId)
+      const submitResp = await fetch(VIDEO_GEN_URL, {
         method: "POST",
         headers,
-        body: JSON.stringify({ prompt: prompt.trim(), style: selectedStyle, aspectRatio: selectedAspect }),
+        body: JSON.stringify({ prompt: savedPrompt, style: selectedStyle, aspectRatio: selectedAspect }),
       });
 
-      if (await handleApiError(resp)) return;
-      if (!resp.ok) {
-        const data = await resp.json();
+      if (await handleApiError(submitResp)) return;
+      if (!submitResp.ok) {
+        const data = await submitResp.json();
         throw new Error(data.error || "Video generation failed");
       }
 
-      const data = await resp.json();
-      setVideos(prev => [{
-        id: Date.now().toString(),
-        title: prompt.trim().slice(0, 40) + (prompt.trim().length > 40 ? "..." : ""),
-        prompt: prompt.trim(),
-        style: selectedStyle,
-        aspect: selectedAspect,
-        videoUrl: data.videoUrl,
-        thumbnailUrl: data.thumbnailUrl,
-        createdAt: new Date(),
-      }, ...prev]);
+      const submitData = await submitResp.json();
+      const generationId = submitData.generationId;
+      if (!generationId) throw new Error("No generation ID returned");
+
+      toast({ title: "Video queued!", description: "Generating your video... this takes 1-2 minutes." });
       setPrompt("");
-      trackEvent("video_generate_complete", { style: selectedStyle });
-      refetchCredits();
-      toast({ title: "Video generated!", description: "Your AI video is ready. (10 credits used)" });
+
+      // Step 2: Poll for completion (client-side)
+      const maxPolls = 30; // 30 * 5s = 150s
+      for (let i = 0; i < maxPolls; i++) {
+        await new Promise((r) => setTimeout(r, 5000));
+
+        const pollResp = await fetch(VIDEO_GEN_URL, {
+          method: "POST",
+          headers,
+          body: JSON.stringify({ action: "poll", generationId }),
+        });
+
+        if (!pollResp.ok) continue;
+        const pollData = await pollResp.json();
+
+        if (pollData.state === "completed") {
+          setVideos(prev => [{
+            id: generationId,
+            title: savedPrompt.slice(0, 40) + (savedPrompt.length > 40 ? "..." : ""),
+            prompt: savedPrompt,
+            style: selectedStyle,
+            aspect: selectedAspect,
+            videoUrl: pollData.videoUrl,
+            thumbnailUrl: pollData.thumbnailUrl,
+            createdAt: new Date(),
+          }, ...prev]);
+          trackEvent("video_generate_complete", { style: selectedStyle });
+          refetchCredits();
+          toast({ title: "Video generated!", description: "Your AI video is ready. (10 credits used)" });
+          return;
+        }
+
+        if (pollData.state === "failed") {
+          throw new Error(pollData.error || "Video generation failed");
+        }
+        // Otherwise keep polling (state is "dreaming" / "queued")
+      }
+
+      throw new Error("Generation timed out. The video may still be processing — try refreshing.");
     } catch (err) {
       console.error("Video generation error:", err);
       toast({ title: "Generation failed", description: err instanceof Error ? err.message : "Please try again.", variant: "destructive" });
@@ -193,7 +226,7 @@ const Veo3 = () => {
 
   return (
     <AppLayout>
-      {/* PaywallGate temporarily bypassed for testing */}
+      <PaywallGate>
         <div className="p-6 lg:p-8 space-y-8">
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
             <div className="flex items-center gap-3">
@@ -472,7 +505,7 @@ const Veo3 = () => {
             </motion.div>
           )}
         </AnimatePresence>
-      {/* /PaywallGate */}
+      </PaywallGate>
     </AppLayout>
   );
 };

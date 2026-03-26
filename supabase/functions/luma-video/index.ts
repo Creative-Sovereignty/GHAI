@@ -8,6 +8,7 @@ const corsHeaders = {
 };
 
 const LUMA_API_BASE = "https://api.lumalabs.ai/dream-machine/v1";
+const CREDIT_COST = 10;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -30,22 +31,99 @@ serve(async (req) => {
       { global: { headers: { Authorization: authHeader } } }
     );
 
-    const token = authHeader.replace("Bearer ", "");
-    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims) {
+    const { data: { user }, error: userError } = await supabaseAuth.auth.getUser();
+    if (userError || !user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    const userId = claimsData.claims.sub;
+    const userId = user.id;
 
-    // Credit check (10 credits for video)
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    const LUMA_API_KEY = Deno.env.get("LUMA_API_KEY");
+    if (!LUMA_API_KEY) {
+      throw new Error("LUMA_API_KEY is not configured");
+    }
+
+    const body = await req.json();
+    const { action } = body;
+
+    // ──────────────────────────────────────────────
+    // ACTION: poll — check generation status
+    // ──────────────────────────────────────────────
+    if (action === "poll") {
+      const { generationId } = body;
+      if (!generationId) {
+        return new Response(JSON.stringify({ error: "generationId required" }), {
+          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const pollResp = await fetch(`${LUMA_API_BASE}/generations/${generationId}`, {
+        headers: {
+          Authorization: `Bearer ${LUMA_API_KEY}`,
+          Accept: "application/json",
+        },
+      });
+
+      if (!pollResp.ok) {
+        throw new Error(`Poll failed: ${pollResp.status}`);
+      }
+
+      const status = await pollResp.json();
+      console.log(`Poll for ${generationId}: state=${status.state}`);
+
+      if (status.state === "completed") {
+        // Deduct credits on completion
+        const { data: credits } = await supabase
+          .from("user_credits")
+          .select("balance")
+          .eq("user_id", userId)
+          .maybeSingle();
+
+        const balance = credits?.balance ?? 100;
+        await supabase
+          .from("user_credits")
+          .update({ balance: balance - CREDIT_COST })
+          .eq("user_id", userId);
+
+        await supabase.from("credit_transactions").insert({
+          user_id: userId,
+          amount: -CREDIT_COST,
+          action_type: "video_generation",
+        });
+
+        return new Response(JSON.stringify({
+          state: "completed",
+          videoUrl: status.assets?.video,
+          thumbnailUrl: status.assets?.thumbnail,
+        }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+
+      if (status.state === "failed") {
+        return new Response(JSON.stringify({
+          state: "failed",
+          error: status.failure_reason || "Video generation failed",
+        }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+
+      // Still processing
+      return new Response(JSON.stringify({
+        state: status.state,
+      }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    // ──────────────────────────────────────────────
+    // ACTION: submit (default) — start generation
+    // ──────────────────────────────────────────────
+    const { prompt, style, aspectRatio } = body;
+
+    // Credit check
     const { data: credits } = await supabase
       .from("user_credits")
       .select("balance")
@@ -53,47 +131,24 @@ serve(async (req) => {
       .maybeSingle();
 
     const balance = credits?.balance ?? 100;
-    if (balance < 10) {
+    if (balance < CREDIT_COST) {
       return new Response(
-        JSON.stringify({ error: "Insufficient credits. Video generation costs 10 credits." }),
+        JSON.stringify({ error: `Insufficient credits. Video generation costs ${CREDIT_COST} credits.` }),
         { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    const LUMA_API_KEY = Deno.env.get("LUMA_API_KEY");
-    if (!LUMA_API_KEY) {
-      throw new Error("LUMA_API_KEY is not configured");
-    }
-
-    const { prompt, style, aspectRatio, action } = await req.json();
-
-    // Poll action — check generation status
-    if (action === "poll") {
-      const { generationId } = await req.json().catch(() => ({ generationId: null }));
-      // Re-parse since we already consumed the body
-    }
-
     if (!prompt || typeof prompt !== "string" || prompt.trim().length === 0) {
       return new Response(JSON.stringify({ error: "Prompt is required" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Build cinematic prompt
     const fullPrompt = `${style || "Cinematic"} style. ${prompt.trim()}`;
-
-    // Map aspect ratio
-    const arMap: Record<string, string> = {
-      "16:9": "16:9",
-      "9:16": "9:16",
-      "1:1": "1:1",
-      "4:3": "4:3",
-    };
+    const arMap: Record<string, string> = { "16:9": "16:9", "9:16": "9:16", "1:1": "1:1", "4:3": "4:3" };
 
     console.log(`Starting Luma generation for user ${userId}: "${fullPrompt.substring(0, 80)}..."`);
 
-    // Step 1: Create generation
     const createResp = await fetch(`${LUMA_API_BASE}/generations`, {
       method: "POST",
       headers: {
@@ -103,6 +158,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         prompt: fullPrompt,
+        model: "ray-2",
         aspect_ratio: arMap[aspectRatio] || "16:9",
         loop: false,
       }),
@@ -117,71 +173,17 @@ serve(async (req) => {
           { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-      throw new Error(`Luma API error: ${createResp.status}`);
+      throw new Error(`Luma API error: ${createResp.status} - ${errText}`);
     }
 
     const generation = await createResp.json();
-    const generationId = generation.id;
-    console.log(`Luma generation created: ${generationId}`);
+    console.log(`Luma generation created: ${generation.id}`);
 
-    // Step 2: Poll for completion (max ~2 minutes)
-    let videoUrl: string | null = null;
-    let thumbnailUrl: string | null = null;
-    const maxAttempts = 24; // 24 * 5s = 120s
-
-    for (let i = 0; i < maxAttempts; i++) {
-      await new Promise((r) => setTimeout(r, 5000));
-
-      const pollResp = await fetch(`${LUMA_API_BASE}/generations/${generationId}`, {
-        headers: {
-          Authorization: `Bearer ${LUMA_API_KEY}`,
-          Accept: "application/json",
-        },
-      });
-
-      if (!pollResp.ok) {
-        console.error(`Poll error: ${pollResp.status}`);
-        continue;
-      }
-
-      const status = await pollResp.json();
-      console.log(`Poll ${i + 1}: state=${status.state}`);
-
-      if (status.state === "completed") {
-        videoUrl = status.assets?.video;
-        thumbnailUrl = status.assets?.thumbnail;
-        break;
-      }
-
-      if (status.state === "failed") {
-        throw new Error(status.failure_reason || "Video generation failed");
-      }
-    }
-
-    if (!videoUrl) {
-      throw new Error("Generation timed out. Please try again.");
-    }
-
-    // Deduct credits
-    await supabase
-      .from("user_credits")
-      .update({ balance: balance - 10 })
-      .eq("user_id", userId);
-
-    // Log transaction
-    await supabase.from("credit_transactions").insert({
-      user_id: userId,
-      amount: -10,
-      action_type: "video_generation",
-    });
-
-    console.log(`Video ready: ${videoUrl}`);
-
+    // Return immediately with generation ID — client will poll
     return new Response(
       JSON.stringify({
-        videoUrl,
-        thumbnailUrl,
-        generationId,
+        generationId: generation.id,
+        state: generation.state || "queued",
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
