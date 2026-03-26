@@ -115,8 +115,8 @@ const AIMusic = () => {
                 />
               </div>
             </div>
-            <Button variant="glow" size="lg" onClick={() => trackEvent("music_generate", { genre: selectedGenre, mood: selectedMood, prompt_length: prompt.length })}>
-              <Wand2 className="w-4 h-4" /> Generate Track
+            <Button variant="glow" size="lg" disabled onClick={() => trackEvent("music_generate", { genre: selectedGenre, mood: selectedMood, prompt_length: prompt.length })}>
+              <Wand2 className="w-4 h-4" /> Coming Soon
             </Button>
           </div>
         </motion.div>
