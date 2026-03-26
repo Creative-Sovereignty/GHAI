@@ -15,3 +15,5 @@ project_id = "broeyaqgxkaqfjxjgrnw"
     verify_jwt = false
   [functions.elevenlabs-music]
     verify_jwt = false
+  [functions.luma-video]
+    verify_jwt = false
