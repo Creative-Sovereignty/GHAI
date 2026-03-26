@@ -115,6 +115,7 @@ const Veo3 = () => {
         createdAt: new Date(),
       }, ...prev]);
       setPrompt("");
+      refetchCredits();
       toast({ title: "Scene generated!", description: "Your cinematic scene is ready." });
     } catch (err) {
       console.error("Scene generation error:", err);
