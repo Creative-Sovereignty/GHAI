@@ -345,8 +345,15 @@ const Landing = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="neo-card rounded-xl p-6 hover:border-primary/30 transition-all duration-300 group">
+              className={`neo-card rounded-xl p-6 hover:border-primary/30 transition-all duration-300 group relative ${(feat as any).comingSoon ? "opacity-80" : ""}`}>
               
+                {(feat as any).comingSoon && (
+                  <div className="absolute top-3 right-3">
+                    <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/20">
+                      Coming Soon
+                    </span>
+                  </div>
+                )}
                 <feat.icon className={`w-8 h-8 mb-4 ${neonColors[feat.neon]} group-hover:drop-shadow-[0_0_8px_currentColor] transition-all`} />
                 <h3 className="font-display font-semibold text-lg mb-2">{feat.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{feat.desc}</p>
