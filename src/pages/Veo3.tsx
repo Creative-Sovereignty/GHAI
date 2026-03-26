@@ -311,7 +311,7 @@ const Veo3 = () => {
                   variant="glow"
                   size="lg"
                   onClick={activeTab === "video" ? generateVideo : generateScene}
-                  disabled={isGenerating || !prompt.trim()}
+                  disabled={isGenerating || !prompt.trim() || creditBalance < currentCost}
                 >
                   {isGenerating ? (
                     <>
