@@ -12,6 +12,8 @@ import { Input } from "@/components/ui/input";
 import AppLayout from "@/components/AppLayout";
 import ReactMarkdown from "react-markdown";
 import { useToast } from "@/hooks/use-toast";
+import GhostwriterPromptBuilder from "@/components/script/GhostwriterPromptBuilder";
+import ContinuityTracker, { extractLocations } from "@/components/script/ContinuityTracker";
 
 type Message = { role: "user" | "assistant"; content: string };
 
