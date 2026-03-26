@@ -8,14 +8,18 @@ const corsHeaders = {
 
 const FAQ_KNOWLEDGE = `
 Golden Hour AI FAQ:
-- Golden Hour AI is an AI-powered filmmaking studio for creating short films from script to screen.
-- No filmmaking experience needed. AI assists with each step.
-- Features: Script Editor, Storyboard Studio, Shot List Tracker, Veo 3 video generation, Timeline Editor, AI Music Studio.
-- All content is private and protected by row-level security.
-- It's a PWA - installable on mobile via browser "Add to Home Screen".
-- Uses state-of-the-art AI models for text, image, music, and video generation.
-- Free plan includes 3 projects and 5 AI generations/mo. Pro ($19/mo) and Studio ($49/mo) plans available.
-- Videos export as standard MP4 format.
+- Golden Hour AI is an AI-powered filmmaking studio that helps you create stunning short films from script to screen — including scriptwriting, storyboarding, shot planning, AI video generation via Luma Dream Machine, a multi-track video editor, and AI music generation.
+- No filmmaking experience needed. The AI assists with each step — from Director AI shot breakdowns to AI-generated video clips.
+- Features: AI Script Editor, Storyboard Studio, Shot List Tracker, AI Video via Luma Dream Machine, multi-track Timeline Editor (Video, Dialog, Score, Sound Design tracks), AI Music Studio, Director AI.
+- The AI Studio (/ai-studio) is the central hub for all AI generation — storyboard images, AI video clips via Luma Dream Machine, and AI music. Each tab shows your credit balance and generation controls.
+- AI Video generation uses Luma Dream Machine. Enter a cinematic prompt, adjust camera and motion settings, then click Generate. You'll see real-time progress states: queued → dreaming → completed.
+- Credit costs: storyboard images cost 2 credits, AI music costs 3 credits, AI video generation costs 10 credits. Your remaining balance is displayed on the AI Studio page and in the top bar.
+- All content is private. Every project is tied to your account and protected by row-level security.
+- Golden Hour AI is a Progressive Web App (PWA). Install it on mobile via your browser's "Add to Home Screen" option for a native app-like experience.
+- Uses state-of-the-art AI models for text generation, image synthesis (storyboards), video generation (Luma Dream Machine), and music composition — all accessible without needing your own API keys.
+- Free credits are provided to get started. Paid plans (Pro and Studio) unlock higher usage limits and premium features.
+- The multi-track timeline features separate tracks for Video, Dialog, Score, and Sound Design. Drag clips onto tracks, trim edges non-destructively, and use snap-to-grid for precise editing with real-time preview.
+- Videos export as standard MP4 format from the Video Editor.
 - For support issues, you can create a ticket and the team will follow up.
 `;
 
