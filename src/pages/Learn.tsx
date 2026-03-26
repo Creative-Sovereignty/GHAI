@@ -29,7 +29,7 @@ const wikiSections: WikiSection[] = [
       "**Welcome to Golden Hour AI** — your AI-native filmmaking studio. This guide covers every feature so you can go from script to screen.",
       "**1. Sign up / Log in** — Create an account with your email. You'll receive a verification link before you can access the studio.",
       "**2. Create a Project** — From the Dashboard, click **+ New Project**. Give it a title and optional description. Every project is your central hub for a single film or video.",
-      "**3. Navigate** — Use the sidebar on the left to jump between tools. On mobile, tap the ☰ hamburger menu.",
+      "**3. Navigate** — Use the sidebar on the left to jump between tools: Script Editor, Director AI, Shot List, Storyboard, AI Studio, Video Editor, AI Music, and more. On mobile, tap the ☰ hamburger menu.",
     ],
   },
   {
@@ -40,7 +40,7 @@ const wikiSections: WikiSection[] = [
       "The **Dashboard** is your home base. It shows all your projects as cards with status badges (Draft, In Progress, Complete).",
       "**Create a project** — Click the glowing **+ New Project** button. Fill in a title, optional description, and hit Create.",
       "**Open a project** — Click any project card to set it as your active project. All other tools (Script, Shot List, etc.) will operate on the active project.",
-      "**Project status** — Status is updated automatically as you progress through the pipeline, or you can set it manually from Settings.",
+      "**Credits display** — Your current credit balance is always visible in the top bar so you can plan your AI generations.",
     ],
   },
   {
@@ -85,21 +85,21 @@ const wikiSections: WikiSection[] = [
     title: "Storyboard",
     content: [
       "The **Storyboard** page gives you a visual grid of your shots with AI-generated thumbnail images.",
-      "**Generating images** — Select a shot and click **Generate Thumbnail**. The AI creates a cinematic frame based on the shot's description and prompt.",
+      "**Generating images** — Select a shot and click **Generate Thumbnail**. The AI creates a cinematic frame based on the shot's description and prompt. Each image costs **2 credits**.",
       "**Layout** — Thumbnails are displayed in a responsive grid, arranged by scene and shot order. Each card shows the shot code, description, and status.",
       "**Tip:** Use the Storyboard to get a bird's-eye view of your visual flow before moving to video generation.",
     ],
   },
   {
-    id: "veo3",
+    id: "ai-studio",
     icon: Video,
-    title: "Veo 3 — Video Generation",
+    title: "AI Studio — Video Generation",
     content: [
-      "**Veo 3** is the video generation engine. It takes your shot prompts and produces short AI-generated video clips.",
-      "**Workflow:** Select a shot → review the prompt → adjust motion intensity and camera parameters → click **Generate Video**.",
+      "The **AI Studio** (/ai-studio) is your central hub for AI-powered generation, including video clips via the **Luma Dream Machine** API.",
+      "**Workflow:** Select the AI Video tab → enter a cinematic prompt → adjust shot type, camera angle, and motion intensity → click **Generate Video**.",
       "**Parameters:**\n- **Shot Type** — Wide, Medium, Close-up, Extreme Close-up, etc.\n- **Camera Angle** — Eye Level, Low Angle, High Angle, Dutch, Bird's Eye, Worm's Eye\n- **Motion Intensity** — Slider from 0 (static) to 100 (dynamic movement)",
-      "**Status tracking** — Videos go through *draft → rendering → complete*. You'll see a progress indicator while rendering.",
-      "**Credits** — Video generation consumes credits based on duration and complexity.",
+      "**Progress tracking** — Videos go through *queued → dreaming → completed*. A real-time progress indicator shows you exactly where your generation is, with an elapsed time counter.",
+      "**Credits** — Video generation costs **10 credits** per clip. Your remaining balance is shown at the top of the page before you generate.",
     ],
   },
   {
@@ -107,11 +107,11 @@ const wikiSections: WikiSection[] = [
     icon: Film,
     title: "Video Editor",
     content: [
-      "The **Video Editor** is a non-destructive timeline editor for assembling your generated clips.",
-      "**Timeline** — Drag clips onto the timeline track. Use snap-to-grid for precise placement.",
+      "The **Video Editor** is a non-destructive, multi-track timeline editor for assembling your generated clips.",
+      "**Tracks** — The timeline includes dedicated tracks for **Video**, **Dialog**, **Score**, and **Sound Design**, giving you full control over your audio-visual mix.",
       "**Trimming** — Drag clip edges to trim in/out points without destroying the original media.",
-      "**Preview** — Use the built-in player to preview your edit in real time.",
-      "**Export** — When satisfied, export your assembled cut. The editor preserves your edit history so you can always undo.",
+      "**Preview** — Use the built-in player with transport controls to preview your edit in real time. A playhead and timeline ruler help with precise positioning.",
+      "**Export** — When satisfied, export your assembled cut as a standard MP4 file.",
     ],
   },
   {
@@ -119,10 +119,10 @@ const wikiSections: WikiSection[] = [
     icon: Music,
     title: "AI Music",
     content: [
-      "**AI Music** generates original soundtrack and score for your project.",
+      "**AI Music** generates original soundtrack and score for your project, costing **3 credits** per generation.",
       "**Describe the mood** — Enter a text prompt describing the musical feel: *\"Tense orchestral build-up with deep bass\"* or *\"Warm acoustic guitar, golden hour vibes\"*.",
       "**Parameters** — Set duration, tempo preference, and genre tags to guide the generation.",
-      "**Layering** — Generated tracks can be added to your timeline in the Video Editor for a complete audio-visual experience.",
+      "**Layering** — Generated tracks can be added to your timeline's Score or Sound Design tracks in the Video Editor for a complete audio-visual experience.",
     ],
   },
   {
@@ -143,8 +143,8 @@ const wikiSections: WikiSection[] = [
     title: "Credits & Usage",
     content: [
       "Golden Hour AI uses a **credit system** to manage AI operations.",
-      "**What costs credits:**\n- Director AI generations\n- Storyboard image generation\n- Veo 3 video generation\n- AI Music generation\n- Script AI suggestions",
-      "**Checking balance** — Your current credit balance is displayed in the top bar and on the Dashboard.",
+      "**Credit costs:**\n- Storyboard image generation — **2 credits**\n- AI Music generation — **3 credits**\n- AI Video generation (Luma Dream Machine) — **10 credits**\n- Director AI & Script AI suggestions — credits vary",
+      "**Checking balance** — Your current credit balance is displayed in the top bar, on the Dashboard, and at the top of the AI Studio page.",
       "**Transaction history** — View a detailed log of all credit-consuming actions in Settings → Usage.",
       "**Free actions** — Browsing, editing text, reordering shots, and viewing the Learn page are always free.",
     ],
@@ -179,10 +179,12 @@ const wikiSections: WikiSection[] = [
     content: [
       "**Q: How do I start a new film project?**\nA: Go to Dashboard → click **+ New Project** → enter a title → start writing in the Script Editor.",
       "**Q: Can I use Director AI without writing a script first?**\nA: Yes! Director AI works with free-form prompts. It will create scenes and shots directly.",
-      "**Q: What happens if I run out of credits?**\nA: Free actions (editing, browsing, reordering) still work. AI generation features require credits.",
+      "**Q: How do I generate an AI video?**\nA: Go to **AI Studio** (/ai-studio) → select the AI Video tab → enter a prompt → click Generate. You'll see real-time progress as Luma Dream Machine processes your clip.",
+      "**Q: What happens if I run out of credits?**\nA: Free actions (editing, browsing, reordering) still work. AI generation features require credits — images (2), music (3), video (10).",
       "**Q: Can I reorder shots?**\nA: Yes — use drag-and-drop on the Shot List page. Grab the grip handle and move shots within a scene.",
       "**Q: Is my work saved automatically?**\nA: Yes. Scripts, shots, and project data auto-save to the cloud. Generated media is stored securely.",
-      "**Q: How do I get help?**\nA: Visit the **Help** page from the sidebar, submit a support ticket, or use the chat widget in the bottom-right corner.",
+      "**Q: What are the timeline tracks for?**\nA: The Video Editor has separate tracks for Video, Dialog, Score, and Sound Design — giving you full control over your edit's audio layers.",
+      "**Q: How do I get help?**\nA: Visit the **Help** page from the sidebar, submit a support ticket, or use the AI-powered chat widget in the bottom-right corner.",
     ],
   },
 ];
