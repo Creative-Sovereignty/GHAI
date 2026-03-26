@@ -14,21 +14,27 @@ const CLIP_COLORS: Record<string, string> = {
   video: "hsla(190, 80%, 40%, 0.8)",
   audio: "hsla(270, 70%, 45%, 0.8)",
   title: "hsla(340, 70%, 45%, 0.8)",
+  dialog: "hsla(45, 85%, 50%, 0.8)",
+  score: "hsla(270, 70%, 45%, 0.8)",
+  sfx: "hsla(160, 70%, 40%, 0.8)",
 };
 
 const defaultTracks: TimelineTrack[] = [
-  { id: "v1", name: "V1", type: "video", muted: false, locked: false, visible: true },
-  { id: "v2", name: "V2", type: "video", muted: false, locked: false, visible: true },
-  { id: "a1", name: "A1", type: "audio", muted: false, locked: false, visible: true },
-  { id: "a2", name: "A2", type: "audio", muted: false, locked: false, visible: true },
+  { id: "v1", name: "V1 — Video", type: "video", muted: false, locked: false, visible: true },
+  { id: "v2", name: "V2 — B-Roll", type: "video", muted: false, locked: false, visible: true },
+  { id: "dialog", name: "Dialog", type: "audio", muted: false, locked: false, visible: true },
+  { id: "score", name: "Score", type: "audio", muted: false, locked: false, visible: true },
+  { id: "sfx", name: "Sound Design", type: "audio", muted: false, locked: false, visible: true },
 ];
 
 const defaultClips: TimelineClip[] = [
   { id: "c1", name: "Scene 1 — Wide", trackId: "v1", startFrame: 0, durationFrames: 90, color: CLIP_COLORS.video, type: "video" },
   { id: "c2", name: "Scene 1 — CU", trackId: "v1", startFrame: 95, durationFrames: 60, color: CLIP_COLORS.video, type: "video" },
   { id: "c3", name: "B-Roll", trackId: "v2", startFrame: 30, durationFrames: 120, color: "hsla(190, 60%, 50%, 0.7)", type: "video" },
-  { id: "c4", name: "Dialogue", trackId: "a1", startFrame: 0, durationFrames: 150, color: CLIP_COLORS.audio, type: "audio" },
-  { id: "c5", name: "Ambient SFX", trackId: "a2", startFrame: 20, durationFrames: 130, color: "hsla(270, 50%, 55%, 0.7)", type: "audio" },
+  { id: "c4", name: "Character Dialog", trackId: "dialog", startFrame: 0, durationFrames: 150, color: CLIP_COLORS.dialog, type: "audio" },
+  { id: "c5", name: "Main Score", trackId: "score", startFrame: 10, durationFrames: 140, color: CLIP_COLORS.score, type: "audio" },
+  { id: "c6", name: "Ambient Room Tone", trackId: "sfx", startFrame: 0, durationFrames: 160, color: CLIP_COLORS.sfx, type: "audio" },
+  { id: "c7", name: "Door Slam SFX", trackId: "sfx", startFrame: 85, durationFrames: 15, color: "hsla(160, 50%, 50%, 0.7)", type: "audio" },
 ];
 
 const VideoEditor = () => {
