@@ -98,6 +98,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         prompt: fullPrompt,
+        model: "ray-2",
         aspect_ratio: arMap[aspectRatio] || "16:9",
         loop: false,
       }),
