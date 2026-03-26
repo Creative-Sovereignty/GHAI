@@ -130,6 +130,8 @@ const Veo3 = () => {
   const generateVideo = async () => {
     if (!prompt.trim() || isGenerating) return;
     setIsGenerating(true);
+    setGenerationState("submitting");
+    setPollCount(0);
     const savedPrompt = prompt.trim();
     trackEvent("video_generate_start", { style: selectedStyle, aspect: selectedAspect });
 
