@@ -203,6 +203,20 @@ const Veo3 = () => {
             <p className="text-sm text-muted-foreground mt-1">Generate cinematic scene images and AI videos</p>
           </motion.div>
 
+          {/* Credits Display */}
+          <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
+            className="neo-card rounded-xl px-5 py-3 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Coins className="w-4 h-4 text-[var(--neon-cyan)]" />
+              <span className="text-sm font-medium">{creditBalance} credits remaining</span>
+            </div>
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+              <span>Image: <strong className="text-foreground">2</strong></span>
+              <span className="text-[var(--neo-border)]">|</span>
+              <span>Video: <strong className="text-foreground">10</strong></span>
+            </div>
+          </motion.div>
+
           {/* Generator Panel */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="neo-card rounded-2xl p-6">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
