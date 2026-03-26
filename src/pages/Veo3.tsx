@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Image, Wand2, Download, Sparkles, Loader2, Trash2, ZoomIn, X, Video, Play } from "lucide-react";
+import { Image, Wand2, Download, Sparkles, Loader2, Trash2, ZoomIn, X, Video, Play, Coins } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { trackEvent } from "@/lib/analytics";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useCredits } from "@/hooks/useCredits";
 import AppLayout from "@/components/AppLayout";
 import PaywallGate from "@/components/PaywallGate";
 
@@ -49,6 +50,9 @@ const Veo3 = () => {
   const [lightboxType, setLightboxType] = useState<"image" | "video">("image");
   const [activeTab, setActiveTab] = useState("image");
   const { toast } = useToast();
+  const { data: creditData, refetch: refetchCredits } = useCredits();
+  const creditBalance = creditData?.balance ?? 0;
+  const currentCost = activeTab === "video" ? 10 : 2;
 
   const getAuthHeaders = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -111,6 +115,7 @@ const Veo3 = () => {
         createdAt: new Date(),
       }, ...prev]);
       setPrompt("");
+      refetchCredits();
       toast({ title: "Scene generated!", description: "Your cinematic scene is ready." });
     } catch (err) {
       console.error("Scene generation error:", err);
@@ -152,6 +157,7 @@ const Veo3 = () => {
       }, ...prev]);
       setPrompt("");
       trackEvent("video_generate_complete", { style: selectedStyle });
+      refetchCredits();
       toast({ title: "Video generated!", description: "Your AI video is ready. (10 credits used)" });
     } catch (err) {
       console.error("Video generation error:", err);
@@ -197,6 +203,20 @@ const Veo3 = () => {
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground mt-1">Generate cinematic scene images and AI videos</p>
+          </motion.div>
+
+          {/* Credits Display */}
+          <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
+            className="neo-card rounded-xl px-5 py-3 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Coins className="w-4 h-4 text-[var(--neon-cyan)]" />
+              <span className="text-sm font-medium">{creditBalance} credits remaining</span>
+            </div>
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+              <span>Image: <strong className="text-foreground">2</strong></span>
+              <span className="text-[var(--neo-border)]">|</span>
+              <span>Video: <strong className="text-foreground">10</strong></span>
+            </div>
           </motion.div>
 
           {/* Generator Panel */}
@@ -291,7 +311,7 @@ const Veo3 = () => {
                   variant="glow"
                   size="lg"
                   onClick={activeTab === "video" ? generateVideo : generateScene}
-                  disabled={isGenerating || !prompt.trim()}
+                  disabled={isGenerating || !prompt.trim() || creditBalance < currentCost}
                 >
                   {isGenerating ? (
                     <>
