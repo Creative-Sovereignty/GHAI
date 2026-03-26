@@ -21,9 +21,9 @@ const features = [
 
 
 const testimonials = [
-{ name: "Jordan K.", role: "Indie Filmmaker", text: "Golden Hour AI transformed my workflow. I went from script to final cut in a weekend.", avatar: "JK" },
-{ name: "Samira P.", role: "Content Creator", text: "The AI music generator alone is worth it. Every track feels custom-made for my videos.", avatar: "SP" },
-{ name: "Marcus T.", role: "Film Student", text: "I had zero editing experience. Now I'm producing short films that look professional.", avatar: "MT" }];
+{ name: "Early Tester", role: "Beta User", text: "The AI Script Editor and Scene Generator are genuinely impressive. This is a real tool, not a demo.", avatar: "ET" },
+{ name: "Beta Feedback", role: "Indie Creator", text: "Being able to go from script to storyboard with AI in one app is a game-changer for pre-production.", avatar: "BF" },
+{ name: "First Look", role: "Film Student", text: "I love that everything actually works — no fake buttons. The Director AI ties it all together.", avatar: "FL" }];
 
 
 const plans = [
