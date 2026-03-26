@@ -681,3 +681,7 @@
     0 0 12px 2px hsl(var(--gold, 38 90% 55%) / 0.25),
     0 0 24px 4px hsl(var(--gold, 38 90% 55%) / 0.1);
 }
+
+.clip-triangle {
+  clip-path: polygon(50% 100%, 0 0, 100% 0);
+}
