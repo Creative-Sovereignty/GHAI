@@ -67,8 +67,11 @@ const FAQ = () => {
           </Accordion>
         </motion.div>
 
-        <div className="text-center">
-          <a href="/" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+        <div className="text-center space-y-2">
+          <a href="/learn" className="block text-sm text-primary hover:text-primary/80 transition-colors font-medium">
+            📖 Explore the full App Wiki →
+          </a>
+          <a href="/" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
             ← Back to Home
           </a>
         </div>
