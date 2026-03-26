@@ -50,6 +50,9 @@ const Veo3 = () => {
   const [lightboxType, setLightboxType] = useState<"image" | "video">("image");
   const [activeTab, setActiveTab] = useState("image");
   const { toast } = useToast();
+  const { data: creditData, refetch: refetchCredits } = useCredits();
+  const creditBalance = creditData?.balance ?? 0;
+  const currentCost = activeTab === "video" ? 10 : 2;
 
   const getAuthHeaders = async () => {
     const { data: { session } } = await supabase.auth.getSession();
