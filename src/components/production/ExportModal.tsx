@@ -68,7 +68,7 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
     setExporting(true);
 
     try {
-      // If festival submission is toggled and we have a shot
+      // Festival submission (this is real — writes to DB)
       if (submitToFest && selectedShotId) {
         const { error } = await supabase
           .from("contest_entries")
@@ -85,9 +85,7 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
         }
       }
 
-      // Simulate export
-      await new Promise((r) => setTimeout(r, 1200));
-      toast.success("Export complete — MP4 ready for download.");
+      toast.info("Video export is coming soon — festival submission saved!");
       onOpenChange(false);
     } catch (err: any) {
       toast.error(err.message || "Export failed.");
