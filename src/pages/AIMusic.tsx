@@ -29,7 +29,10 @@ const AIMusic = () => {
       <div className="p-6 lg:p-8 space-y-8">
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
           <h1 className="font-display text-2xl font-bold text-gold-blue-shimmer">AI Music Generator</h1>
-          <p className="text-sm text-muted-foreground mt-1">Generate custom soundtracks for your shorts</p>
+          <div className="flex items-center gap-2 mt-1">
+            <p className="text-sm text-muted-foreground">Generate custom soundtracks for your shorts</p>
+            <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/20">Coming Soon</span>
+          </div>
         </motion.div>
 
         {/* Generator Panel */}
