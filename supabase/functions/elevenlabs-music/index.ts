@@ -1,9 +1,12 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
+
+const CREDIT_COST = 3;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -11,6 +14,50 @@ serve(async (req) => {
   }
 
   try {
+    // JWT Authentication
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const supabaseAuth = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+      { global: { headers: { Authorization: authHeader } } }
+    );
+    const { data: { user }, error: userError } = await supabaseAuth.auth.getUser();
+    if (userError || !user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const userId = user.id;
+
+    // Service role client for credit operations
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+
+    // Credit check
+    const { data: credits } = await supabase
+      .from("user_credits")
+      .select("balance")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    const balance = credits?.balance ?? 100;
+    if (balance < CREDIT_COST) {
+      return new Response(
+        JSON.stringify({ error: `Insufficient credits. Music generation costs ${CREDIT_COST} credits.` }),
+        { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const ELEVENLABS_API_KEY = Deno.env.get("ELEVENLABS_API_KEY");
     if (!ELEVENLABS_API_KEY) {
       throw new Error("ELEVENLABS_API_KEY is not configured");
@@ -50,6 +97,19 @@ serve(async (req) => {
     }
 
     const audioBuffer = await response.arrayBuffer();
+
+    // Deduct credits after successful generation
+    await supabase
+      .from("user_credits")
+      .update({ balance: balance - CREDIT_COST })
+      .eq("user_id", userId);
+
+    // Log transaction
+    await supabase.from("credit_transactions").insert({
+      user_id: userId,
+      amount: -CREDIT_COST,
+      action_type: isMusic ? "music_generation" : "sfx_generation",
+    });
 
     return new Response(audioBuffer, {
       headers: {
