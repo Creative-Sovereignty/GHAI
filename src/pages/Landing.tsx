@@ -311,8 +311,8 @@ const Landing = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.9 }}>
             
-            <StatPill value="6" label="AI Tools" delay={1.0} />
-            <StatPill value="4K" label="Export" delay={1.1} />
+            <StatPill value="4" label="AI Tools Live" delay={1.0} />
+            <StatPill value="3" label="Coming Soon" delay={1.1} />
             <StatPill value="∞" label="Creativity" delay={1.2} />
           </motion.div>
         </motion.div>
