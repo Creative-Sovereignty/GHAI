@@ -44,6 +44,8 @@ const Veo3 = () => {
   const [selectedStyle, setSelectedStyle] = useState("Cinematic");
   const [selectedAspect, setSelectedAspect] = useState("16:9");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generationState, setGenerationState] = useState<string | null>(null);
+  const [pollCount, setPollCount] = useState(0);
   const [scenes, setScenes] = useState<GeneratedScene[]>([]);
   const [videos, setVideos] = useState<GeneratedVideo[]>([]);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
