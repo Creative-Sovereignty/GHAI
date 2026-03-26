@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Image, Wand2, Download, Sparkles, Loader2, Trash2, ZoomIn, X, Video, Play } from "lucide-react";
+import { Image, Wand2, Download, Sparkles, Loader2, Trash2, ZoomIn, X, Video, Play, Coins } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { trackEvent } from "@/lib/analytics";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useCredits } from "@/hooks/useCredits";
 import AppLayout from "@/components/AppLayout";
 import PaywallGate from "@/components/PaywallGate";
 
