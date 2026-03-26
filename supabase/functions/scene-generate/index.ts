@@ -8,6 +8,8 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const CREDIT_COST = 2;
+
 serve(async (req) => {
   if (req.method === "OPTIONS")
     return new Response(null, { headers: corsHeaders });
@@ -25,6 +27,27 @@ serve(async (req) => {
     }
     const userId = user.id;
     const userEmail = user.email;
+
+    // Service role client for credit operations
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+
+    // Credit check
+    const { data: credits } = await supabase
+      .from("user_credits")
+      .select("balance")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    const balance = credits?.balance ?? 100;
+    if (balance < CREDIT_COST) {
+      return new Response(
+        JSON.stringify({ error: `Insufficient credits. Image generation costs ${CREDIT_COST} credits.` }),
+        { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     // Server-side subscription check
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
@@ -107,10 +130,6 @@ Make it look like a professional film still or concept art frame with dramatic l
     const base64String = imageData.replace(/^data:image\/\w+;base64,/, "");
     const imageBytes = decode(base64String);
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
     const fileName = `${userId}/scene-${Date.now()}.png`;
     const { error: uploadError } = await supabase.storage
       .from("storyboard-images")
@@ -132,6 +151,19 @@ Make it look like a professional film still or concept art frame with dramatic l
     if (signedError || !signedUrlData?.signedUrl) {
       throw new Error("Failed to generate signed URL");
     }
+
+    // Deduct credits
+    await supabase
+      .from("user_credits")
+      .update({ balance: balance - CREDIT_COST })
+      .eq("user_id", userId);
+
+    // Log transaction
+    await supabase.from("credit_transactions").insert({
+      user_id: userId,
+      amount: -CREDIT_COST,
+      action_type: "image_generation",
+    });
 
     return new Response(
       JSON.stringify({
