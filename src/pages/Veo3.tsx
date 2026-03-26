@@ -204,6 +204,8 @@ const Veo3 = () => {
       toast({ title: "Generation failed", description: err instanceof Error ? err.message : "Please try again.", variant: "destructive" });
     } finally {
       setIsGenerating(false);
+      setGenerationState(null);
+      setPollCount(0);
     }
   };
 
