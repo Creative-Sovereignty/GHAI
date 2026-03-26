@@ -193,7 +193,7 @@ const Veo3 = () => {
 
   return (
     <AppLayout>
-      <PaywallGate>
+      {/* PaywallGate temporarily bypassed for testing */}
         <div className="p-6 lg:p-8 space-y-8">
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
             <div className="flex items-center gap-3">
