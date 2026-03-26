@@ -155,6 +155,7 @@ const Veo3 = () => {
       const generationId = submitData.generationId;
       if (!generationId) throw new Error("No generation ID returned");
 
+      setGenerationState("queued");
       toast({ title: "Video queued!", description: "Generating your video... this takes 1-2 minutes." });
       setPrompt("");
 
