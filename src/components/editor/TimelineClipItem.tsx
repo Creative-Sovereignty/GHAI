@@ -6,16 +6,18 @@ import { TimelineClip, PIXELS_PER_FRAME, TRACK_HEIGHT } from "./types";
 interface TimelineClipItemProps {
   clip: TimelineClip;
   onMove: (clipId: string, newStartFrame: number) => void;
-  onResize: (clipId: string, newDuration: number) => void;
+  onResize: (clipId: string, newDuration: number, side: "left" | "right") => void;
   onSelect: (clipId: string) => void;
   isSelected: boolean;
 }
 
+const MIN_FRAMES = 10;
+
 const TimelineClipItem = ({ clip, onMove, onResize, onSelect, isSelected }: TimelineClipItemProps) => {
   const [isDragging, setIsDragging] = useState(false);
-  const [isResizing, setIsResizing] = useState(false);
+  const [resizeSide, setResizeSide] = useState<"left" | "right" | null>(null);
   const dragStartRef = useRef({ x: 0, startFrame: 0 });
-  const resizeStartRef = useRef({ x: 0, duration: 0 });
+  const resizeStartRef = useRef({ x: 0, startFrame: 0, duration: 0 });
 
   const width = clip.durationFrames * PIXELS_PER_FRAME;
   const left = clip.startFrame * PIXELS_PER_FRAME;
@@ -43,27 +45,44 @@ const TimelineClipItem = ({ clip, onMove, onResize, onSelect, isSelected }: Time
     window.addEventListener("mouseup", handleDragEnd);
   }, [clip.id, clip.startFrame, onMove, onSelect]);
 
-  const handleResizeStart = useCallback((e: React.MouseEvent) => {
+  const handleResizeStart = useCallback((e: React.MouseEvent, side: "left" | "right") => {
     e.stopPropagation();
-    setIsResizing(true);
-    resizeStartRef.current = { x: e.clientX, duration: clip.durationFrames };
+    e.preventDefault();
+    onSelect(clip.id);
+    setResizeSide(side);
+    resizeStartRef.current = { x: e.clientX, startFrame: clip.startFrame, duration: clip.durationFrames };
 
     const handleResizeMove = (ev: MouseEvent) => {
       const dx = ev.clientX - resizeStartRef.current.x;
       const dFrames = Math.round(dx / PIXELS_PER_FRAME);
-      const newDuration = Math.max(15, resizeStartRef.current.duration + dFrames);
-      onResize(clip.id, newDuration);
+
+      if (side === "right") {
+        const newDuration = Math.max(MIN_FRAMES, resizeStartRef.current.duration + dFrames);
+        onResize(clip.id, newDuration, "right");
+      } else {
+        // Left trim: move start forward, shrink duration
+        const maxTrim = resizeStartRef.current.duration - MIN_FRAMES;
+        const trimFrames = Math.min(maxTrim, Math.max(-resizeStartRef.current.startFrame, dFrames));
+        const newStart = resizeStartRef.current.startFrame + trimFrames;
+        const newDuration = resizeStartRef.current.duration - trimFrames;
+        if (newDuration >= MIN_FRAMES && newStart >= 0) {
+          onResize(clip.id, newDuration, "left");
+          onMove(clip.id, newStart);
+        }
+      }
     };
 
     const handleResizeEnd = () => {
-      setIsResizing(false);
+      setResizeSide(null);
       window.removeEventListener("mousemove", handleResizeMove);
       window.removeEventListener("mouseup", handleResizeEnd);
     };
 
     window.addEventListener("mousemove", handleResizeMove);
     window.addEventListener("mouseup", handleResizeEnd);
-  }, [clip.id, clip.durationFrames, onResize]);
+  }, [clip.id, clip.startFrame, clip.durationFrames, onResize, onMove, onSelect]);
+
+  const isResizing = resizeSide !== null;
 
   return (
     <motion.div
@@ -82,23 +101,37 @@ const TimelineClipItem = ({ clip, onMove, onResize, onSelect, isSelected }: Time
       }}
       onMouseDown={handleDragStart}
     >
+      {/* Left trim handle */}
+      <div
+        className={`absolute left-0 top-0 bottom-0 w-2 cursor-col-resize z-10 transition-colors ${
+          resizeSide === "left" ? "bg-primary/40" : "hover:bg-white/25"
+        }`}
+        onMouseDown={(e) => handleResizeStart(e, "left")}
+      >
+        <div className="absolute inset-y-0 left-0.5 w-[2px] rounded-full bg-white/0 group-hover:bg-white/50 transition-colors" />
+      </div>
+
       {/* Grip handle */}
-      <div className="absolute left-0 top-0 bottom-0 w-5 flex items-center justify-center opacity-0 group-hover:opacity-60 transition-opacity">
+      <div className="absolute left-2 top-0 bottom-0 w-5 flex items-center justify-center opacity-0 group-hover:opacity-60 transition-opacity pointer-events-none">
         <GripVertical className="w-3 h-3 text-white/80" />
       </div>
 
       {/* Clip content */}
-      <div className="px-2 py-1 h-full flex items-center overflow-hidden">
+      <div className="px-5 py-1 h-full flex items-center overflow-hidden">
         <span className="text-[10px] font-medium text-white truncate drop-shadow-sm">
           {clip.name}
         </span>
       </div>
 
-      {/* Right resize handle */}
+      {/* Right trim handle */}
       <div
-        className="absolute right-0 top-0 bottom-0 w-2 cursor-col-resize hover:bg-white/20 transition-colors"
-        onMouseDown={handleResizeStart}
-      />
+        className={`absolute right-0 top-0 bottom-0 w-2 cursor-col-resize z-10 transition-colors ${
+          resizeSide === "right" ? "bg-primary/40" : "hover:bg-white/25"
+        }`}
+        onMouseDown={(e) => handleResizeStart(e, "right")}
+      >
+        <div className="absolute inset-y-0 right-0.5 w-[2px] rounded-full bg-white/0 group-hover:bg-white/50 transition-colors" />
+      </div>
 
       {/* Waveform/thumbnail decoration */}
       <div className="absolute inset-0 pointer-events-none opacity-20">
@@ -114,6 +147,11 @@ const TimelineClipItem = ({ clip, onMove, onResize, onSelect, isSelected }: Time
           </div>
         )}
       </div>
+
+      {/* Trim indicators when resizing */}
+      {isResizing && (
+        <div className="absolute inset-0 pointer-events-none border-2 border-primary/60 rounded-lg" />
+      )}
     </motion.div>
   );
 };
