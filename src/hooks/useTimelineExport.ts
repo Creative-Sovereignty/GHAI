@@ -2,12 +2,13 @@ import { useState, useRef, useCallback } from "react";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile, toBlobURL } from "@ffmpeg/util";
 import type { TimelineClip } from "@/components/editor/types";
+import { FRAME_RATE } from "@/components/editor/types";
 
 export type ExportStage = "idle" | "loading" | "downloading" | "encoding" | "complete" | "error";
 
 interface ExportState {
   stage: ExportStage;
-  progress: number; // 0-100
+  progress: number;
   message: string;
   downloadUrl: string | null;
   error: string | null;
@@ -32,13 +33,16 @@ export function useTimelineExport() {
   }, [state.downloadUrl]);
 
   const exportTimeline = useCallback(async (clips: TimelineClip[]) => {
-    // Filter to video clips with actual URLs, sorted by startFrame
     const videoClips = clips
       .filter((c) => c.type === "video" && c.videoUrl)
       .sort((a, b) => a.startFrame - b.startFrame);
 
-    if (videoClips.length === 0) {
-      setState((s) => ({ ...s, stage: "error", error: "No video clips with sources found on the timeline." }));
+    const audioClips = clips
+      .filter((c) => c.type === "audio" && c.audioUrl)
+      .sort((a, b) => a.startFrame - b.startFrame);
+
+    if (videoClips.length === 0 && audioClips.length === 0) {
+      setState((s) => ({ ...s, stage: "error", error: "No video or audio clips with sources found on the timeline." }));
       return;
     }
 
@@ -66,41 +70,138 @@ export function useTimelineExport() {
       const ffmpeg = ffmpegRef.current;
 
       // Stage 2: Download clips
+      const totalDownloads = videoClips.length + audioClips.length;
       setState((s) => ({ ...s, stage: "downloading", progress: 0, message: "Downloading clips…" }));
 
-      const fileNames: string[] = [];
+      const videoFileNames: string[] = [];
       for (let i = 0; i < videoClips.length; i++) {
-        const clip = videoClips[i];
-        const pct = Math.round(((i + 1) / videoClips.length) * 100);
-        setState((s) => ({ ...s, progress: pct, message: `Downloading clip ${i + 1}/${videoClips.length}…` }));
-
-        const fileName = `input_${i}.mp4`;
-        const data = await fetchFile(clip.videoUrl!);
+        const pct = Math.round(((i + 1) / totalDownloads) * 100);
+        setState((s) => ({ ...s, progress: pct, message: `Downloading video ${i + 1}/${videoClips.length}…` }));
+        const fileName = `vid_${i}.mp4`;
+        const data = await fetchFile(videoClips[i].videoUrl!);
         await ffmpeg.writeFile(fileName, data);
-        fileNames.push(fileName);
+        videoFileNames.push(fileName);
       }
 
-      // Stage 3: Encode (concatenate)
-      setState((s) => ({ ...s, stage: "encoding", progress: 0, message: "Encoding video…" }));
+      const audioFileNames: string[] = [];
+      for (let i = 0; i < audioClips.length; i++) {
+        const pct = Math.round(((videoClips.length + i + 1) / totalDownloads) * 100);
+        setState((s) => ({ ...s, progress: pct, message: `Downloading audio ${i + 1}/${audioClips.length}…` }));
+        const fileName = `aud_${i}.mp3`;
+        const data = await fetchFile(audioClips[i].audioUrl!);
+        await ffmpeg.writeFile(fileName, data);
+        audioFileNames.push(fileName);
+      }
 
-      if (fileNames.length === 1) {
-        // Single clip — just re-mux
-        await ffmpeg.exec(["-i", fileNames[0], "-c", "copy", "-movflags", "+faststart", "output.mp4"]);
+      // Stage 3: Encode
+      setState((s) => ({ ...s, stage: "encoding", progress: 0, message: "Encoding video + audio…" }));
+
+      const hasVideo = videoFileNames.length > 0;
+      const hasAudio = audioFileNames.length > 0;
+
+      if (hasVideo && !hasAudio) {
+        // Video only — same as before
+        if (videoFileNames.length === 1) {
+          await ffmpeg.exec(["-i", videoFileNames[0], "-c", "copy", "-movflags", "+faststart", "output.mp4"]);
+        } else {
+          const inputs = videoFileNames.flatMap((f) => ["-i", f]);
+          const filterParts = videoFileNames.map((_, i) => `[${i}:v:0]`).join("");
+          const filter = `${filterParts}concat=n=${videoFileNames.length}:v=1:a=0[outv]`;
+          await ffmpeg.exec([
+            ...inputs,
+            "-filter_complex", filter,
+            "-map", "[outv]",
+            "-c:v", "libx264", "-preset", "fast", "-crf", "23",
+            "-movflags", "+faststart",
+            "output.mp4",
+          ]);
+        }
+      } else if (!hasVideo && hasAudio) {
+        // Audio only — mix all audio tracks into a single mp4 with silent video
+        // Generate a 10-second black video as base, then overlay audio
+        const totalAudioDuration = Math.max(
+          ...audioClips.map((c) => (c.startFrame + c.durationFrames) / FRAME_RATE)
+        );
+        const inputs = audioFileNames.flatMap((f) => ["-i", f]);
+
+        if (audioFileNames.length === 1) {
+          // Single audio — wrap in mp4 container
+          await ffmpeg.exec([
+            "-f", "lavfi", "-i", `color=c=black:s=1920x1080:d=${totalAudioDuration}:r=30`,
+            ...inputs,
+            "-c:v", "libx264", "-preset", "fast",
+            "-c:a", "aac", "-b:a", "192k",
+            "-shortest",
+            "-movflags", "+faststart",
+            "output.mp4",
+          ]);
+        } else {
+          const amixInputs = audioFileNames.map((_, i) => `[${i + 1}:a]`).join("");
+          const amixFilter = `${amixInputs}amix=inputs=${audioFileNames.length}:duration=longest[outa]`;
+          await ffmpeg.exec([
+            "-f", "lavfi", "-i", `color=c=black:s=1920x1080:d=${totalAudioDuration}:r=30`,
+            ...inputs,
+            "-filter_complex", amixFilter,
+            "-map", "0:v", "-map", "[outa]",
+            "-c:v", "libx264", "-preset", "fast",
+            "-c:a", "aac", "-b:a", "192k",
+            "-shortest",
+            "-movflags", "+faststart",
+            "output.mp4",
+          ]);
+        }
       } else {
-        // Multiple clips — concat via filter_complex
-        const inputs = fileNames.flatMap((f) => ["-i", f]);
-        const filterParts = fileNames.map((_, i) => `[${i}:v:0]`).join("");
-        const filter = `${filterParts}concat=n=${fileNames.length}:v=1:a=0[outv]`;
-        await ffmpeg.exec([
-          ...inputs,
-          "-filter_complex", filter,
-          "-map", "[outv]",
-          "-c:v", "libx264",
-          "-preset", "fast",
-          "-crf", "23",
-          "-movflags", "+faststart",
-          "output.mp4",
-        ]);
+        // Both video and audio — concat video, mix audio, merge together
+        // Step 1: Concat videos into intermediate
+        const vInputs = videoFileNames.flatMap((f) => ["-i", f]);
+
+        if (videoFileNames.length === 1) {
+          await ffmpeg.exec(["-i", videoFileNames[0], "-c", "copy", "intermediate_video.mp4"]);
+        } else {
+          const vFilterParts = videoFileNames.map((_, i) => `[${i}:v:0]`).join("");
+          const vFilter = `${vFilterParts}concat=n=${videoFileNames.length}:v=1:a=0[outv]`;
+          await ffmpeg.exec([
+            ...vInputs,
+            "-filter_complex", vFilter,
+            "-map", "[outv]",
+            "-c:v", "libx264", "-preset", "fast", "-crf", "23",
+            "intermediate_video.mp4",
+          ]);
+        }
+
+        // Step 2: Merge intermediate video + all audio inputs
+        const aInputs = audioFileNames.flatMap((f) => ["-i", f]);
+
+        if (audioFileNames.length === 1) {
+          // Single audio track — just add it
+          await ffmpeg.exec([
+            "-i", "intermediate_video.mp4",
+            ...aInputs,
+            "-c:v", "copy",
+            "-c:a", "aac", "-b:a", "192k",
+            "-shortest",
+            "-movflags", "+faststart",
+            "output.mp4",
+          ]);
+        } else {
+          // Multiple audio — amix them, then merge
+          const amixInputs = audioFileNames.map((_, i) => `[${i + 1}:a]`).join("");
+          const amixFilter = `${amixInputs}amix=inputs=${audioFileNames.length}:duration=longest[outa]`;
+          await ffmpeg.exec([
+            "-i", "intermediate_video.mp4",
+            ...aInputs,
+            "-filter_complex", amixFilter,
+            "-map", "0:v", "-map", "[outa]",
+            "-c:v", "copy",
+            "-c:a", "aac", "-b:a", "192k",
+            "-shortest",
+            "-movflags", "+faststart",
+            "output.mp4",
+          ]);
+        }
+
+        // Clean up intermediate
+        try { await ffmpeg.deleteFile("intermediate_video.mp4"); } catch {}
       }
 
       // Stage 4: Read output
@@ -109,7 +210,7 @@ export function useTimelineExport() {
       const url = URL.createObjectURL(blob);
 
       // Cleanup input files
-      for (const f of fileNames) {
+      for (const f of [...videoFileNames, ...audioFileNames]) {
         try { await ffmpeg.deleteFile(f); } catch {}
       }
       try { await ffmpeg.deleteFile("output.mp4"); } catch {}
