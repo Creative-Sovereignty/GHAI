@@ -164,8 +164,52 @@ const VideoEditor = () => {
     setClips((prev) => prev.map((c) => c.id === clipId ? { ...c, startFrame: newStart } : c));
   }, []);
 
-  const resizeClip = useCallback((clipId: string, newDuration: number) => {
+  const resizeClip = useCallback((clipId: string, newDuration: number, _side: "left" | "right") => {
     setClips((prev) => prev.map((c) => c.id === clipId ? { ...c, durationFrames: newDuration } : c));
+  }, []);
+
+  const splitClip = useCallback((clipId: string, atFrame: number) => {
+    setClips((prev) => {
+      const clip = prev.find((c) => c.id === clipId);
+      if (!clip) return prev;
+      const splitPoint = atFrame - clip.startFrame;
+      if (splitPoint <= 0 || splitPoint >= clip.durationFrames) return prev;
+
+      const leftClip: TimelineClip = {
+        ...clip,
+        durationFrames: splitPoint,
+      };
+      const rightClip: TimelineClip = {
+        ...clip,
+        id: `${clip.id}-split-${Date.now()}`,
+        name: `${clip.name} (2)`,
+        startFrame: atFrame,
+        durationFrames: clip.durationFrames - splitPoint,
+      };
+      return prev.map((c) => (c.id === clipId ? leftClip : c)).concat(rightClip);
+    });
+    toast.success("Clip split at playhead");
+  }, []);
+
+  const deleteClip = useCallback((clipId: string) => {
+    setClips((prev) => prev.filter((c) => c.id !== clipId));
+    setSelectedClip(null);
+    toast.success("Clip deleted");
+  }, []);
+
+  const duplicateClip = useCallback((clipId: string) => {
+    setClips((prev) => {
+      const clip = prev.find((c) => c.id === clipId);
+      if (!clip) return prev;
+      const newClip: TimelineClip = {
+        ...clip,
+        id: `${clip.id}-dup-${Date.now()}`,
+        name: `${clip.name} (copy)`,
+        startFrame: clip.startFrame + clip.durationFrames + 5,
+      };
+      return [...prev, newClip];
+    });
+    toast.success("Clip duplicated");
   }, []);
 
   const addTrack = (type: "video" | "audio" | "title") => {
