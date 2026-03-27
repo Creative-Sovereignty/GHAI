@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Film } from "lucide-react";
+import { Film, FolderOpen } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import AppLayout from "@/components/AppLayout";
 import PaywallGate from "@/components/PaywallGate";
 import TransportControls from "@/components/editor/TransportControls";
@@ -8,7 +9,12 @@ import TrackHeader from "@/components/editor/TrackHeader";
 import TimelineRuler from "@/components/editor/TimelineRuler";
 import TimelineClipItem from "@/components/editor/TimelineClipItem";
 import Playhead from "@/components/editor/Playhead";
+import ExportProgressModal from "@/components/editor/ExportProgressModal";
 import { TimelineTrack, TimelineClip, FRAME_RATE, PIXELS_PER_FRAME, TRACK_HEIGHT, RULER_HEIGHT } from "@/components/editor/types";
+import { useTimelineExport } from "@/hooks/useTimelineExport";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const CLIP_COLORS: Record<string, string> = {
   video: "hsla(190, 80%, 40%, 0.8)",
@@ -27,7 +33,7 @@ const defaultTracks: TimelineTrack[] = [
   { id: "sfx", name: "Sound Design", type: "audio", muted: false, locked: false, visible: true },
 ];
 
-const defaultClips: TimelineClip[] = [
+const demoClips: TimelineClip[] = [
   { id: "c1", name: "Scene 1 — Wide", trackId: "v1", startFrame: 0, durationFrames: 90, color: CLIP_COLORS.video, type: "video" },
   { id: "c2", name: "Scene 1 — CU", trackId: "v1", startFrame: 95, durationFrames: 60, color: CLIP_COLORS.video, type: "video" },
   { id: "c3", name: "B-Roll", trackId: "v2", startFrame: 30, durationFrames: 120, color: "hsla(190, 60%, 50%, 0.7)", type: "video" },
@@ -37,9 +43,15 @@ const defaultClips: TimelineClip[] = [
   { id: "c7", name: "Door Slam SFX", trackId: "sfx", startFrame: 85, durationFrames: 15, color: "hsla(160, 50%, 50%, 0.7)", type: "audio" },
 ];
 
+interface ProjectOption {
+  id: string;
+  title: string;
+}
+
 const VideoEditor = () => {
+  const { user } = useAuth();
   const [tracks, setTracks] = useState<TimelineTrack[]>(defaultTracks);
-  const [clips, setClips] = useState<TimelineClip[]>(defaultClips);
+  const [clips, setClips] = useState<TimelineClip[]>(demoClips);
   const [currentFrame, setCurrentFrame] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [selectedClip, setSelectedClip] = useState<string | null>(null);
@@ -48,22 +60,92 @@ const VideoEditor = () => {
   const animFrameRef = useRef<number>();
   const lastTimeRef = useRef<number>(0);
 
-  const totalFrames = FRAME_RATE * 30; // 30 seconds timeline
+  // Project & shot loading
+  const [projects, setProjects] = useState<ProjectOption[]>([]);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [loadingShots, setLoadingShots] = useState(false);
+
+  // Export
+  const [exportModalOpen, setExportModalOpen] = useState(false);
+  const exportState = useTimelineExport();
+
+  const totalFrames = FRAME_RATE * 30;
+  const hasExportableClips = clips.some((c) => c.type === "video" && c.videoUrl);
+
+  // Load user's projects
+  useEffect(() => {
+    if (!user) return;
+    const loadProjects = async () => {
+      const { data } = await supabase
+        .from("projects")
+        .select("id, title")
+        .eq("user_id", user.id)
+        .order("updated_at", { ascending: false });
+      if (data) setProjects(data);
+    };
+    loadProjects();
+  }, [user]);
+
+  // Load shots when project selected
+  useEffect(() => {
+    if (!selectedProjectId) {
+      setClips(demoClips);
+      return;
+    }
+    const loadShots = async () => {
+      setLoadingShots(true);
+      const { data, error } = await supabase
+        .from("shots")
+        .select("id, shot_code, description, scene_number, video_url, thumbnail_url, duration, sort_order")
+        .eq("project_id", selectedProjectId)
+        .order("sort_order", { ascending: true });
+
+      if (error) {
+        toast.error("Failed to load shots");
+        setLoadingShots(false);
+        return;
+      }
+
+      if (data && data.length > 0) {
+        let frameOffset = 0;
+        const shotClips: TimelineClip[] = data.map((shot) => {
+          const durationSec = parseInt(shot.duration || "5", 10) || 5;
+          const durationFrames = durationSec * FRAME_RATE;
+          const clip: TimelineClip = {
+            id: shot.id,
+            name: `S${shot.scene_number}-${shot.shot_code} ${shot.description?.slice(0, 30) || ""}`,
+            trackId: "v1",
+            startFrame: frameOffset,
+            durationFrames,
+            color: shot.video_url ? CLIP_COLORS.video : "hsla(190, 40%, 30%, 0.5)",
+            type: "video",
+            videoUrl: shot.video_url || undefined,
+            thumbnailUrl: shot.thumbnail_url || undefined,
+            shotId: shot.id,
+          };
+          frameOffset += durationFrames + 5; // 5 frame gap
+          return clip;
+        });
+        setClips(shotClips);
+        setCurrentFrame(0);
+      } else {
+        setClips([]);
+      }
+      setLoadingShots(false);
+    };
+    loadShots();
+  }, [selectedProjectId]);
 
   // Playback loop
   useEffect(() => {
     if (!isPlaying) return;
     lastTimeRef.current = performance.now();
-
     const tick = (now: number) => {
       const elapsed = now - lastTimeRef.current;
       if (elapsed >= 1000 / FRAME_RATE) {
         lastTimeRef.current = now;
         setCurrentFrame((f) => {
-          if (f >= totalFrames) {
-            setIsPlaying(false);
-            return totalFrames;
-          }
+          if (f >= totalFrames) { setIsPlaying(false); return totalFrames; }
           return f + 1;
         });
       }
@@ -107,27 +189,90 @@ const VideoEditor = () => {
     setTracks((prev) => prev.map((t) => t.id === trackId ? { ...t, [prop]: !t[prop] } : t));
   };
 
+  const handleExport = () => {
+    if (!hasExportableClips) {
+      toast.error("No video clips with sources. Generate videos in AI Studio first, then load your project here.");
+      return;
+    }
+    setExportModalOpen(true);
+    exportState.exportTimeline(clips);
+  };
+
   const timelineHeight = tracks.length * TRACK_HEIGHT;
+
+  // Find active video clip for preview
+  const activeVideoClip = clips.find(
+    (c) => c.type === "video" && c.videoUrl &&
+      currentFrame >= c.startFrame && currentFrame < c.startFrame + c.durationFrames
+  );
 
   return (
     <AppLayout>
       <PaywallGate>
         <div className="flex flex-col h-[calc(100vh-64px)]">
           {/* Preview Monitor */}
-          <div className="flex-1 min-h-0 bg-black flex items-center justify-center relative">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center"
-            >
-              <div className="aspect-video w-full max-w-2xl mx-auto bg-secondary/10 rounded-lg border border-[var(--neo-border)] flex items-center justify-center">
-                <div className="text-center p-8">
-                  <Film className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
-                  <p className="text-xs text-muted-foreground/50">Preview Monitor</p>
-                  <p className="text-[10px] text-muted-foreground/30 mt-1">Drag clips on the timeline below</p>
+          <div className="flex-1 min-h-0 bg-black flex flex-col">
+            {/* Project selector bar */}
+            <div className="flex items-center gap-2 px-4 py-2 bg-secondary/10 border-b border-[var(--neo-border)]">
+              <FolderOpen className="w-4 h-4 text-muted-foreground" />
+              <Select
+                value={selectedProjectId ?? "demo"}
+                onValueChange={(v) => setSelectedProjectId(v === "demo" ? null : v)}
+              >
+                <SelectTrigger className="w-48 h-7 text-xs bg-secondary/30 border-[var(--neo-border)]">
+                  <SelectValue placeholder="Select project…" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="demo">
+                    <span className="text-muted-foreground">Demo Timeline</span>
+                  </SelectItem>
+                  {projects.map((p) => (
+                    <SelectItem key={p.id} value={p.id}>{p.title}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {loadingShots && (
+                <span className="text-[10px] text-muted-foreground animate-pulse">Loading shots…</span>
+              )}
+              {selectedProjectId && !loadingShots && (
+                <span className="text-[10px] text-muted-foreground">
+                  {clips.filter((c) => c.type === "video").length} clips
+                  {hasExportableClips && " · ready to export"}
+                </span>
+              )}
+            </div>
+
+            {/* Preview area */}
+            <div className="flex-1 flex items-center justify-center relative">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="w-full h-full flex items-center justify-center"
+              >
+                <div className="aspect-video w-full max-w-2xl mx-auto bg-secondary/10 rounded-lg border border-[var(--neo-border)] flex items-center justify-center overflow-hidden relative">
+                  {activeVideoClip?.videoUrl ? (
+                    <video
+                      key={activeVideoClip.id}
+                      src={activeVideoClip.videoUrl}
+                      className="w-full h-full object-contain"
+                      muted
+                      autoPlay
+                      loop
+                    />
+                  ) : (
+                    <div className="text-center p-8">
+                      <Film className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
+                      <p className="text-xs text-muted-foreground/50">Preview Monitor</p>
+                      <p className="text-[10px] text-muted-foreground/30 mt-1">
+                        {selectedProjectId
+                          ? "Move playhead over a clip with video to preview"
+                          : "Select a project above or use the demo timeline"}
+                      </p>
+                    </div>
+                  )}
                 </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            </div>
           </div>
 
           {/* Timeline Panel */}
@@ -137,7 +282,6 @@ const VideoEditor = () => {
             transition={{ delay: 0.2 }}
             className="border-t border-[var(--neo-border)] bg-background"
           >
-            {/* Transport */}
             <TransportControls
               isPlaying={isPlaying}
               currentFrame={currentFrame}
@@ -148,11 +292,11 @@ const VideoEditor = () => {
               onSkipBack={() => setCurrentFrame((f) => Math.max(0, f - FRAME_RATE * 5))}
               onSkipForward={() => setCurrentFrame((f) => Math.min(totalFrames, f + FRAME_RATE * 5))}
               onAddTrack={addTrack}
+              onExport={handleExport}
+              canExport={hasExportableClips}
             />
 
-            {/* Timeline body */}
             <div className="flex overflow-hidden" style={{ height: timelineHeight + RULER_HEIGHT + 4 }}>
-              {/* Track headers */}
               <div className="w-36 shrink-0 border-r border-[var(--neo-border)]">
                 <div style={{ height: RULER_HEIGHT }} className="border-b border-[var(--neo-border)] bg-secondary/10" />
                 {tracks.map((track) => (
@@ -167,44 +311,29 @@ const VideoEditor = () => {
                 ))}
               </div>
 
-              {/* Scrollable timeline area */}
               <div
                 ref={scrollRef}
                 className="flex-1 overflow-x-auto overflow-y-hidden relative"
                 onScroll={handleScroll}
               >
-                {/* Ruler */}
                 <div className="sticky top-0 z-30" style={{ width: totalFrames * PIXELS_PER_FRAME }}>
-                  <TimelineRuler
-                    totalFrames={totalFrames}
-                    scrollLeft={0}
-                    onSeek={(f) => setCurrentFrame(f)}
-                  />
+                  <TimelineRuler totalFrames={totalFrames} scrollLeft={0} onSeek={(f) => setCurrentFrame(f)} />
                 </div>
 
-                {/* Tracks area */}
                 <div className="relative" style={{ width: totalFrames * PIXELS_PER_FRAME, height: timelineHeight }}>
-                  {/* Track lane backgrounds */}
                   {tracks.map((track, i) => (
                     <div
                       key={track.id}
-                      className={`absolute w-full border-b border-[var(--neo-border)] ${
-                        i % 2 === 0 ? "bg-secondary/5" : "bg-transparent"
-                      }`}
+                      className={`absolute w-full border-b border-[var(--neo-border)] ${i % 2 === 0 ? "bg-secondary/5" : "bg-transparent"}`}
                       style={{ top: i * TRACK_HEIGHT, height: TRACK_HEIGHT }}
                     />
                   ))}
 
-                  {/* Clips */}
                   {clips.map((clip) => {
                     const trackIndex = tracks.findIndex((t) => t.id === clip.trackId);
                     if (trackIndex === -1) return null;
                     return (
-                      <div
-                        key={clip.id}
-                        className="absolute"
-                        style={{ top: trackIndex * TRACK_HEIGHT }}
-                      >
+                      <div key={clip.id} className="absolute" style={{ top: trackIndex * TRACK_HEIGHT }}>
                         <TimelineClipItem
                           clip={clip}
                           onMove={moveClip}
@@ -217,16 +346,23 @@ const VideoEditor = () => {
                   })}
                 </div>
 
-                {/* Playhead */}
-                <Playhead
-                  currentFrame={currentFrame}
-                  scrollLeft={0}
-                  timelineHeight={timelineHeight}
-                />
+                <Playhead currentFrame={currentFrame} scrollLeft={0} timelineHeight={timelineHeight} />
               </div>
             </div>
           </motion.div>
         </div>
+
+        {/* Export Modal */}
+        <ExportProgressModal
+          open={exportModalOpen}
+          onOpenChange={setExportModalOpen}
+          stage={exportState.stage}
+          progress={exportState.progress}
+          message={exportState.message}
+          downloadUrl={exportState.downloadUrl}
+          error={exportState.error}
+          onReset={exportState.reset}
+        />
       </PaywallGate>
     </AppLayout>
   );

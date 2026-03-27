@@ -7,6 +7,8 @@ export interface TimelineClip {
   color: string;
   thumbnailUrl?: string;
   type: "video" | "audio" | "title";
+  videoUrl?: string;
+  shotId?: string;
 }
 
 export interface TimelineTrack {
