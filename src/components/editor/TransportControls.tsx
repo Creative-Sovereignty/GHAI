@@ -1,4 +1,4 @@
-import { Play, Pause, SkipBack, SkipForward, Square, Plus, Film, Music, Type } from "lucide-react";
+import { Play, Pause, SkipBack, SkipForward, Square, Plus, Film, Music, Type, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { frameToTimecode } from "./types";
 
@@ -12,11 +12,14 @@ interface TransportControlsProps {
   onSkipBack: () => void;
   onSkipForward: () => void;
   onAddTrack: (type: "video" | "audio" | "title") => void;
+  onExport?: () => void;
+  canExport?: boolean;
 }
 
 const TransportControls = ({
   isPlaying, currentFrame, totalFrames,
-  onPlay, onPause, onStop, onSkipBack, onSkipForward, onAddTrack
+  onPlay, onPause, onStop, onSkipBack, onSkipForward, onAddTrack,
+  onExport, canExport,
 }: TransportControlsProps) => {
   return (
     <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--neo-border)] bg-secondary/20">
@@ -64,7 +67,7 @@ const TransportControls = ({
         </Button>
       </div>
 
-      {/* Right: Timecode */}
+      {/* Right: Timecode + Export */}
       <div className="flex items-center gap-3">
         <span className="font-mono text-xs text-primary tabular-nums">
           {frameToTimecode(currentFrame)}
@@ -73,6 +76,18 @@ const TransportControls = ({
         <span className="font-mono text-xs text-muted-foreground tabular-nums">
           {frameToTimecode(totalFrames)}
         </span>
+        {onExport && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-7 text-[10px] gap-1 border-primary/30 text-primary hover:bg-primary/10"
+            onClick={onExport}
+            disabled={!canExport}
+          >
+            <Download className="w-3 h-3" />
+            Export
+          </Button>
+        )}
       </div>
     </div>
   );
