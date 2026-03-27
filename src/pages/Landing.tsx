@@ -2,10 +2,10 @@ import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import { forwardRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Film, FileText, Music, Video, Image, ListChecks, Star, ArrowRight, Check, Sparkles, Zap, Shield, Menu, X, Sun, Moon } from "lucide-react";
+import { Film, FileText, Music, Video, Image, ListChecks, Star, ArrowRight, Check, Sparkles, Zap, Shield, Menu, X } from "lucide-react";
 import logoImg from "@/assets/logo-circle.png";
 import { useRef, useState } from "react";
-import { useTheme } from "@/hooks/useTheme";
+
 import { useSubscription, TIERS } from "@/hooks/useSubscription";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
@@ -110,7 +110,6 @@ const PricingCTA = ({ plan }: { plan: typeof plans[number] }) => {
 const Landing = () => {
   const heroRef = useRef<HTMLElement>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { theme, toggleTheme } = useTheme();
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const logoY = useTransform(scrollYProgress, [0, 1], [0, -60]);
   const textY = useTransform(scrollYProgress, [0, 1], [0, -30]);
@@ -145,13 +144,6 @@ const Landing = () => {
             )}
           </div>
           <div className="flex items-center gap-3">
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-              aria-label="Toggle theme"
-            >
-              {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-            </button>
             <Link to="/auth" className="hidden sm:block">
               <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">Sign In</Button>
             </Link>

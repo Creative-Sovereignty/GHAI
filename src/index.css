@@ -152,66 +152,6 @@
     --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
   }
 
-  /* ═══ LIGHT THEME ═══ */
-  .light {
-    --background: 0 0% 10%;
-    --foreground: 0 0% 88%;
-
-    --card: 0 0% 22%;
-    --card-foreground: 0 0% 88%;
-
-    --popover: 0 0% 13%;
-    --popover-foreground: 0 0% 88%;
-
-    --primary: 0 0% 78%;
-    --primary-foreground: 0 0% 8%;
-
-    --secondary: 0 0% 16%;
-    --secondary-foreground: 0 0% 80%;
-
-    --muted: 0 0% 18%;
-    --muted-foreground: 0 0% 55%;
-
-    --accent: 0 0% 70%;
-    --accent-foreground: 0 0% 8%;
-
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 0 0% 22%;
-    --input: 0 0% 22%;
-    --ring: 0 0% 70%;
-
-    --sidebar-background: 0 0% 8%;
-    --sidebar-foreground: 0 0% 82%;
-    --sidebar-primary: 0 0% 78%;
-    --sidebar-primary-foreground: 0 0% 8%;
-    --sidebar-accent: 0 0% 15%;
-    --sidebar-accent-foreground: 0 0% 82%;
-    --sidebar-border: 0 0% 20%;
-    --sidebar-ring: 0 0% 70%;
-
-    --w3-void: #121212;
-    --w3-deep: #181818;
-    --w3-surface: #1e1e1e;
-    --w3-card: #2e2e2e;
-    --w3-border: #333333;
-    --w3-border-light: #444444;
-    --w3-text: #d8d8d8;
-    --w3-text-muted: #888888;
-
-    --glass-bg: rgba(30, 30, 30, 0.6);
-    --glass-border: rgba(200, 200, 200, 0.1);
-    --surface-glass: rgba(40, 40, 40, 0.7);
-
-    --gradient-mesh: radial-gradient(ellipse at 20% 50%, rgba(180, 180, 180, 0.04) 0%, transparent 50%),
-                     radial-gradient(ellipse at 80% 20%, rgba(200, 200, 200, 0.03) 0%, transparent 50%),
-                     radial-gradient(ellipse at 50% 80%, rgba(160, 160, 160, 0.03) 0%, transparent 50%);
-    --gradient-card: linear-gradient(135deg, #222222, #181818);
-    --gradient-dark: linear-gradient(180deg, hsl(0 0% 16%), hsl(0 0% 10%));
-
-    --grid-color: rgba(200, 200, 200, 0.04);
-  }
 }
 
 @layer base {
@@ -228,24 +168,6 @@
     filter: none;
   }
 
-  .light h1, .light h2, .light h3, .light h4, .light h5, .light h6 {
-    background: linear-gradient(90deg, #888, #e0e0e0, #aaa, #888);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 4px rgba(200, 200, 200, 0.15));
-  }
-
-  .light [class*="bg-primary"] h1, .light [class*="bg-primary"] h2, .light [class*="bg-primary"] h3,
-  .light [class*="bg-primary"] h4, .light [class*="bg-primary"] h5, .light [class*="bg-primary"] h6,
-  .light [class*="bg-primary"] p, .light [class*="bg-primary"] span, .light [class*="bg-primary"] li {
-    color: hsl(0 0% 5%) !important;
-    -webkit-text-fill-color: hsl(0 0% 5%) !important;
-    background: none !important;
-    -webkit-background-clip: unset !important;
-    background-clip: unset !important;
-  }
 
   a[href*="install"], a[href="/install"] {
     background: linear-gradient(90deg, var(--gold-dark), var(--gold-bright), var(--gold), var(--gold-dark));
