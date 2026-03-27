@@ -10,7 +10,7 @@ const FAQ_KNOWLEDGE = `
 Golden Hour AI FAQ:
 - Golden Hour AI is an AI-powered filmmaking studio that helps you create stunning short films from script to screen — including scriptwriting, storyboarding, shot planning, AI video generation via Luma Dream Machine, a multi-track video editor, and AI music generation.
 - No filmmaking experience needed. The AI assists with each step — from Director AI shot breakdowns to AI-generated video clips.
-- Features: AI Script Editor, Storyboard Studio, Shot List Tracker, AI Video via Luma Dream Machine, multi-track Timeline Editor (Video, Dialog, Score, Sound Design tracks), AI Music Studio, Director AI.
+- Features: AI Script Editor, Storyboard Studio, Shot List Tracker, AI Video via Luma Dream Machine, multi-track Timeline Editor (Video V1, B-Roll V2, Dialog, Score, Sound Design tracks), AI Music Studio, Director AI, and full MP4 export with audio mixing.
 - The AI Studio (/ai-studio) is the central hub for all AI generation — storyboard images, AI video clips via Luma Dream Machine, and AI music. Each tab shows your credit balance and generation controls.
 - AI Video generation uses Luma Dream Machine. Enter a cinematic prompt, adjust camera and motion settings, then click Generate. You'll see real-time progress states: queued → dreaming → completed.
 - Credit costs: storyboard images cost 2 credits, AI music costs 3 credits, AI video generation costs 10 credits. Your remaining balance is displayed on the AI Studio page and in the top bar.
@@ -18,8 +18,9 @@ Golden Hour AI FAQ:
 - Golden Hour AI is a Progressive Web App (PWA). Install it on mobile via your browser's "Add to Home Screen" option for a native app-like experience.
 - Uses state-of-the-art AI models for text generation, image synthesis (storyboards), video generation (Luma Dream Machine), and music composition — all accessible without needing your own API keys.
 - Free credits are provided to get started. Paid plans (Pro and Studio) unlock higher usage limits and premium features.
-- The multi-track timeline features separate tracks for Video, Dialog, Score, and Sound Design. Drag clips onto tracks, trim edges non-destructively, and use snap-to-grid for precise editing with real-time preview.
-- Videos export as standard MP4 format from the Video Editor.
+- The multi-track timeline features separate tracks for Video (V1), B-Roll (V2), Dialog, Score, and Sound Design. Select a project to auto-load your generated shots. Drag clip edges to trim in/out points non-destructively. Select a clip and use the toolbar to split at the playhead, duplicate, or delete. A preview monitor shows the active clip in real time.
+- MP4 Export: Click the Export button in the Video Editor transport bar. The export runs entirely in your browser using ffmpeg.wasm — no server upload needed. It supports both video and audio tracks. The pipeline: 1) Loading Encoder (downloads ~30MB FFmpeg WASM core, cached after first use), 2) Downloading Clips (fetches each video and audio source), 3) Encoding (concatenates video with libx264, mixes audio tracks with amix into AAC at 192kbps), 4) Complete — click Download MP4 to save your finished film. A progress modal tracks each stage with a percentage indicator.
+- Audio in exports: AI-generated music and sound effects from the AI Music page can be placed on Dialog, Score, or Sound Design tracks. When exporting, all audio clips with sources are mixed together and merged with the concatenated video into the final MP4.
 - For support issues, you can create a ticket and the team will follow up.
 `;
 
