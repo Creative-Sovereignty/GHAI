@@ -48,7 +48,7 @@ const ExportProgressModal = ({
             Export Timeline to MP4
           </DialogTitle>
           <DialogDescription>
-            Concatenates your video clips into a single MP4 file.
+            Concatenates your video clips and mixes audio tracks into a single MP4 file.
           </DialogDescription>
         </DialogHeader>
 

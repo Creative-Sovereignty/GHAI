@@ -8,6 +8,7 @@ export interface TimelineClip {
   thumbnailUrl?: string;
   type: "video" | "audio" | "title";
   videoUrl?: string;
+  audioUrl?: string;
   shotId?: string;
 }
 

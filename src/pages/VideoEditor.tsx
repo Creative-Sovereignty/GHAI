@@ -71,7 +71,7 @@ const VideoEditor = () => {
   const exportState = useTimelineExport();
 
   const totalFrames = FRAME_RATE * 30;
-  const hasExportableClips = clips.some((c) => c.type === "video" && c.videoUrl);
+  const hasExportableClips = clips.some((c) => (c.type === "video" && c.videoUrl) || (c.type === "audio" && c.audioUrl));
 
   // Load user's projects
   useEffect(() => {
@@ -281,7 +281,7 @@ const VideoEditor = () => {
               )}
               {selectedProjectId && !loadingShots && (
                 <span className="text-[10px] text-muted-foreground">
-                  {clips.filter((c) => c.type === "video").length} clips
+                  {clips.filter((c) => c.type === "video").length} video · {clips.filter((c) => c.type === "audio" && c.audioUrl).length} audio
                   {hasExportableClips && " · ready to export"}
                 </span>
               )}
