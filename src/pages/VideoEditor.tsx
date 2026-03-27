@@ -71,7 +71,7 @@ const VideoEditor = () => {
   const exportState = useTimelineExport();
 
   const totalFrames = FRAME_RATE * 30;
-  const hasExportableClips = clips.some((c) => c.type === "video" && c.videoUrl);
+  const hasExportableClips = clips.some((c) => (c.type === "video" && c.videoUrl) || (c.type === "audio" && c.audioUrl));
 
   // Load user's projects
   useEffect(() => {
