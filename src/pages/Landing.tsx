@@ -230,14 +230,6 @@ const Landing = () => {
         {/* Radial vignette */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_40%,transparent_30%,var(--w3-void)_80%)]" />
 
-        {/* Watermark logo */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <img
-            src={logoImg}
-            alt=""
-            className="w-[80vw] h-[80vw] max-w-[700px] max-h-[700px] object-contain opacity-[0.06]"
-          />
-        </div>
 
         {/* Content */}
         <motion.div style={{ opacity }} className="relative z-10 max-w-5xl mx-auto text-center">
