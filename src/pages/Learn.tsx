@@ -107,11 +107,12 @@ const wikiSections: WikiSection[] = [
     icon: Film,
     title: "Video Editor",
     content: [
-      "The **Video Editor** is a non-destructive, multi-track timeline editor for assembling your generated clips.",
-      "**Tracks** — The timeline includes dedicated tracks for **Video**, **Dialog**, **Score**, and **Sound Design**, giving you full control over your audio-visual mix.",
+      "The **Video Editor** is a non-destructive, multi-track timeline editor for assembling your generated clips into a finished film.",
+      "**Project Selector** — Choose a project from the dropdown at the top. All shots with generated video URLs are automatically loaded onto the timeline as clips, ordered by scene and shot code.",
+      "**Tracks** — The timeline includes dedicated tracks for **Video (V1)**, **B-Roll (V2)**, **Dialog**, **Score**, and **Sound Design**, giving you full control over your audio-visual mix.",
+      "**Preview Monitor** — A built-in video player shows the active clip under the playhead in real time. Transport controls let you play, pause, stop, skip forward/back, and scrub the timeline.",
       "**Trimming** — Drag clip edges to trim in/out points without destroying the original media.",
-      "**Preview** — Use the built-in player with transport controls to preview your edit in real time. A playhead and timeline ruler help with precise positioning.",
-      "**Export** — When satisfied, export your assembled cut as a standard MP4 file.",
+      "**MP4 Export** — Click the **Export** button in the transport bar to render your timeline into a single MP4 file. The process runs entirely in your browser using **ffmpeg.wasm** (no server upload needed):\n- *Loading Encoder* — Downloads the FFmpeg WebAssembly core (~30 MB, cached after first use)\n- *Downloading Clips* — Fetches each video source from cloud storage\n- *Encoding MP4* — Concatenates clips with libx264 and produces a faststart-optimized file\n- *Complete* — Click **Download MP4** to save your finished film\n\nA progress modal tracks each stage with a percentage indicator so you always know the status.",
     ],
   },
   {
