@@ -10,6 +10,7 @@ import TimelineRuler from "@/components/editor/TimelineRuler";
 import TimelineClipItem from "@/components/editor/TimelineClipItem";
 import Playhead from "@/components/editor/Playhead";
 import ExportProgressModal from "@/components/editor/ExportProgressModal";
+import ClipToolbar from "@/components/editor/ClipToolbar";
 import { TimelineTrack, TimelineClip, FRAME_RATE, PIXELS_PER_FRAME, TRACK_HEIGHT, RULER_HEIGHT } from "@/components/editor/types";
 import { useTimelineExport } from "@/hooks/useTimelineExport";
 import { useAuth } from "@/contexts/AuthContext";
@@ -163,8 +164,52 @@ const VideoEditor = () => {
     setClips((prev) => prev.map((c) => c.id === clipId ? { ...c, startFrame: newStart } : c));
   }, []);
 
-  const resizeClip = useCallback((clipId: string, newDuration: number) => {
+  const resizeClip = useCallback((clipId: string, newDuration: number, _side: "left" | "right") => {
     setClips((prev) => prev.map((c) => c.id === clipId ? { ...c, durationFrames: newDuration } : c));
+  }, []);
+
+  const splitClip = useCallback((clipId: string, atFrame: number) => {
+    setClips((prev) => {
+      const clip = prev.find((c) => c.id === clipId);
+      if (!clip) return prev;
+      const splitPoint = atFrame - clip.startFrame;
+      if (splitPoint <= 0 || splitPoint >= clip.durationFrames) return prev;
+
+      const leftClip: TimelineClip = {
+        ...clip,
+        durationFrames: splitPoint,
+      };
+      const rightClip: TimelineClip = {
+        ...clip,
+        id: `${clip.id}-split-${Date.now()}`,
+        name: `${clip.name} (2)`,
+        startFrame: atFrame,
+        durationFrames: clip.durationFrames - splitPoint,
+      };
+      return prev.map((c) => (c.id === clipId ? leftClip : c)).concat(rightClip);
+    });
+    toast.success("Clip split at playhead");
+  }, []);
+
+  const deleteClip = useCallback((clipId: string) => {
+    setClips((prev) => prev.filter((c) => c.id !== clipId));
+    setSelectedClip(null);
+    toast.success("Clip deleted");
+  }, []);
+
+  const duplicateClip = useCallback((clipId: string) => {
+    setClips((prev) => {
+      const clip = prev.find((c) => c.id === clipId);
+      if (!clip) return prev;
+      const newClip: TimelineClip = {
+        ...clip,
+        id: `${clip.id}-dup-${Date.now()}`,
+        name: `${clip.name} (copy)`,
+        startFrame: clip.startFrame + clip.durationFrames + 5,
+      };
+      return [...prev, newClip];
+    });
+    toast.success("Clip duplicated");
   }, []);
 
   const addTrack = (type: "video" | "audio" | "title") => {
@@ -295,6 +340,19 @@ const VideoEditor = () => {
               onExport={handleExport}
               canExport={hasExportableClips}
             />
+
+            {/* Clip context toolbar */}
+            {selectedClip && clips.find((c) => c.id === selectedClip) && (
+              <div className="flex items-center justify-center px-4 py-1.5 border-b border-[var(--neo-border)] bg-secondary/10">
+                <ClipToolbar
+                  clip={clips.find((c) => c.id === selectedClip)!}
+                  currentFrame={currentFrame}
+                  onSplit={splitClip}
+                  onDelete={deleteClip}
+                  onDuplicate={duplicateClip}
+                />
+              </div>
+            )}
 
             <div className="flex overflow-hidden" style={{ height: timelineHeight + RULER_HEIGHT + 4 }}>
               <div className="w-36 shrink-0 border-r border-[var(--neo-border)]">
