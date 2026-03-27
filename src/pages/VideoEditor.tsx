@@ -10,6 +10,7 @@ import TimelineRuler from "@/components/editor/TimelineRuler";
 import TimelineClipItem from "@/components/editor/TimelineClipItem";
 import Playhead from "@/components/editor/Playhead";
 import ExportProgressModal from "@/components/editor/ExportProgressModal";
+import ClipToolbar from "@/components/editor/ClipToolbar";
 import { TimelineTrack, TimelineClip, FRAME_RATE, PIXELS_PER_FRAME, TRACK_HEIGHT, RULER_HEIGHT } from "@/components/editor/types";
 import { useTimelineExport } from "@/hooks/useTimelineExport";
 import { useAuth } from "@/contexts/AuthContext";
