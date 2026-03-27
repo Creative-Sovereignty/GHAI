@@ -341,6 +341,19 @@ const VideoEditor = () => {
               canExport={hasExportableClips}
             />
 
+            {/* Clip context toolbar */}
+            {selectedClip && clips.find((c) => c.id === selectedClip) && (
+              <div className="flex items-center justify-center px-4 py-1.5 border-b border-[var(--neo-border)] bg-secondary/10">
+                <ClipToolbar
+                  clip={clips.find((c) => c.id === selectedClip)!}
+                  currentFrame={currentFrame}
+                  onSplit={splitClip}
+                  onDelete={deleteClip}
+                  onDuplicate={duplicateClip}
+                />
+              </div>
+            )}
+
             <div className="flex overflow-hidden" style={{ height: timelineHeight + RULER_HEIGHT + 4 }}>
               <div className="w-36 shrink-0 border-r border-[var(--neo-border)]">
                 <div style={{ height: RULER_HEIGHT }} className="border-b border-[var(--neo-border)] bg-secondary/10" />
