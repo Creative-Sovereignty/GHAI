@@ -232,7 +232,17 @@ const Landing = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}>
-              
+
+              {/* Hero logo */}
+              <motion.img
+                src={logoImg}
+                alt="Golden Hour AI"
+                className="w-32 h-32 sm:w-40 sm:h-40 md:w-52 md:h-52 mx-auto mb-6 object-contain logo-gold-ring drop-shadow-[0_0_40px_var(--gold-30)]"
+                initial={{ opacity: 0, scale: 0.7 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              />
+
               <p className="neo-label text-[var(--gold)] mb-4 tracking-[0.15em]">
                 <Sparkles className="w-4 h-4 inline mr-1 -mt-0.5" />
                 Next-Gen Filmmaking
