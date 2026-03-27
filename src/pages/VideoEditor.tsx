@@ -281,7 +281,7 @@ const VideoEditor = () => {
               )}
               {selectedProjectId && !loadingShots && (
                 <span className="text-[10px] text-muted-foreground">
-                  {clips.filter((c) => c.type === "video").length} clips
+                  {clips.filter((c) => c.type === "video").length} video · {clips.filter((c) => c.type === "audio" && c.audioUrl).length} audio
                   {hasExportableClips && " · ready to export"}
                 </span>
               )}
