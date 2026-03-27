@@ -101,10 +101,9 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
           <DialogTitle className="font-display flex items-center gap-2">
             <Download className="w-5 h-5 text-primary" />
             Export & Submit
-            <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/20 ml-1">Export Coming Soon</span>
           </DialogTitle>
           <DialogDescription>
-            Submit your shot to the festival. Video file export is coming soon.
+            Export your video from the Timeline Editor, or submit shots to the festival here.
           </DialogDescription>
         </DialogHeader>
 
