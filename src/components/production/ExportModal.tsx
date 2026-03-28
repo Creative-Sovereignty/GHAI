@@ -85,7 +85,36 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
         }
       }
 
-      toast.info("Video export is coming soon — festival submission saved!");
+      // Download the shot's video if available
+      if (selectedShotId) {
+        const shot = shots.find((s) => s.id === selectedShotId);
+        const { data: shotData } = await supabase
+          .from("shots")
+          .select("video_url, shot_code, scene_number")
+          .eq("id", selectedShotId)
+          .single();
+
+        if (shotData?.video_url) {
+          try {
+            const resp = await fetch(shotData.video_url);
+            const blob = await resp.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `S${shotData.scene_number}-${shotData.shot_code}.mp4`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            toast.success("Video exported successfully!");
+          } catch {
+            toast.error("Failed to download video file.");
+          }
+        } else {
+          toast.info("No rendered video found for this shot. Generate a video first.");
+        }
+      }
+
       onOpenChange(false);
     } catch (err: any) {
       toast.error(err.message || "Export failed.");
