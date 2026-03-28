@@ -32,7 +32,9 @@ const AIMusic = () => {
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
   const [tracks, setTracks] = useState<GeneratedTrack[]>([]);
+  const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const musicLibrary = useMusicLibrary();
 
   const buildPrompt = () => {
     const parts = [prompt || "background music"];
