@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Trophy, Film, Play, Share2, Search, Clock, Crown, Flame, TrendingUp, Star, Award, Clapperboard } from "lucide-react";
+import { FESTIVAL_CATEGORIES, getCategoryLabel, getCategoryIcon, type FestivalCategory } from "@/lib/festivalCategories";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
