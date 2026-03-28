@@ -201,6 +201,34 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
               disabled={!selectedShotId}
             />
           </div>
+
+          {/* Category selector (shown when festival toggle is on) */}
+          {submitToFest && (
+            <div className="space-y-2">
+              <Label className="text-sm text-muted-foreground flex items-center gap-1.5">
+                <Trophy className="w-3.5 h-3.5" />
+                Festival Category
+              </Label>
+              <Select value={festCategory} onValueChange={(v) => setFestCategory(v as FestivalCategory)}>
+                <SelectTrigger className="w-full bg-secondary/30 border-[var(--neo-border)]">
+                  <SelectValue placeholder="Choose a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {FESTIVAL_CATEGORIES.map((cat) => {
+                    const Icon = cat.icon;
+                    return (
+                      <SelectItem key={cat.value} value={cat.value}>
+                        <span className="flex items-center gap-2">
+                          <Icon className="w-3.5 h-3.5 text-primary" />
+                          {cat.label}
+                        </span>
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           {/* Share to Social */}
           <div className="space-y-2">
             <Label className="text-sm text-muted-foreground flex items-center gap-1.5">
