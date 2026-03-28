@@ -515,7 +515,7 @@ const FestivalGallery = () => {
                       }`}
                     >
                       {/* Video Preview */}
-                      <div className="aspect-video bg-secondary/20 relative overflow-hidden">
+                      <div className="aspect-video bg-secondary/20 relative overflow-hidden cursor-pointer" onClick={() => setLightboxEntry(entry)}>
                         {entry.shot?.video_url ? (
                           <video
                             src={entry.shot.video_url}
