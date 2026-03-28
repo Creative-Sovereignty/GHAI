@@ -27,6 +27,7 @@ interface ExportModalProps {
 const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
   const { user } = useAuth();
   const [submitToFest, setSubmitToFest] = useState(false);
+  const [festCategory, setFestCategory] = useState<FestivalCategory>("best_overall");
   const [exporting, setExporting] = useState(false);
   const [selectedShotId, setSelectedShotId] = useState<string | null>(shotId ?? null);
   const [shots, setShots] = useState<ShotOption[]>([]);
