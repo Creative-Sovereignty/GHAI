@@ -428,49 +428,88 @@ const FestivalGallery = () => {
         </div>
 
         {/* ── Gallery Filters ── */}
-        <div className="sticky top-0 z-10 flex items-center justify-between gap-4 px-6 md:px-8 py-3 border-b border-border bg-background/80 backdrop-blur-md">
-          <div className="flex items-center gap-1 bg-secondary/30 rounded-lg p-0.5">
-            {([
-              { mode: "trending" as SortMode, icon: Flame, label: "Trending" },
-              { mode: "recent" as SortMode, icon: Clock, label: "Recent" },
-              { mode: "top" as SortMode, icon: TrendingUp, label: "Top Rated" },
-            ]).map(({ mode, icon: Icon, label }) => (
+        <div className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur-md">
+          {/* Sort + Search row */}
+          <div className="flex items-center justify-between gap-4 px-6 md:px-8 py-3">
+            <div className="flex items-center gap-1 bg-secondary/30 rounded-lg p-0.5">
+              {([
+                { mode: "trending" as SortMode, icon: Flame, label: "Trending" },
+                { mode: "recent" as SortMode, icon: Clock, label: "Recent" },
+                { mode: "top" as SortMode, icon: TrendingUp, label: "Top Rated" },
+              ]).map(({ mode, icon: Icon, label }) => (
+                <button
+                  key={mode}
+                  onClick={() => setSortMode(mode)}
+                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-sm font-medium transition-all ${
+                    sortMode === mode
+                      ? "bg-primary/15 text-primary shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  {label}
+                </button>
+              ))}
+            </div>
+            <div className="flex items-center gap-2">
+              <AnimatePresence>
+                {showSearch && (
+                  <motion.div initial={{ width: 0, opacity: 0 }} animate={{ width: 200, opacity: 1 }} exit={{ width: 0, opacity: 0 }}>
+                    <Input
+                      placeholder="Search entries…"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="h-8 text-sm bg-secondary/30 border-border"
+                      autoFocus
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
               <button
-                key={mode}
-                onClick={() => setSortMode(mode)}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-sm font-medium transition-all ${
-                  sortMode === mode
-                    ? "bg-primary/15 text-primary shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
+                onClick={() => { setShowSearch((s) => !s); if (showSearch) setSearchQuery(""); }}
+                className={`p-2 rounded-lg transition-colors ${
+                  showSearch ? "bg-primary/15 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
                 }`}
               >
-                <Icon className="w-3.5 h-3.5" />
-                {label}
+                <Search className="w-4 h-4" />
               </button>
-            ))}
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <AnimatePresence>
-              {showSearch && (
-                <motion.div initial={{ width: 0, opacity: 0 }} animate={{ width: 200, opacity: 1 }} exit={{ width: 0, opacity: 0 }}>
-                  <Input
-                    placeholder="Search entries…"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="h-8 text-sm bg-secondary/30 border-border"
-                    autoFocus
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
+
+          {/* Category filter row */}
+          <div className="flex items-center gap-1.5 px-6 md:px-8 pb-3 overflow-x-auto scrollbar-hide">
             <button
-              onClick={() => { setShowSearch((s) => !s); if (showSearch) setSearchQuery(""); }}
-              className={`p-2 rounded-lg transition-colors ${
-                showSearch ? "bg-primary/15 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+              onClick={() => setActiveCategory("all")}
+              className={`shrink-0 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-all ${
+                activeCategory === "all"
+                  ? "bg-primary/15 text-primary border-primary/30"
+                  : "bg-secondary/20 text-muted-foreground border-border hover:text-foreground hover:border-foreground/20"
               }`}
             >
-              <Search className="w-4 h-4" />
+              <Film className="w-3 h-3" />
+              All Categories
             </button>
+            {FESTIVAL_CATEGORIES.map((cat) => {
+              const Icon = cat.icon;
+              const count = entries.filter((e) => e.category === cat.value).length;
+              return (
+                <button
+                  key={cat.value}
+                  onClick={() => setActiveCategory(cat.value)}
+                  className={`shrink-0 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-all ${
+                    activeCategory === cat.value
+                      ? "bg-primary/15 text-primary border-primary/30"
+                      : "bg-secondary/20 text-muted-foreground border-border hover:text-foreground hover:border-foreground/20"
+                  }`}
+                >
+                  <Icon className="w-3 h-3" />
+                  {cat.label}
+                  {count > 0 && (
+                    <span className="ml-0.5 text-[10px] font-mono opacity-70">{count}</span>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
 
