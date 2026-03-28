@@ -598,6 +598,7 @@ export type Database = {
     Views: {
       contest_entries_public: {
         Row: {
+          category: string | null
           created_at: string | null
           director_avatar: string | null
           director_name: string | null
