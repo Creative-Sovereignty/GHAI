@@ -85,7 +85,36 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
         }
       }
 
-      toast.info("Video export is coming soon — festival submission saved!");
+      // Download the shot's video if available
+      if (selectedShotId) {
+        const shot = shots.find((s) => s.id === selectedShotId);
+        const { data: shotData } = await supabase
+          .from("shots")
+          .select("video_url, shot_code, scene_number")
+          .eq("id", selectedShotId)
+          .single();
+
+        if (shotData?.video_url) {
+          try {
+            const resp = await fetch(shotData.video_url);
+            const blob = await resp.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `S${shotData.scene_number}-${shotData.shot_code}.mp4`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            toast.success("Video exported successfully!");
+          } catch {
+            toast.error("Failed to download video file.");
+          }
+        } else {
+          toast.info("No rendered video found for this shot. Generate a video first.");
+        }
+      }
+
       onOpenChange(false);
     } catch (err: any) {
       toast.error(err.message || "Export failed.");
@@ -139,7 +168,7 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
           {/* Format info */}
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Format</span>
-            <span className="font-mono text-muted-foreground/60">MP4 · H.264 — coming soon</span>
+            <span className="font-mono text-foreground/80">MP4 · H.264</span>
           </div>
 
           {/* Festival toggle */}
@@ -211,16 +240,16 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={exporting}>
             Cancel
           </Button>
-          <Button variant="glow" onClick={handleExport} disabled={exporting || !submitToFest || !selectedShotId}>
+          <Button variant="glow" onClick={handleExport} disabled={exporting || !selectedShotId}>
             {exporting ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Submitting…
+                Exporting…
               </>
             ) : (
               <>
-                <Trophy className="w-4 h-4" />
-                Submit to Festival
+                <Download className="w-4 h-4" />
+                {submitToFest ? "Export & Submit" : "Export MP4"}
               </>
             )}
           </Button>

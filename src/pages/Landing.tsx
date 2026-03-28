@@ -15,9 +15,9 @@ const features = [
 { icon: Image, title: "Storyboard Studio", desc: "Plan every scene visually with AI-generated storyboard frames and drag-and-drop.", neon: "cyan" },
 { icon: ListChecks, title: "Shot List Tracker", desc: "Organize shots, angles, and equipment for seamless production.", neon: "pink" },
 { icon: Sparkles, title: "AI Scene Generator", desc: "Generate stunning cinematic scene images from text prompts.", neon: "cyan" },
-{ icon: Film, title: "Timeline Editor", desc: "Assemble your final cut with a professional video editor.", neon: "purple", comingSoon: true },
-{ icon: Music, title: "AI Music Studio", desc: "Compose original soundtracks with mood and genre control.", neon: "pink", comingSoon: true },
-{ icon: Video, title: "AI Video Generation", desc: "Generate AI video clips from prompts — launching soon.", neon: "cyan", comingSoon: true }];
+{ icon: Film, title: "Timeline Editor", desc: "Assemble your final cut with a professional video editor and MP4 export.", neon: "purple" },
+{ icon: Music, title: "AI Music Studio", desc: "Compose original soundtracks with mood and genre control.", neon: "pink" },
+{ icon: Video, title: "AI Video Generation", desc: "Generate AI video clips from text prompts with cinematic quality.", neon: "cyan" }];
 
 
 const testimonials = [
@@ -305,8 +305,8 @@ const Landing = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.9 }}>
             
-            <StatPill value="4" label="AI Tools Live" delay={1.0} />
-            <StatPill value="3" label="Coming Soon" delay={1.1} />
+            <StatPill value="7" label="AI Tools Live" delay={1.0} />
+            <StatPill value="0" label="Placeholders" delay={1.1} />
             <StatPill value="∞" label="Creativity" delay={1.2} />
           </motion.div>
         </motion.div>
