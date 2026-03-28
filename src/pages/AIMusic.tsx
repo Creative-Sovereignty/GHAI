@@ -281,6 +281,18 @@ const AIMusic = () => {
 
                   <div className="flex items-center gap-1 shrink-0">
                     <button
+                      onClick={() => handleSaveToLibrary(track)}
+                      disabled={savedIds.has(track.id)}
+                      className={`p-2 rounded-lg transition-colors ${
+                        savedIds.has(track.id)
+                          ? "text-green-400 cursor-default"
+                          : "hover:bg-[var(--neon-cyan-10)] text-muted-foreground hover:text-foreground"
+                      }`}
+                      title={savedIds.has(track.id) ? "Saved to library" : "Save to Music Library"}
+                    >
+                      {savedIds.has(track.id) ? <Check className="w-4 h-4" /> : <BookmarkPlus className="w-4 h-4" />}
+                    </button>
+                    <button
                       onClick={() => handleDownload(track)}
                       className="p-2 rounded-lg hover:bg-[var(--neon-purple-10)] text-muted-foreground hover:text-foreground transition-colors"
                     >
