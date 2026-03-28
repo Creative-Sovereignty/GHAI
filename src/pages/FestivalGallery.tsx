@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, Trophy, Film, Sparkles, Play, Share2, Filter, Search, Clock, Crown, Medal } from "lucide-react";
+import { Heart, Trophy, Film, Play, Share2, Search, Clock, Crown, Flame, TrendingUp, Star, Award, Clapperboard } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
@@ -53,7 +53,6 @@ const FestivalGallery = () => {
   useEffect(() => {
     const tick = () => {
       const diff = Math.max(0, getNextSunday() - Date.now());
-      // Detect when countdown hits zero (previous was >0, now is 0)
       if (prevDiffRef.current !== null && prevDiffRef.current > 0 && diff === 0) {
         setShowConfetti(true);
         setTimeout(() => setShowConfetti(false), 5000);
@@ -72,9 +71,7 @@ const FestivalGallery = () => {
   }, [getNextSunday]);
 
   const DAILY_VOTE_LIMIT = 5;
-  const votesUsedToday = useMemo(() => {
-    return entries.filter((e) => e.hasVoted).length;
-  }, [entries]);
+  const votesUsedToday = useMemo(() => entries.filter((e) => e.hasVoted).length, [entries]);
   const votesRemaining = Math.max(0, DAILY_VOTE_LIMIT - votesUsedToday);
 
   const fetchEntries = async () => {
@@ -174,7 +171,6 @@ const FestivalGallery = () => {
         break;
       case "trending":
       default:
-        // Trending = weighted by recency + votes
         sorted.sort((a, b) => {
           const ageA = (Date.now() - new Date(a.created_at).getTime()) / 3600000;
           const ageB = (Date.now() - new Date(b.created_at).getTime()) / 3600000;
@@ -206,6 +202,8 @@ const FestivalGallery = () => {
       .sort((a, b) => b.totalVotes - a.totalVotes)
       .slice(0, 10);
   }, [entries]);
+
+  const rankIcons = [Trophy, Award, Star];
 
   return (
     <AppLayout>
@@ -280,75 +278,158 @@ const FestivalGallery = () => {
           )}
         </AnimatePresence>
 
-        {/* ── Festival Header ── */}
-        <div className="relative overflow-hidden border-b border-border bg-gradient-to-br from-card via-card to-primary/5">
-          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary))_0%,transparent_60%)]" />
-          <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 p-6 md:p-8">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/15 border border-primary/25 mb-3">
-                <span className="relative flex h-2 w-2">
+        {/* ── Cinematic Festival Header ── */}
+        <div className="relative overflow-hidden border-b border-primary/10">
+          {/* Layered background effects */}
+          <div className="absolute inset-0 bg-gradient-to-br from-[#0A0A0A] via-card to-[#0A0A0A]" />
+          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary))_0%,transparent_50%)]" />
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_bottom_left,hsl(200,80%,50%)_0%,transparent_50%)]" />
+          {/* Film grain texture */}
+          <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")` }} />
+
+          <div className="relative px-6 md:px-8 py-8 md:py-10">
+            {/* Top row: badge + countdown */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10 backdrop-blur-sm"
+              >
+                <span className="relative flex h-2.5 w-2.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary" />
                 </span>
-                <span className="text-xs font-mono uppercase tracking-wider text-primary">Live Competition</span>
-              </div>
-              <h1 className="text-3xl md:text-4xl font-display font-bold">
-                <span className="text-gold-blue-shimmer">Golden Hour</span>
-                <br />
-                <span className="text-foreground">Indie Fest '26</span>
-              </h1>
+                <span className="text-xs font-mono uppercase tracking-[0.2em] text-primary font-semibold">Live Competition</span>
+              </motion.div>
+
+              {/* Countdown */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="flex items-center gap-1"
+              >
+                <Clock className="w-3.5 h-3.5 text-primary/60 mr-1.5" />
+                <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground mr-2">Round ends</span>
+                {[
+                  { label: "D", value: countdown.days },
+                  { label: "H", value: countdown.hours },
+                  { label: "M", value: countdown.minutes },
+                  { label: "S", value: countdown.seconds },
+                ].map((unit, idx) => (
+                  <div key={unit.label} className="flex items-center">
+                    <div className="text-center px-2 py-1.5 rounded-md border border-primary/15 bg-primary/5 backdrop-blur-sm min-w-[36px]">
+                      <p className="text-sm font-mono font-bold text-foreground leading-none tabular-nums">
+                        {String(unit.value).padStart(2, "0")}
+                      </p>
+                      <p className="text-[8px] font-mono uppercase tracking-wider text-muted-foreground mt-0.5">{unit.label}</p>
+                    </div>
+                    {idx < 3 && <span className="text-primary/30 font-mono text-xs mx-0.5">:</span>}
+                  </div>
+                ))}
+              </motion.div>
             </div>
 
-            {/* Countdown Timer */}
-            <div className="flex items-center gap-1.5">
-              <Clock className="w-4 h-4 text-muted-foreground mr-1" />
+            {/* Title + CTA row */}
+            <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 rounded-xl bg-primary/15 border border-primary/25 flex items-center justify-center">
+                    <Clapperboard className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <h1 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold leading-none">
+                      <span className="text-gold-blue-shimmer">Golden Hour</span>
+                    </h1>
+                    <p className="text-lg md:text-xl font-display text-foreground/80 -mt-0.5">Indie Fest '26</p>
+                  </div>
+                </div>
+                <p className="text-sm text-muted-foreground max-w-md mt-3">
+                  Submit your AI-generated shots, compete with fellow filmmakers, and vote for the best cinema every week.
+                </p>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="flex items-center gap-3"
+              >
+                {/* Vote power indicator */}
+                <div className="text-center px-4 py-3 rounded-xl border border-primary/15 bg-primary/5 backdrop-blur-sm">
+                  <div className="flex items-center justify-center gap-1 mb-1">
+                    {Array.from({ length: DAILY_VOTE_LIMIT }).map((_, i) => (
+                      <div
+                        key={i}
+                        className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                          i < votesRemaining ? "bg-primary shadow-[0_0_4px_hsl(var(--primary)/0.5)]" : "bg-muted-foreground/20"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
+                    {votesRemaining} vote{votesRemaining !== 1 ? "s" : ""} left
+                  </p>
+                </div>
+
+                <Button
+                  variant="glow"
+                  size="lg"
+                  className="gap-2 font-semibold"
+                  onClick={() => {
+                    toast({ title: "Head to the Video Editor", description: "Export a shot and toggle Festival Submission." });
+                  }}
+                >
+                  <Trophy className="w-4 h-4" />
+                  Submit Entry
+                </Button>
+              </motion.div>
+            </div>
+
+            {/* Stats strip */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="flex items-center gap-6 mt-6 pt-5 border-t border-primary/10"
+            >
               {[
-                { label: "D", value: countdown.days },
-                { label: "H", value: countdown.hours },
-                { label: "M", value: countdown.minutes },
-                { label: "S", value: countdown.seconds },
-              ].map((unit) => (
-                <div key={unit.label} className="text-center px-2.5 py-2 rounded-lg border border-border bg-card/80 backdrop-blur-sm min-w-[44px]">
-                  <p className="text-lg font-mono font-bold text-foreground leading-none">{String(unit.value).padStart(2, "0")}</p>
-                  <p className="text-[9px] font-mono uppercase tracking-wider text-muted-foreground mt-0.5">{unit.label}</p>
+                { label: "Entries", value: entries.length, icon: Film },
+                { label: "Directors", value: leaderboard.length, icon: Crown },
+                { label: "Total Votes", value: entries.reduce((s, e) => s + e.votes, 0), icon: Heart },
+              ].map(({ label, value, icon: Icon }) => (
+                <div key={label} className="flex items-center gap-2">
+                  <Icon className="w-3.5 h-3.5 text-primary/60" />
+                  <span className="text-sm font-mono font-bold text-foreground">{value.toLocaleString()}</span>
+                  <span className="text-xs text-muted-foreground">{label}</span>
                 </div>
               ))}
-            </div>
-
-            <div className="flex items-center gap-4">
-              <div className="text-center px-5 py-3 rounded-xl border border-border bg-card/80 backdrop-blur-sm">
-                <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Your Power</p>
-                <p className="text-2xl font-display font-bold text-primary">{votesRemaining}</p>
-                <p className="text-[10px] text-muted-foreground">Votes Left Today</p>
-              </div>
-              <Button
-                variant="glow"
-                className="gap-2"
-                onClick={() => {
-                  toast({ title: "Head to the Video Editor", description: "Export a shot and toggle Festival Submission." });
-                }}
-              >
-                <Trophy className="w-4 h-4" />
-                Submit Entry
-              </Button>
-            </div>
+            </motion.div>
           </div>
         </div>
 
         {/* ── Gallery Filters ── */}
-        <div className="flex items-center justify-between gap-4 px-6 md:px-8 py-4 border-b border-border bg-card/50">
-          <div className="flex items-center gap-1">
-            {(["trending", "recent", "top"] as SortMode[]).map((mode) => (
+        <div className="sticky top-0 z-10 flex items-center justify-between gap-4 px-6 md:px-8 py-3 border-b border-border bg-background/80 backdrop-blur-md">
+          <div className="flex items-center gap-1 bg-secondary/30 rounded-lg p-0.5">
+            {([
+              { mode: "trending" as SortMode, icon: Flame, label: "Trending" },
+              { mode: "recent" as SortMode, icon: Clock, label: "Recent" },
+              { mode: "top" as SortMode, icon: TrendingUp, label: "Top Rated" },
+            ]).map(({ mode, icon: Icon, label }) => (
               <button
                 key={mode}
                 onClick={() => setSortMode(mode)}
-                className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-sm font-medium transition-all ${
                   sortMode === mode
-                    ? "bg-primary/15 text-primary"
-                    : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                    ? "bg-primary/15 text-primary shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {mode === "trending" ? "Trending" : mode === "recent" ? "Recent" : "Top Rated"}
+                <Icon className="w-3.5 h-3.5" />
+                {label}
               </button>
             ))}
           </div>
@@ -368,7 +449,9 @@ const FestivalGallery = () => {
             </AnimatePresence>
             <button
               onClick={() => { setShowSearch((s) => !s); if (showSearch) setSearchQuery(""); }}
-              className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+              className={`p-2 rounded-lg transition-colors ${
+                showSearch ? "bg-primary/15 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+              }`}
             >
               <Search className="w-4 h-4" />
             </button>
@@ -379,174 +462,265 @@ const FestivalGallery = () => {
         <div className="flex gap-0">
           {/* ── Submission Grid ── */}
           <div className="flex-1 p-6 md:p-8 min-w-0">
-          {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="aspect-[16/12] rounded-xl bg-card animate-pulse border border-border" />
-              ))}
-            </div>
-          ) : sortedEntries.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-center">
-              <Film className="w-16 h-16 text-muted-foreground/30 mb-4" />
-              <h2 className="text-xl font-semibold text-foreground mb-2">
-                {searchQuery ? "No matching entries" : "No entries yet"}
-              </h2>
-              <p className="text-muted-foreground">
-                {searchQuery
-                  ? "Try a different search term."
-                  : "Submit your best shots from the Video Editor to enter the festival."}
-              </p>
-            </div>
-          ) : (
-            <motion.div
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-              initial="hidden"
-              animate="visible"
-              variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.06 } } }}
-            >
-              {sortedEntries.map((entry, i) => (
-                <motion.div
-                  key={entry.id}
-                  variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-                  className="group relative rounded-xl border border-border bg-card overflow-hidden hover:border-primary/30 transition-all hover:shadow-[0_0_24px_hsl(var(--primary)/0.08)]"
-                >
-                  {/* Video Preview */}
-                  <div className="aspect-video bg-muted relative overflow-hidden">
-                    {entry.shot?.video_url ? (
-                      <video
-                        src={entry.shot.video_url}
-                        className="w-full h-full object-cover"
-                        muted
-                        loop
-                        onMouseEnter={(e) => (e.target as HTMLVideoElement).play()}
-                        onMouseLeave={(e) => {
-                          const v = e.target as HTMLVideoElement;
-                          v.pause();
-                          v.currentTime = 0;
-                        }}
-                      />
-                    ) : entry.shot?.thumbnail_url ? (
-                      <img src={entry.shot.thumbnail_url} alt={entry.shot.description} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-card to-secondary/30">
-                        <Film className="w-10 h-10 text-muted-foreground/30" />
-                      </div>
-                    )}
-
-                    {/* Gradient overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-
-                    {/* Rank badge */}
-                    {i < 3 && (
-                      <div className="absolute top-2.5 left-2.5">
-                        <Badge className="bg-primary text-primary-foreground border-0 font-bold text-xs shadow-[0_0_12px_hsl(var(--primary)/0.4)]">
-                          Rank #{i + 1}
-                        </Badge>
-                      </div>
-                    )}
-
-                    {/* Play button */}
-                    {entry.shot?.video_url && (
-                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div className="w-12 h-12 rounded-full bg-primary/90 backdrop-blur-sm flex items-center justify-center shadow-lg">
-                          <Play className="w-5 h-5 text-primary-foreground ml-0.5" />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Entry Metadata */}
-                  <div className="p-4">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold text-foreground truncate">
-                          {entry.shot?.description || "Untitled Shot"}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          Dir. @{entry.director_name || "Anonymous"}
-                        </p>
-                        <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-                          <span className="flex items-center gap-1">
-                            <Heart className="w-3 h-3" />
-                            {entry.votes.toLocaleString()}
-                          </span>
-                          <span className="font-mono">
-                            {entry.shot?.shot_code || "—"}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        <button
-                          onClick={() => handleVote(entry.id)}
-                          disabled={votingId === entry.id}
-                          className={`p-2.5 rounded-xl border transition-all active:scale-90 ${
-                            entry.hasVoted
-                              ? "bg-primary text-primary-foreground border-primary shadow-[0_0_10px_hsl(var(--primary)/0.3)]"
-                              : "bg-secondary/30 hover:bg-primary hover:text-primary-foreground border-border hover:border-primary"
-                          }`}
-                        >
-                          <Heart className={`w-4 h-4 ${entry.hasVoted ? "fill-current" : ""}`} />
-                        </button>
-                        <button
-                          onClick={() => {
-                            navigator.clipboard.writeText(`${window.location.origin}/festival?entry=${entry.id}`);
-                            toast({ title: "Link copied!" });
-                          }}
-                          className="p-2.5 bg-secondary/30 hover:bg-secondary/60 rounded-xl border border-border transition-colors"
-                        >
-                          <Share2 className="w-4 h-4 text-muted-foreground" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          )}
-          </div>
-
-          {/* ── Leaderboard Sidebar ── */}
-          <div className="hidden lg:block w-72 shrink-0 border-l border-border bg-card/50 p-5">
-            <div className="flex items-center gap-2 mb-4">
-              <Crown className="w-4 h-4 text-primary" />
-              <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">Top Directors</h3>
-            </div>
-            {leaderboard.length === 0 ? (
-              <p className="text-xs text-muted-foreground">No entries yet.</p>
-            ) : (
-              <div className="space-y-2">
-                {leaderboard.map((dir, i) => (
-                  <div
-                    key={i}
-                    className={`flex items-center gap-3 p-2.5 rounded-lg transition-colors ${
-                      i === 0 ? "bg-primary/10 border border-primary/20" : "hover:bg-secondary/30"
-                    }`}
-                  >
-                    <span className={`text-xs font-mono font-bold w-5 text-center shrink-0 ${
-                      i === 0 ? "text-primary" : i < 3 ? "text-foreground" : "text-muted-foreground"
-                    }`}>
-                      {i + 1}
-                    </span>
-                    <div className="w-7 h-7 rounded-full bg-secondary/50 border border-border overflow-hidden shrink-0 flex items-center justify-center">
-                      {dir.avatar ? (
-                        <img src={dir.avatar} alt={dir.name} className="w-full h-full object-cover" />
-                      ) : (
-                        <span className="text-[10px] font-bold text-muted-foreground">{dir.name.charAt(0).toUpperCase()}</span>
-                      )}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs font-medium text-foreground truncate">@{dir.name}</p>
-                      <p className="text-[10px] text-muted-foreground">{dir.entries} {dir.entries === 1 ? "entry" : "entries"}</p>
-                    </div>
-                    <div className="flex items-center gap-1 shrink-0">
-                      <Heart className="w-3 h-3 text-primary" />
-                      <span className="text-xs font-mono font-bold text-primary">{dir.totalVotes.toLocaleString()}</span>
+            {loading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="rounded-xl bg-card border border-border overflow-hidden">
+                    <div className="aspect-video bg-secondary/30 animate-pulse" />
+                    <div className="p-4 space-y-2">
+                      <div className="h-4 bg-secondary/30 rounded animate-pulse w-3/4" />
+                      <div className="h-3 bg-secondary/20 rounded animate-pulse w-1/2" />
                     </div>
                   </div>
                 ))}
               </div>
+            ) : sortedEntries.length === 0 ? (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex flex-col items-center justify-center py-24 text-center"
+              >
+                <div className="w-20 h-20 rounded-2xl bg-primary/5 border border-primary/15 flex items-center justify-center mb-5">
+                  <Film className="w-10 h-10 text-primary/30" />
+                </div>
+                <h2 className="text-xl font-display font-bold text-foreground mb-2">
+                  {searchQuery ? "No matching entries" : "No entries yet"}
+                </h2>
+                <p className="text-sm text-muted-foreground max-w-sm">
+                  {searchQuery
+                    ? "Try a different search term."
+                    : "Submit your best shots from the Video Editor to be the first to enter the festival."}
+                </p>
+              </motion.div>
+            ) : (
+              <motion.div
+                className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5"
+                initial="hidden"
+                animate="visible"
+                variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.05 } } }}
+              >
+                {sortedEntries.map((entry, i) => {
+                  const RankIcon = i < 3 ? rankIcons[i] : null;
+
+                  return (
+                    <motion.div
+                      key={entry.id}
+                      variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}
+                      className={`group relative rounded-xl border overflow-hidden transition-all duration-300 ${
+                        i === 0
+                          ? "border-primary/30 bg-card shadow-[0_0_30px_hsl(var(--primary)/0.08)]"
+                          : "border-border bg-card hover:border-primary/20 hover:shadow-[0_0_20px_hsl(var(--primary)/0.05)]"
+                      }`}
+                    >
+                      {/* Video Preview */}
+                      <div className="aspect-video bg-secondary/20 relative overflow-hidden">
+                        {entry.shot?.video_url ? (
+                          <video
+                            src={entry.shot.video_url}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                            muted
+                            loop
+                            onMouseEnter={(e) => (e.target as HTMLVideoElement).play()}
+                            onMouseLeave={(e) => {
+                              const v = e.target as HTMLVideoElement;
+                              v.pause();
+                              v.currentTime = 0;
+                            }}
+                          />
+                        ) : entry.shot?.thumbnail_url ? (
+                          <img
+                            src={entry.shot.thumbnail_url}
+                            alt={entry.shot.description}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <Film className="w-8 h-8 text-muted-foreground/20" />
+                          </div>
+                        )}
+
+                        {/* Cinematic gradient overlays */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent opacity-80" />
+                        <div className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-black/30 to-transparent" />
+
+                        {/* Rank badge */}
+                        {RankIcon && (
+                          <div className="absolute top-3 left-3 z-10">
+                            <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg backdrop-blur-md border ${
+                              i === 0
+                                ? "bg-primary/20 border-primary/40 shadow-[0_0_12px_hsl(var(--primary)/0.3)]"
+                                : i === 1
+                                ? "bg-foreground/10 border-foreground/20"
+                                : "bg-foreground/5 border-foreground/15"
+                            }`}>
+                              <RankIcon className={`w-3.5 h-3.5 ${i === 0 ? "text-primary" : "text-foreground/70"}`} />
+                              <span className={`text-xs font-mono font-bold ${i === 0 ? "text-primary" : "text-foreground/70"}`}>#{i + 1}</span>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Play indicator */}
+                        {entry.shot?.video_url && (
+                          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <motion.div
+                              whileHover={{ scale: 1.1 }}
+                              className="w-12 h-12 rounded-full bg-primary/90 backdrop-blur-sm flex items-center justify-center shadow-[0_0_20px_hsl(var(--primary)/0.4)]"
+                            >
+                              <Play className="w-5 h-5 text-primary-foreground ml-0.5" />
+                            </motion.div>
+                          </div>
+                        )}
+
+                        {/* Shot type badge */}
+                        {entry.shot?.shot_type && (
+                          <div className="absolute bottom-3 left-3">
+                            <span className="text-[10px] font-mono uppercase tracking-wider text-foreground/70 px-2 py-0.5 rounded-md bg-black/40 backdrop-blur-sm border border-white/10">
+                              {entry.shot.shot_type}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Entry Metadata */}
+                      <div className="p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-semibold text-foreground truncate leading-tight">
+                              {entry.shot?.description || "Untitled Shot"}
+                            </p>
+                            <div className="flex items-center gap-2 mt-1.5">
+                              {/* Director avatar */}
+                              <div className="w-4 h-4 rounded-full bg-secondary/50 border border-border overflow-hidden shrink-0 flex items-center justify-center">
+                                {entry.director_avatar ? (
+                                  <img src={entry.director_avatar} alt="" className="w-full h-full object-cover" />
+                                ) : (
+                                  <span className="text-[7px] font-bold text-muted-foreground">
+                                    {(entry.director_name || "A").charAt(0).toUpperCase()}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-xs text-muted-foreground truncate">
+                                @{entry.director_name || "Anonymous"}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <button
+                              onClick={() => handleVote(entry.id)}
+                              disabled={votingId === entry.id}
+                              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border text-sm font-medium transition-all active:scale-95 ${
+                                entry.hasVoted
+                                  ? "bg-primary/15 text-primary border-primary/30 shadow-[0_0_10px_hsl(var(--primary)/0.15)]"
+                                  : "bg-secondary/20 hover:bg-primary/10 hover:text-primary border-border hover:border-primary/30 text-muted-foreground"
+                              }`}
+                            >
+                              <Heart className={`w-3.5 h-3.5 ${entry.hasVoted ? "fill-current" : ""}`} />
+                              <span className="font-mono text-xs">{entry.votes.toLocaleString()}</span>
+                            </button>
+                            <button
+                              onClick={() => {
+                                navigator.clipboard.writeText(`${window.location.origin}/festival?entry=${entry.id}`);
+                                toast({ title: "Link copied!" });
+                              }}
+                              className="p-2 bg-secondary/20 hover:bg-secondary/40 rounded-lg border border-border transition-colors"
+                            >
+                              <Share2 className="w-3.5 h-3.5 text-muted-foreground" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </motion.div>
             )}
+          </div>
+
+          {/* ── Leaderboard Sidebar ── */}
+          <div className="hidden lg:block w-72 shrink-0 border-l border-border bg-card/30 backdrop-blur-sm">
+            <div className="sticky top-[49px] p-5">
+              <div className="flex items-center gap-2 mb-5">
+                <div className="w-7 h-7 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
+                  <Crown className="w-3.5 h-3.5 text-primary" />
+                </div>
+                <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">Top Directors</h3>
+              </div>
+
+              {leaderboard.length === 0 ? (
+                <div className="text-center py-8">
+                  <Trophy className="w-8 h-8 text-muted-foreground/20 mx-auto mb-2" />
+                  <p className="text-xs text-muted-foreground">No entries yet.</p>
+                </div>
+              ) : (
+                <div className="space-y-1.5">
+                  {leaderboard.map((dir, i) => {
+                    const RankIcon = i < 3 ? rankIcons[i] : null;
+                    return (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: 10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.1 + i * 0.04 }}
+                        className={`flex items-center gap-2.5 p-2.5 rounded-lg transition-all ${
+                          i === 0
+                            ? "bg-primary/10 border border-primary/20 shadow-[0_0_15px_hsl(var(--primary)/0.05)]"
+                            : "hover:bg-secondary/30"
+                        }`}
+                      >
+                        <span className="w-5 text-center shrink-0">
+                          {RankIcon ? (
+                            <RankIcon className={`w-3.5 h-3.5 mx-auto ${i === 0 ? "text-primary" : "text-muted-foreground"}`} />
+                          ) : (
+                            <span className="text-xs font-mono text-muted-foreground">{i + 1}</span>
+                          )}
+                        </span>
+                        <div className={`w-7 h-7 rounded-full overflow-hidden shrink-0 flex items-center justify-center border ${
+                          i === 0 ? "border-primary/30" : "border-border"
+                        } bg-secondary/50`}>
+                          {dir.avatar ? (
+                            <img src={dir.avatar} alt={dir.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <span className="text-[10px] font-bold text-muted-foreground">{dir.name.charAt(0).toUpperCase()}</span>
+                          )}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-medium text-foreground truncate">@{dir.name}</p>
+                          <p className="text-[10px] text-muted-foreground">{dir.entries} {dir.entries === 1 ? "entry" : "entries"}</p>
+                        </div>
+                        <div className="flex items-center gap-1 shrink-0">
+                          <Heart className="w-3 h-3 text-primary/60" />
+                          <span className="text-xs font-mono font-bold text-primary">{dir.totalVotes.toLocaleString()}</span>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Festival rules mini card */}
+              <div className="mt-6 p-3.5 rounded-xl border border-border bg-secondary/10">
+                <p className="text-[10px] font-mono uppercase tracking-wider text-primary/80 mb-2">How it works</p>
+                <ul className="space-y-1.5 text-xs text-muted-foreground">
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary/60 mt-0.5">01</span>
+                    <span>Generate & export shots from the Video Editor</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary/60 mt-0.5">02</span>
+                    <span>Toggle "Festival Submission" when exporting</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary/60 mt-0.5">03</span>
+                    <span>Vote for your favorites — {DAILY_VOTE_LIMIT} per day</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary/60 mt-0.5">04</span>
+                    <span>Weekly rounds — top directors earn recognition</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>
