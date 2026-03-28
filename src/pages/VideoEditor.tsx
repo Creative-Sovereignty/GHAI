@@ -410,6 +410,8 @@ const VideoEditor = () => {
                 ref={scrollRef}
                 className="flex-1 overflow-x-auto overflow-y-hidden relative"
                 onScroll={handleScroll}
+                onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = "copy"; }}
+                onDrop={handleTimelineDrop}
               >
                 <div className="sticky top-0 z-30" style={{ width: totalFrames * PIXELS_PER_FRAME }}>
                   <TimelineRuler totalFrames={totalFrames} scrollLeft={0} onSeek={(f) => setCurrentFrame(f)} />
