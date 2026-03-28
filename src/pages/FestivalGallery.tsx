@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import AppLayout from "@/components/AppLayout";
+import VideoLightbox from "@/components/production/VideoLightbox";
 
 interface ContestEntry {
   id: string;
@@ -38,6 +39,7 @@ const FestivalGallery = () => {
   const [sortMode, setSortMode] = useState<SortMode>("trending");
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearch, setShowSearch] = useState(false);
+  const [lightboxEntry, setLightboxEntry] = useState<ContestEntry | null>(null);
 
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [showConfetti, setShowConfetti] = useState(false);
@@ -144,6 +146,12 @@ const FestivalGallery = () => {
             ? { ...e, hasVoted: voted, votes: e.votes + (voted ? 1 : -1) }
             : e
         )
+      );
+      // Keep lightbox in sync
+      setLightboxEntry((prev) =>
+        prev?.id === entryId
+          ? { ...prev, hasVoted: voted, votes: prev.votes + (voted ? 1 : -1) }
+          : prev
       );
       toast({ title: voted ? "Voted! 🎬" : "Vote removed" });
     }
@@ -513,7 +521,7 @@ const FestivalGallery = () => {
                       }`}
                     >
                       {/* Video Preview */}
-                      <div className="aspect-video bg-secondary/20 relative overflow-hidden">
+                      <div className="aspect-video bg-secondary/20 relative overflow-hidden cursor-pointer" onClick={() => setLightboxEntry(entry)}>
                         {entry.shot?.video_url ? (
                           <video
                             src={entry.shot.video_url}
@@ -724,6 +732,28 @@ const FestivalGallery = () => {
           </div>
         </div>
       </div>
+
+      <VideoLightbox
+        open={!!lightboxEntry}
+        onClose={() => setLightboxEntry(null)}
+        videoUrl={lightboxEntry?.shot?.video_url ?? null}
+        thumbnailUrl={lightboxEntry?.shot?.thumbnail_url}
+        title={lightboxEntry?.shot?.description || "Untitled Shot"}
+        directorName={lightboxEntry?.director_name || "Anonymous"}
+        directorAvatar={lightboxEntry?.director_avatar}
+        shotCode={lightboxEntry?.shot?.shot_code}
+        shotType={lightboxEntry?.shot?.shot_type}
+        votes={lightboxEntry?.votes ?? 0}
+        hasVoted={lightboxEntry?.hasVoted ?? false}
+        onVote={() => lightboxEntry && handleVote(lightboxEntry.id)}
+        onShare={() => {
+          if (lightboxEntry) {
+            navigator.clipboard.writeText(`${window.location.origin}/festival?entry=${lightboxEntry.id}`);
+            toast({ title: "Link copied!" });
+          }
+        }}
+        votingDisabled={votingId === lightboxEntry?.id}
+      />
     </AppLayout>
   );
 };
