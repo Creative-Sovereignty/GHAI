@@ -147,6 +147,12 @@ const FestivalGallery = () => {
             : e
         )
       );
+      // Keep lightbox in sync
+      setLightboxEntry((prev) =>
+        prev?.id === entryId
+          ? { ...prev, hasVoted: voted, votes: prev.votes + (voted ? 1 : -1) }
+          : prev
+      );
       toast({ title: voted ? "Voted! 🎬" : "Vote removed" });
     }
     setVotingId(null);
