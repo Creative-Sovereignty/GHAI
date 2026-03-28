@@ -16,6 +16,7 @@ interface ContestEntry {
   shot_id: string;
   votes: number;
   created_at: string;
+  category: string;
   director_name: string | null;
   director_avatar: string | null;
   shot: {
