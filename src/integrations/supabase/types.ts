@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       contest_entries: {
         Row: {
+          category: string
           created_at: string
           id: string
           shot_id: string
@@ -23,6 +24,7 @@ export type Database = {
           votes: number
         }
         Insert: {
+          category?: string
           created_at?: string
           id?: string
           shot_id: string
@@ -30,6 +32,7 @@ export type Database = {
           votes?: number
         }
         Update: {
+          category?: string
           created_at?: string
           id?: string
           shot_id?: string
