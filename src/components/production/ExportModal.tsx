@@ -240,16 +240,16 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={exporting}>
             Cancel
           </Button>
-          <Button variant="glow" onClick={handleExport} disabled={exporting || !submitToFest || !selectedShotId}>
+          <Button variant="glow" onClick={handleExport} disabled={exporting || !selectedShotId}>
             {exporting ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Submitting…
+                Exporting…
               </>
             ) : (
               <>
-                <Trophy className="w-4 h-4" />
-                Submit to Festival
+                <Download className="w-4 h-4" />
+                {submitToFest ? "Export & Submit" : "Export MP4"}
               </>
             )}
           </Button>
