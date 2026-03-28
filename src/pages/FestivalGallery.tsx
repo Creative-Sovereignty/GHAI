@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import AppLayout from "@/components/AppLayout";
+import VideoLightbox from "@/components/production/VideoLightbox";
 
 interface ContestEntry {
   id: string;
