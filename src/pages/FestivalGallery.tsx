@@ -164,9 +164,13 @@ const FestivalGallery = () => {
 
   const sortedEntries = useMemo(() => {
     let filtered = entries;
+    // Category filter
+    if (activeCategory !== "all") {
+      filtered = filtered.filter((e) => e.category === activeCategory);
+    }
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
-      filtered = entries.filter(
+      filtered = filtered.filter(
         (e) =>
           e.shot?.description?.toLowerCase().includes(q) ||
           e.shot?.shot_code?.toLowerCase().includes(q) ||
