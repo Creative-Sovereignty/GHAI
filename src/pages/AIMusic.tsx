@@ -114,6 +114,23 @@ const AIMusic = () => {
     a.click();
   };
 
+  const handleSaveToLibrary = (track: GeneratedTrack) => {
+    musicLibrary.addTrack({
+      id: track.id,
+      name: track.name,
+      genre: track.genre,
+      mood: track.mood,
+      duration: track.duration,
+      durationSeconds: selectedDuration,
+      bpm: track.bpm,
+      audioUrl: track.audioUrl,
+      prompt: track.prompt,
+      savedAt: new Date().toISOString(),
+    });
+    setSavedIds((prev) => new Set(prev).add(track.id));
+    toast.success("Saved to Music Library — available in Video Editor");
+  };
+
   return (
     <AppLayout>
       <PaywallGate>
