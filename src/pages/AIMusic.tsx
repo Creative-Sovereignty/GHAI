@@ -1,12 +1,13 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Music, Play, Pause, Download, Wand2, Clock, RefreshCw, Volume2, Sparkles, Loader2, Square } from "lucide-react";
+import { Music, Play, Pause, Download, Wand2, Clock, RefreshCw, Volume2, Sparkles, Loader2, Square, BookmarkPlus, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
 import { Badge } from "@/components/ui/badge";
 import AppLayout from "@/components/AppLayout";
 import PaywallGate from "@/components/PaywallGate";
 import { toast } from "sonner";
+import { useMusicLibrary } from "@/hooks/useMusicLibrary";
 
 const genres = ["Cinematic", "Ambient", "Electronic", "Orchestral", "Lo-Fi", "Suspense", "Action", "Romantic"];
 const moods = ["Tense", "Uplifting", "Melancholic", "Mysterious", "Energetic", "Peaceful", "Dark", "Triumphant"];
