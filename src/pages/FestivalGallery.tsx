@@ -626,14 +626,23 @@ const FestivalGallery = () => {
                           </div>
                         )}
 
-                        {/* Shot type badge */}
-                        {entry.shot?.shot_type && (
-                          <div className="absolute bottom-3 left-3">
+                        {/* Shot type + category badges */}
+                        <div className="absolute bottom-3 left-3 flex items-center gap-1.5">
+                          {entry.shot?.shot_type && (
                             <span className="text-[10px] font-mono uppercase tracking-wider text-foreground/70 px-2 py-0.5 rounded-md bg-black/40 backdrop-blur-sm border border-white/10">
                               {entry.shot.shot_type}
                             </span>
-                          </div>
-                        )}
+                          )}
+                          {(() => {
+                            const CatIcon = getCategoryIcon(entry.category);
+                            return (
+                              <span className="flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider text-primary/80 px-2 py-0.5 rounded-md bg-primary/10 backdrop-blur-sm border border-primary/20">
+                                <CatIcon className="w-2.5 h-2.5" />
+                                {getCategoryLabel(entry.category)}
+                              </span>
+                            );
+                          })()}
+                        </div>
                       </div>
 
                       {/* Entry Metadata */}
