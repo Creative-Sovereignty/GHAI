@@ -15,9 +15,9 @@ const features = [
 { icon: Image, title: "Storyboard Studio", desc: "Plan every scene visually with AI-generated storyboard frames and drag-and-drop.", neon: "cyan" },
 { icon: ListChecks, title: "Shot List Tracker", desc: "Organize shots, angles, and equipment for seamless production.", neon: "pink" },
 { icon: Sparkles, title: "AI Scene Generator", desc: "Generate stunning cinematic scene images from text prompts.", neon: "cyan" },
-{ icon: Film, title: "Timeline Editor", desc: "Assemble your final cut with a professional video editor.", neon: "purple", comingSoon: true },
-{ icon: Music, title: "AI Music Studio", desc: "Compose original soundtracks with mood and genre control.", neon: "pink", comingSoon: true },
-{ icon: Video, title: "AI Video Generation", desc: "Generate AI video clips from prompts — launching soon.", neon: "cyan", comingSoon: true }];
+{ icon: Film, title: "Timeline Editor", desc: "Assemble your final cut with a professional video editor and MP4 export.", neon: "purple" },
+{ icon: Music, title: "AI Music Studio", desc: "Compose original soundtracks with mood and genre control.", neon: "pink" },
+{ icon: Video, title: "AI Video Generation", desc: "Generate AI video clips from text prompts with cinematic quality.", neon: "cyan" }];
 
 
 const testimonials = [
