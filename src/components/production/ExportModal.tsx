@@ -9,6 +9,7 @@ import { Download, Trophy, Info, Loader2, Clapperboard, Share2, Youtube, Instagr
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { FESTIVAL_CATEGORIES, type FestivalCategory } from "@/lib/festivalCategories";
 
 interface ShotOption {
   id: string;
