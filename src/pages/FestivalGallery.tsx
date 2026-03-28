@@ -106,6 +106,7 @@ const FestivalGallery = () => {
       shot_id: e.shot_id,
       votes: e.votes,
       created_at: e.created_at,
+      category: e.category || "best_overall",
       director_name: e.director_name,
       director_avatar: e.director_avatar,
       shot: {
