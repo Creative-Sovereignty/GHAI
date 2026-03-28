@@ -446,6 +446,9 @@ const VideoEditor = () => {
                 <Playhead currentFrame={currentFrame} scrollLeft={0} timelineHeight={timelineHeight} />
               </div>
             </div>
+
+            {/* Music Library Panel */}
+            <MusicLibraryPanel onAddToTimeline={addMusicToTimeline} />
           </motion.div>
         </div>
 
