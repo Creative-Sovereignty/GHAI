@@ -726,6 +726,28 @@ const FestivalGallery = () => {
           </div>
         </div>
       </div>
+
+      <VideoLightbox
+        open={!!lightboxEntry}
+        onClose={() => setLightboxEntry(null)}
+        videoUrl={lightboxEntry?.shot?.video_url ?? null}
+        thumbnailUrl={lightboxEntry?.shot?.thumbnail_url}
+        title={lightboxEntry?.shot?.description || "Untitled Shot"}
+        directorName={lightboxEntry?.director_name || "Anonymous"}
+        directorAvatar={lightboxEntry?.director_avatar}
+        shotCode={lightboxEntry?.shot?.shot_code}
+        shotType={lightboxEntry?.shot?.shot_type}
+        votes={lightboxEntry?.votes ?? 0}
+        hasVoted={lightboxEntry?.hasVoted ?? false}
+        onVote={() => lightboxEntry && handleVote(lightboxEntry.id)}
+        onShare={() => {
+          if (lightboxEntry) {
+            navigator.clipboard.writeText(`${window.location.origin}/festival?entry=${lightboxEntry.id}`);
+            toast({ title: "Link copied!" });
+          }
+        }}
+        votingDisabled={votingId === lightboxEntry?.id}
+      />
     </AppLayout>
   );
 };
