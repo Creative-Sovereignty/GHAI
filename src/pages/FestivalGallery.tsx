@@ -39,6 +39,7 @@ const FestivalGallery = () => {
   const [sortMode, setSortMode] = useState<SortMode>("trending");
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearch, setShowSearch] = useState(false);
+  const [lightboxEntry, setLightboxEntry] = useState<ContestEntry | null>(null);
 
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [showConfetti, setShowConfetti] = useState(false);
