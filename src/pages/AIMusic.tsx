@@ -1,12 +1,13 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Music, Play, Pause, Download, Wand2, Clock, RefreshCw, Volume2, Sparkles, Loader2, Square } from "lucide-react";
+import { Music, Play, Pause, Download, Wand2, Clock, RefreshCw, Volume2, Sparkles, Loader2, Square, BookmarkPlus, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
 import { Badge } from "@/components/ui/badge";
 import AppLayout from "@/components/AppLayout";
 import PaywallGate from "@/components/PaywallGate";
 import { toast } from "sonner";
+import { useMusicLibrary } from "@/hooks/useMusicLibrary";
 
 const genres = ["Cinematic", "Ambient", "Electronic", "Orchestral", "Lo-Fi", "Suspense", "Action", "Romantic"];
 const moods = ["Tense", "Uplifting", "Melancholic", "Mysterious", "Energetic", "Peaceful", "Dark", "Triumphant"];
@@ -31,7 +32,9 @@ const AIMusic = () => {
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
   const [tracks, setTracks] = useState<GeneratedTrack[]>([]);
+  const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const musicLibrary = useMusicLibrary();
 
   const buildPrompt = () => {
     const parts = [prompt || "background music"];
@@ -109,6 +112,23 @@ const AIMusic = () => {
     a.href = track.audioUrl;
     a.download = `${track.name.replace(/\s+/g, "_")}.mp3`;
     a.click();
+  };
+
+  const handleSaveToLibrary = (track: GeneratedTrack) => {
+    musicLibrary.addTrack({
+      id: track.id,
+      name: track.name,
+      genre: track.genre,
+      mood: track.mood,
+      duration: track.duration,
+      durationSeconds: selectedDuration,
+      bpm: track.bpm,
+      audioUrl: track.audioUrl,
+      prompt: track.prompt,
+      savedAt: new Date().toISOString(),
+    });
+    setSavedIds((prev) => new Set(prev).add(track.id));
+    toast.success("Saved to Music Library — available in Video Editor");
   };
 
   return (
@@ -260,6 +280,18 @@ const AIMusic = () => {
                   </div>
 
                   <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      onClick={() => handleSaveToLibrary(track)}
+                      disabled={savedIds.has(track.id)}
+                      className={`p-2 rounded-lg transition-colors ${
+                        savedIds.has(track.id)
+                          ? "text-green-400 cursor-default"
+                          : "hover:bg-[var(--neon-cyan-10)] text-muted-foreground hover:text-foreground"
+                      }`}
+                      title={savedIds.has(track.id) ? "Saved to library" : "Save to Music Library"}
+                    >
+                      {savedIds.has(track.id) ? <Check className="w-4 h-4" /> : <BookmarkPlus className="w-4 h-4" />}
+                    </button>
                     <button
                       onClick={() => handleDownload(track)}
                       className="p-2 rounded-lg hover:bg-[var(--neon-purple-10)] text-muted-foreground hover:text-foreground transition-colors"

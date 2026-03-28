@@ -11,7 +11,9 @@ import TimelineClipItem from "@/components/editor/TimelineClipItem";
 import Playhead from "@/components/editor/Playhead";
 import ExportProgressModal from "@/components/editor/ExportProgressModal";
 import ClipToolbar from "@/components/editor/ClipToolbar";
+import MusicLibraryPanel from "@/components/editor/MusicLibraryPanel";
 import { TimelineTrack, TimelineClip, FRAME_RATE, PIXELS_PER_FRAME, TRACK_HEIGHT, RULER_HEIGHT } from "@/components/editor/types";
+import { MusicLibraryTrack } from "@/hooks/useMusicLibrary";
 import { useTimelineExport } from "@/hooks/useTimelineExport";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -230,6 +232,41 @@ const VideoEditor = () => {
     setClips((prev) => prev.filter((c) => c.trackId !== trackId));
   };
 
+  const addMusicToTimeline = useCallback((musicTrack: MusicLibraryTrack, durationFrames: number) => {
+    const scoreTrack = tracks.find((t) => t.type === "audio");
+    if (!scoreTrack) {
+      toast.error("No audio track available. Add one first.");
+      return;
+    }
+    const existingOnTrack = clips.filter((c) => c.trackId === scoreTrack.id);
+    const startFrame = existingOnTrack.length > 0
+      ? Math.max(...existingOnTrack.map((c) => c.startFrame + c.durationFrames)) + 5
+      : 0;
+
+    const newClip: TimelineClip = {
+      id: `music-${Date.now()}`,
+      name: musicTrack.name,
+      trackId: scoreTrack.id,
+      startFrame,
+      durationFrames,
+      color: CLIP_COLORS.score,
+      type: "audio",
+      audioUrl: musicTrack.audioUrl,
+    };
+    setClips((prev) => [...prev, newClip]);
+    toast.success(`"${musicTrack.name}" added to ${scoreTrack.name}`);
+  }, [tracks, clips]);
+
+  const handleTimelineDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    const data = e.dataTransfer.getData("application/x-music-track");
+    if (!data) return;
+    try {
+      const track: MusicLibraryTrack = JSON.parse(data);
+      addMusicToTimeline(track, track.durationSeconds * FRAME_RATE);
+    } catch {}
+  }, [addMusicToTimeline]);
+
   const toggleTrackProp = (trackId: string, prop: "muted" | "locked" | "visible") => {
     setTracks((prev) => prev.map((t) => t.id === trackId ? { ...t, [prop]: !t[prop] } : t));
   };
@@ -373,6 +410,8 @@ const VideoEditor = () => {
                 ref={scrollRef}
                 className="flex-1 overflow-x-auto overflow-y-hidden relative"
                 onScroll={handleScroll}
+                onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = "copy"; }}
+                onDrop={handleTimelineDrop}
               >
                 <div className="sticky top-0 z-30" style={{ width: totalFrames * PIXELS_PER_FRAME }}>
                   <TimelineRuler totalFrames={totalFrames} scrollLeft={0} onSeek={(f) => setCurrentFrame(f)} />
@@ -407,6 +446,9 @@ const VideoEditor = () => {
                 <Playhead currentFrame={currentFrame} scrollLeft={0} timelineHeight={timelineHeight} />
               </div>
             </div>
+
+            {/* Music Library Panel */}
+            <MusicLibraryPanel onAddToTimeline={addMusicToTimeline} />
           </motion.div>
         </div>
 
