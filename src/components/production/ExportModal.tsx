@@ -9,6 +9,7 @@ import { Download, Trophy, Info, Loader2, Clapperboard, Share2, Youtube, Instagr
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { FESTIVAL_CATEGORIES, type FestivalCategory } from "@/lib/festivalCategories";
 
 interface ShotOption {
   id: string;
@@ -26,6 +27,7 @@ interface ExportModalProps {
 const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
   const { user } = useAuth();
   const [submitToFest, setSubmitToFest] = useState(false);
+  const [festCategory, setFestCategory] = useState<FestivalCategory>("best_overall");
   const [exporting, setExporting] = useState(false);
   const [selectedShotId, setSelectedShotId] = useState<string | null>(shotId ?? null);
   const [shots, setShots] = useState<ShotOption[]>([]);
@@ -72,7 +74,7 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
       if (submitToFest && selectedShotId) {
         const { error } = await supabase
           .from("contest_entries")
-          .insert({ shot_id: selectedShotId, user_id: user.id });
+          .insert({ shot_id: selectedShotId, user_id: user.id, category: festCategory } as any);
 
         if (error) {
           if (error.code === "23505") {
@@ -199,6 +201,34 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
               disabled={!selectedShotId}
             />
           </div>
+
+          {/* Category selector (shown when festival toggle is on) */}
+          {submitToFest && (
+            <div className="space-y-2">
+              <Label className="text-sm text-muted-foreground flex items-center gap-1.5">
+                <Trophy className="w-3.5 h-3.5" />
+                Festival Category
+              </Label>
+              <Select value={festCategory} onValueChange={(v) => setFestCategory(v as FestivalCategory)}>
+                <SelectTrigger className="w-full bg-secondary/30 border-[var(--neo-border)]">
+                  <SelectValue placeholder="Choose a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {FESTIVAL_CATEGORIES.map((cat) => {
+                    const Icon = cat.icon;
+                    return (
+                      <SelectItem key={cat.value} value={cat.value}>
+                        <span className="flex items-center gap-2">
+                          <Icon className="w-3.5 h-3.5 text-primary" />
+                          {cat.label}
+                        </span>
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           {/* Share to Social */}
           <div className="space-y-2">
             <Label className="text-sm text-muted-foreground flex items-center gap-1.5">
