@@ -195,7 +195,7 @@ const FestivalGallery = () => {
         break;
     }
     return sorted;
-  }, [entries, sortMode, searchQuery]);
+  }, [entries, sortMode, searchQuery, activeCategory]);
 
   const leaderboard = useMemo(() => {
     const dirMap = new Map<string, { name: string; avatar: string | null; totalVotes: number; entries: number }>();
