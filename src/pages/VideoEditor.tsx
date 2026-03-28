@@ -232,6 +232,41 @@ const VideoEditor = () => {
     setClips((prev) => prev.filter((c) => c.trackId !== trackId));
   };
 
+  const addMusicToTimeline = useCallback((musicTrack: MusicLibraryTrack, durationFrames: number) => {
+    const scoreTrack = tracks.find((t) => t.type === "audio");
+    if (!scoreTrack) {
+      toast.error("No audio track available. Add one first.");
+      return;
+    }
+    const existingOnTrack = clips.filter((c) => c.trackId === scoreTrack.id);
+    const startFrame = existingOnTrack.length > 0
+      ? Math.max(...existingOnTrack.map((c) => c.startFrame + c.durationFrames)) + 5
+      : 0;
+
+    const newClip: TimelineClip = {
+      id: `music-${Date.now()}`,
+      name: musicTrack.name,
+      trackId: scoreTrack.id,
+      startFrame,
+      durationFrames,
+      color: CLIP_COLORS.score,
+      type: "audio",
+      audioUrl: musicTrack.audioUrl,
+    };
+    setClips((prev) => [...prev, newClip]);
+    toast.success(`"${musicTrack.name}" added to ${scoreTrack.name}`);
+  }, [tracks, clips]);
+
+  const handleTimelineDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    const data = e.dataTransfer.getData("application/x-music-track");
+    if (!data) return;
+    try {
+      const track: MusicLibraryTrack = JSON.parse(data);
+      addMusicToTimeline(track, track.durationSeconds * FRAME_RATE);
+    } catch {}
+  }, [addMusicToTimeline]);
+
   const toggleTrackProp = (trackId: string, prop: "muted" | "locked" | "visible") => {
     setTracks((prev) => prev.map((t) => t.id === trackId ? { ...t, [prop]: !t[prop] } : t));
   };
