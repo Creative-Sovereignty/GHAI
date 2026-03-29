@@ -1,6 +1,6 @@
 import { useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Heart, Share2, Maximize2, Volume2, VolumeX } from "lucide-react";
+import { X, Heart, Share2, Maximize2, Volume2, VolumeX, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 
 interface VideoLightboxProps {
