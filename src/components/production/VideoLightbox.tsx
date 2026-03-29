@@ -193,7 +193,7 @@ const VideoLightbox = ({
               >
                 <ChevronRight className="w-5 h-5" />
               </motion.button>
-            )
+            )}
 
             {/* Bottom bar */}
             <motion.div
