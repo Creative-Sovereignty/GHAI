@@ -169,6 +169,32 @@ const VideoLightbox = ({
               )}
             </div>
 
+            {/* Prev / Next arrows */}
+            {hasPrev && (
+              <motion.button
+                onClick={onPrev}
+                className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 z-10 p-2.5 rounded-full bg-black/50 hover:bg-black/70 border border-white/10 text-white transition-all active:scale-90"
+                initial={{ x: -12, opacity: 0 }}
+                animate={{ x: 0, opacity: controlsVisible ? 1 : 0 }}
+                transition={{ duration: 0.25 }}
+                aria-label="Previous entry"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </motion.button>
+            )}
+            {hasNext && (
+              <motion.button
+                onClick={onNext}
+                className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 z-10 p-2.5 rounded-full bg-black/50 hover:bg-black/70 border border-white/10 text-white transition-all active:scale-90"
+                initial={{ x: 12, opacity: 0 }}
+                animate={{ x: 0, opacity: controlsVisible ? 1 : 0 }}
+                transition={{ duration: 0.25 }}
+                aria-label="Next entry"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </motion.button>
+            )
+
             {/* Bottom bar */}
             <motion.div
               className="absolute bottom-0 inset-x-0 z-10 flex items-center justify-between px-4 md:px-6 py-4 bg-gradient-to-t from-black/70 to-transparent"
