@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   BookOpen, ArrowUp, ChevronRight, LayoutDashboard, FileText, ListChecks,
   Image, Video, Film, Music, Clapperboard, Settings, BarChart3, Search,
-  Zap, HelpCircle, Sparkles, CreditCard, Shield,
+  Zap, HelpCircle, Sparkles, CreditCard, Shield, Trophy,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
