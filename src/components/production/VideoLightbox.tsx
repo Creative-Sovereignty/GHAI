@@ -1,6 +1,6 @@
 import { useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Heart, Share2, Maximize2, Volume2, VolumeX } from "lucide-react";
+import { X, Heart, Share2, Maximize2, Volume2, VolumeX, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 
 interface VideoLightboxProps {
@@ -18,6 +18,10 @@ interface VideoLightboxProps {
   onVote: () => void;
   onShare: () => void;
   votingDisabled?: boolean;
+  onNext?: () => void;
+  onPrev?: () => void;
+  hasNext?: boolean;
+  hasPrev?: boolean;
 }
 
 const VideoLightbox = ({
@@ -35,6 +39,10 @@ const VideoLightbox = ({
   onVote,
   onShare,
   votingDisabled,
+  onNext,
+  onPrev,
+  hasNext = false,
+  hasPrev = false,
 }: VideoLightboxProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [muted, setMuted] = useState(false);
@@ -51,6 +59,8 @@ const VideoLightbox = ({
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
+      if (e.key === "ArrowRight" && onNext && hasNext) onNext();
+      if (e.key === "ArrowLeft" && onPrev && hasPrev) onPrev();
     };
     window.addEventListener("keydown", onKey);
     scheduleHide();
@@ -58,7 +68,7 @@ const VideoLightbox = ({
       window.removeEventListener("keydown", onKey);
       clearTimeout(hideTimer.current);
     };
-  }, [open, onClose, scheduleHide]);
+  }, [open, onClose, scheduleHide, onNext, onPrev, hasNext, hasPrev]);
 
   useEffect(() => {
     if (open && videoRef.current) {
@@ -158,6 +168,32 @@ const VideoLightbox = ({
                 </div>
               )}
             </div>
+
+            {/* Prev / Next arrows */}
+            {hasPrev && (
+              <motion.button
+                onClick={onPrev}
+                className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 z-10 p-2.5 rounded-full bg-black/50 hover:bg-black/70 border border-white/10 text-white transition-all active:scale-90"
+                initial={{ x: -12, opacity: 0 }}
+                animate={{ x: 0, opacity: controlsVisible ? 1 : 0 }}
+                transition={{ duration: 0.25 }}
+                aria-label="Previous entry"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </motion.button>
+            )}
+            {hasNext && (
+              <motion.button
+                onClick={onNext}
+                className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 z-10 p-2.5 rounded-full bg-black/50 hover:bg-black/70 border border-white/10 text-white transition-all active:scale-90"
+                initial={{ x: 12, opacity: 0 }}
+                animate={{ x: 0, opacity: controlsVisible ? 1 : 0 }}
+                transition={{ duration: 0.25 }}
+                aria-label="Next entry"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </motion.button>
+            )}
 
             {/* Bottom bar */}
             <motion.div

@@ -809,6 +809,26 @@ const FestivalGallery = () => {
           }
         }}
         votingDisabled={votingId === lightboxEntry?.id}
+        hasNext={(() => {
+          if (!lightboxEntry) return false;
+          const idx = sortedEntries.findIndex((e) => e.id === lightboxEntry.id);
+          return idx >= 0 && idx < sortedEntries.length - 1;
+        })()}
+        hasPrev={(() => {
+          if (!lightboxEntry) return false;
+          const idx = sortedEntries.findIndex((e) => e.id === lightboxEntry.id);
+          return idx > 0;
+        })()}
+        onNext={() => {
+          if (!lightboxEntry) return;
+          const idx = sortedEntries.findIndex((e) => e.id === lightboxEntry.id);
+          if (idx >= 0 && idx < sortedEntries.length - 1) setLightboxEntry(sortedEntries[idx + 1]);
+        }}
+        onPrev={() => {
+          if (!lightboxEntry) return;
+          const idx = sortedEntries.findIndex((e) => e.id === lightboxEntry.id);
+          if (idx > 0) setLightboxEntry(sortedEntries[idx - 1]);
+        }}
       />
     </AppLayout>
   );
