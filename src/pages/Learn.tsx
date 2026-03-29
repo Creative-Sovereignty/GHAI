@@ -151,6 +151,20 @@ const wikiSections: WikiSection[] = [
     ],
   },
   {
+    id: "festival",
+    icon: Trophy,
+    title: "Golden Hour Indie Fest",
+    content: [
+      "The **Golden Hour Indie Fest** is an in-app film competition where creators submit AI-generated shots and compete for community votes.",
+      "**Categories** — Entries are organized into six tracks: **Best Overall**, **Best Cinematography**, **Best VFX**, **Best Short**, **Best Editing**, and **Best Art Direction**. Choose your category when submitting from the Export & Submit modal.",
+      "**Submitting** — Open the Export modal, select a shot with a rendered video, toggle 'Submit to Golden Hour Indie Fest', pick a category, and click Export & Submit. Submission is free.",
+      "**Browsing & Voting** — Visit **/festival** to see all entries. Use the category pills to filter by track, or search by shot code, description, or director name. Sort by Trending, Recent, or Top Rated.",
+      "**Lightbox Viewer** — Click any entry to open a fullscreen cinematic lightbox. Use **← / →** arrow keys (or the on-screen chevrons) to browse entries without closing the viewer. Vote, share, mute/unmute, and toggle fullscreen from the overlay controls.",
+      "**Daily Vote Limit** — Each user gets **5 votes per day**. Your remaining votes are displayed at the top of the festival page.",
+      "**Leaderboard** — The sidebar shows the **Top 10 Directors** ranked by total votes received across all their submissions.",
+    ],
+  },
+  {
     id: "analytics",
     icon: BarChart3,
     title: "Analytics Docs",
