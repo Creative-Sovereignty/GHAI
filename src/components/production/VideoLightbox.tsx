@@ -59,6 +59,8 @@ const VideoLightbox = ({
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
+      if (e.key === "ArrowRight" && onNext && hasNext) onNext();
+      if (e.key === "ArrowLeft" && onPrev && hasPrev) onPrev();
     };
     window.addEventListener("keydown", onKey);
     scheduleHide();
