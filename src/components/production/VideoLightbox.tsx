@@ -68,7 +68,7 @@ const VideoLightbox = ({
       window.removeEventListener("keydown", onKey);
       clearTimeout(hideTimer.current);
     };
-  }, [open, onClose, scheduleHide]);
+  }, [open, onClose, scheduleHide, onNext, onPrev, hasNext, hasPrev]);
 
   useEffect(() => {
     if (open && videoRef.current) {
