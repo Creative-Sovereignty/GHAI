@@ -39,6 +39,10 @@ const VideoLightbox = ({
   onVote,
   onShare,
   votingDisabled,
+  onNext,
+  onPrev,
+  hasNext = false,
+  hasPrev = false,
 }: VideoLightboxProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [muted, setMuted] = useState(false);
