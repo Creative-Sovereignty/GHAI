@@ -18,6 +18,10 @@ interface VideoLightboxProps {
   onVote: () => void;
   onShare: () => void;
   votingDisabled?: boolean;
+  onNext?: () => void;
+  onPrev?: () => void;
+  hasNext?: boolean;
+  hasPrev?: boolean;
 }
 
 const VideoLightbox = ({
