@@ -187,8 +187,8 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
               <Label htmlFor="fest-toggle" className="text-sm font-medium cursor-pointer">
                 Submit to Golden Hour Indie Fest
               </Label>
-              <span className="text-[10px] font-mono uppercase tracking-wider text-primary/80 bg-primary/10 px-1.5 py-0.5 rounded">
-                Free Entry
+              <span className={`text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded ${freeEntryAvailable ? 'text-green-400 bg-green-400/10' : 'text-primary/80 bg-primary/10'}`}>
+                {freeEntryAvailable ? "Free Entry" : "$75 Entry"}
               </span>
               <TooltipProvider delayDuration={200}>
                 <Tooltip>
@@ -196,7 +196,9 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
                     <Info className="w-3.5 h-3.5 text-muted-foreground hover:text-primary transition-colors cursor-help" />
                   </TooltipTrigger>
                   <TooltipContent side="top" className="max-w-[220px] text-xs">
-                    First-time users get a free export credit when submitting to the festival!
+                    {freeEntryAvailable
+                      ? "Your first festival submission is free! Win 10,000 tokens."
+                      : "Additional festival entries cost $75 each. Win 10,000 tokens!"}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
