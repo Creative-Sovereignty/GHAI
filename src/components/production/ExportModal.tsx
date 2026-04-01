@@ -27,6 +27,7 @@ interface ExportModalProps {
 
 const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
   const { user } = useAuth();
+  const { freeEntryAvailable, submitEntry } = useFestivalEntry();
   const [submitToFest, setSubmitToFest] = useState(false);
   const [festCategory, setFestCategory] = useState<FestivalCategory>("best_overall");
   const [exporting, setExporting] = useState(false);
