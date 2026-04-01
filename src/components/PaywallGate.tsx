@@ -1,6 +1,7 @@
 import { useSubscription, TIERS, TierKey } from "@/hooks/useSubscription";
+import { useFestivalEntry } from "@/hooks/useFestivalEntry";
 import { Button } from "@/components/ui/button";
-import { Lock } from "lucide-react";
+import { Lock, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -12,14 +13,20 @@ interface PaywallGateProps {
 
 const PaywallGate = ({ children, requiredTier = ["pro", "studio"] }: PaywallGateProps) => {
   const { subscribed, tier, loading, startCheckout } = useSubscription();
+  const { isInTrial, loading: trialLoading } = useFestivalEntry();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
-  if (loading) {
+  if (loading || trialLoading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
+  }
+
+  // Free trial — all tools unlocked for 30 days
+  if (isInTrial) {
+    return <>{children}</>;
   }
 
   if (subscribed && requiredTier.includes(tier)) {

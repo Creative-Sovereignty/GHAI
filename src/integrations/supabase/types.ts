@@ -240,7 +240,9 @@ export type Database = {
           bio: string | null
           created_at: string
           display_name: string | null
+          free_fest_used: boolean
           id: string
+          trial_started_at: string | null
           updated_at: string
         }
         Insert: {
@@ -248,7 +250,9 @@ export type Database = {
           bio?: string | null
           created_at?: string
           display_name?: string | null
+          free_fest_used?: boolean
           id: string
+          trial_started_at?: string | null
           updated_at?: string
         }
         Update: {
@@ -256,7 +260,9 @@ export type Database = {
           bio?: string | null
           created_at?: string
           display_name?: string | null
+          free_fest_used?: boolean
           id?: string
+          trial_started_at?: string | null
           updated_at?: string
         }
         Relationships: []

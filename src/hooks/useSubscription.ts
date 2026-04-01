@@ -17,6 +17,13 @@ export const TIERS = {
   },
 } as const;
 
+export const FESTIVAL_ENTRY = {
+  price_id: "price_1THFux7pm1sWSXu2v9gtVmIH",
+  product_id: "prod_UFlR9r5kPeww33",
+  name: "Festival Entry",
+  price: "$75",
+} as const;
+
 export type TierKey = keyof typeof TIERS | "free";
 
 export function useSubscription() {
