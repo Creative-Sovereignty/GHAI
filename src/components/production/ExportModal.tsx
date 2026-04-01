@@ -72,20 +72,25 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
     setExporting(true);
 
     try {
-      // Festival submission (this is real — writes to DB)
+      // Festival submission via edge function (handles free vs $75 paid)
       if (submitToFest && selectedShotId) {
-        const { error } = await supabase
-          .from("contest_entries")
-          .insert({ shot_id: selectedShotId, user_id: user.id, category: festCategory } as any);
-
-        if (error) {
-          if (error.code === "23505") {
+        try {
+          const result = await submitEntry(selectedShotId, festCategory);
+          if (result.alreadySubmitted) {
             toast.info("This shot is already submitted to the festival.");
-          } else {
-            throw error;
+          } else if (result.free) {
+            toast.success("🎬 Free entry submitted to Golden Hour Indie Fest!");
+          } else if (result.url) {
+            toast.info("Redirecting to payment for your $75 festival entry…");
+            window.open(result.url, "_blank");
+            onOpenChange(false);
+            setExporting(false);
+            return; // Don't proceed with export — they'll come back after payment
           }
-        } else {
-          toast.success("Submitted to Golden Hour Indie Fest!");
+        } catch (err: any) {
+          toast.error(err.message || "Festival submission failed.");
+          setExporting(false);
+          return;
         }
       }
 
