@@ -28,6 +28,7 @@ const AnalyticsDocs = lazy(() => import("./pages/AnalyticsDocs"));
 const Learn = lazy(() => import("./pages/Learn"));
 const DirectorAI = lazy(() => import("./pages/DirectorAI"));
 const FestivalGallery = lazy(() => import("./pages/FestivalGallery"));
+const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
 import ChatWidget from "./components/ChatWidget";
 import ScrollToTop from "./components/ScrollToTop";
 import PWAInstallBanner from "./components/PWAInstallBanner";
@@ -69,6 +70,7 @@ const App = () => (
                 <Route path="/learn" element={<Learn />} />
                 <Route path="/director" element={<DirectorAI />} />
                 <Route path="/festival" element={<ProtectedRoute><FestivalGallery /></ProtectedRoute>} />
+                <Route path="/checkout-success" element={<ProtectedRoute><CheckoutSuccess /></ProtectedRoute>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
