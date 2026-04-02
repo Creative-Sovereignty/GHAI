@@ -101,7 +101,7 @@ serve(async (req) => {
       customer: customerId,
       line_items: [{ price: FESTIVAL_ENTRY_PRICE_ID, quantity: 1 }],
       mode: "payment",
-      success_url: `${origin}/festival?entry=success&shot=${shotId}&category=${category}`,
+      success_url: `${origin}/checkout-success?type=festival&shot=${shotId}&category=${category}`,
       cancel_url: `${origin}/festival?entry=canceled`,
       metadata: {
         user_id: user.id,

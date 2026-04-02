@@ -70,6 +70,7 @@ const App = () => (
                 <Route path="/learn" element={<Learn />} />
                 <Route path="/director" element={<DirectorAI />} />
                 <Route path="/festival" element={<ProtectedRoute><FestivalGallery /></ProtectedRoute>} />
+                <Route path="/checkout-success" element={<ProtectedRoute><CheckoutSuccess /></ProtectedRoute>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
