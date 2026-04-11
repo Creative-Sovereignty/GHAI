@@ -204,7 +204,7 @@ const Landing = () => {
       </nav>
 
       {/* ══════════ HERO ══════════ */}
-      <section ref={heroRef} className="relative min-h-[100vh] flex items-center justify-center px-6 overflow-hidden">
+      <section ref={heroRef} className="relative min-h-[100vh] flex items-center justify-center px-6 overflow-hidden pt-20">
         {/* Ambient orbs */}
         <motion.div style={{ y: orb1Y }} className="absolute -top-32 -left-40 pointer-events-none">
           <Orb className="w-[500px] h-[500px] bg-[var(--gold)]/15" delay={0} />
