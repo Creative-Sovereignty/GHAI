@@ -442,6 +442,7 @@ const Landing = () => {
                   </motion.div>
                 </motion.div>
               </motion.div>
+            </motion.div>
           </motion.div>
 
           {/* Stats row */}
