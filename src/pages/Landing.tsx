@@ -82,6 +82,39 @@ const heroLogoVariants: Variants = {
   },
 };
 
+const heroSubtitleVariants: Variants = {
+  hidden: { opacity: 0, y: 14 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      opacity: { duration: 0.5, ease: "easeOut" },
+      y: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+    },
+  },
+};
+
+const heroCtasVariants: Variants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.1, when: "beforeChildren" },
+  },
+};
+
+const heroCtaItemVariants: Variants = {
+  hidden: { opacity: 0, y: 16, scale: 0.96 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      opacity: { duration: 0.45, ease: "easeOut" },
+      y: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+      scale: { type: "spring", stiffness: 220, damping: 18 },
+    },
+  },
+};
+
 /* Floating orb component */
 const Orb = forwardRef<HTMLDivElement, {className: string;delay?: number;}>(
   ({ className, delay = 0 }, ref) =>
