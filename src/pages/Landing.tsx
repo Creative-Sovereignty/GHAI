@@ -243,12 +243,12 @@ const Landing = () => {
                 <Sparkles className="w-4 h-4 inline mr-1 -mt-0.5" />
                 Next-Gen Filmmaking
               </p>
-              <h1 className="text-4xl sm:text-5xl md:text-7xl font-display font-bold tracking-tight leading-[1.1] mb-4 text-gold-blue-shimmer">
+              <h1 className="text-4xl sm:text-5xl md:text-7xl font-display font-bold tracking-tight leading-[1.05] sm:leading-[1.02] mb-3 sm:mb-4 md:mb-5 text-gold-blue-shimmer">
                 Your AI-Powered
               </h1>
-              <div className="relative inline-block mb-2 sm:mb-3">
+              <div className="relative inline-block mt-1 mb-3 sm:mb-4 md:mb-5">
                 <motion.span
-                  className="inline-block px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--gold-dark)] via-[var(--gold)] to-[var(--gold-bright)] text-[var(--w3-void)] font-display font-black text-4xl sm:text-5xl md:text-7xl tracking-wide"
+                  className="inline-block px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-[var(--gold-dark)] via-[var(--gold)] to-[var(--gold-bright)] text-[var(--w3-void)] font-display font-black text-4xl sm:text-5xl md:text-7xl leading-[1] tracking-wide"
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.6, delay: 0.6 }}
@@ -287,7 +287,7 @@ const Landing = () => {
             </motion.div>
 
             <motion.p
-              className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mt-4 mb-6 sm:mb-8 leading-relaxed"
+              className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-xl md:max-w-2xl mx-auto mt-5 sm:mt-6 mb-8 sm:mb-10 leading-snug sm:leading-relaxed"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5 }}>
