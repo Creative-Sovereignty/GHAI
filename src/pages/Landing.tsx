@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform, AnimatePresence, type Variants } from "framer-motion";
+import { motion, useScroll, useTransform, AnimatePresence, useMotionValue, useSpring, useReducedMotion, type Variants } from "framer-motion";
 import { forwardRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
