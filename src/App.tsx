@@ -32,6 +32,7 @@ const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
 import ChatWidget from "./components/ChatWidget";
 import ScrollToTop from "./components/ScrollToTop";
 import PWAInstallBanner from "./components/PWAInstallBanner";
+import RouteTransition from "./components/RouteTransition";
 
 const queryClient = new QueryClient();
 
@@ -50,29 +51,31 @@ const App = () => (
           <BrowserRouter>
             <AnalyticsTracker />
             <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background"><div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" /></div>}>
-              <Routes>
-                <Route path="/" element={<Landing />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
-                <Route path="/install" element={<Install />} />
-                <Route path="/faq" element={<FAQ />} />
-                <Route path="/help" element={<Help />} />
-                <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                <Route path="/script" element={<ProtectedRoute><ScriptEditor /></ProtectedRoute>} />
-                <Route path="/storyboard" element={<ProtectedRoute><Storyboard /></ProtectedRoute>} />
-                <Route path="/shots" element={<ProtectedRoute><ShotList /></ProtectedRoute>} />
-                <Route path="/editor" element={<ProtectedRoute><VideoEditor /></ProtectedRoute>} />
-                <Route path="/veo3" element={<ProtectedRoute><Veo3 /></ProtectedRoute>} />
-                <Route path="/ai-studio" element={<ProtectedRoute><Veo3 /></ProtectedRoute>} />
-                <Route path="/music" element={<ProtectedRoute><AIMusic /></ProtectedRoute>} />
-                <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-                <Route path="/analytics-docs" element={<ProtectedRoute><AnalyticsDocs /></ProtectedRoute>} />
-                <Route path="/learn" element={<Learn />} />
-                <Route path="/director" element={<DirectorAI />} />
-                <Route path="/festival" element={<ProtectedRoute><FestivalGallery /></ProtectedRoute>} />
-                <Route path="/checkout-success" element={<ProtectedRoute><CheckoutSuccess /></ProtectedRoute>} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+              <RouteTransition>
+                <Routes>
+                  <Route path="/" element={<Landing />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
+                  <Route path="/install" element={<Install />} />
+                  <Route path="/faq" element={<FAQ />} />
+                  <Route path="/help" element={<Help />} />
+                  <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                  <Route path="/script" element={<ProtectedRoute><ScriptEditor /></ProtectedRoute>} />
+                  <Route path="/storyboard" element={<ProtectedRoute><Storyboard /></ProtectedRoute>} />
+                  <Route path="/shots" element={<ProtectedRoute><ShotList /></ProtectedRoute>} />
+                  <Route path="/editor" element={<ProtectedRoute><VideoEditor /></ProtectedRoute>} />
+                  <Route path="/veo3" element={<ProtectedRoute><Veo3 /></ProtectedRoute>} />
+                  <Route path="/ai-studio" element={<ProtectedRoute><Veo3 /></ProtectedRoute>} />
+                  <Route path="/music" element={<ProtectedRoute><AIMusic /></ProtectedRoute>} />
+                  <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                  <Route path="/analytics-docs" element={<ProtectedRoute><AnalyticsDocs /></ProtectedRoute>} />
+                  <Route path="/learn" element={<Learn />} />
+                  <Route path="/director" element={<DirectorAI />} />
+                  <Route path="/festival" element={<ProtectedRoute><FestivalGallery /></ProtectedRoute>} />
+                  <Route path="/checkout-success" element={<ProtectedRoute><CheckoutSuccess /></ProtectedRoute>} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </RouteTransition>
             </Suspense>
             <ChatWidget />
             <ScrollToTop />
