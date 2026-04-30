@@ -266,7 +266,7 @@ const Landing = () => {
             </motion.div>
 
             <motion.p
-              className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
+              className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mt-4 mb-6 sm:mb-8 leading-relaxed"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5 }}>
@@ -275,23 +275,23 @@ const Landing = () => {
               with AI tools that actually work, all in one place.
             </motion.p>
 
-            {/* CTA buttons */}
+            {/* CTA buttons — centered directly under the hero stack */}
             <motion.div
-              className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14"
+              className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-12 sm:mb-14"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.7 }}>
+              transition={{ duration: 0.8, delay: 0.9 }}>
               
-              <Link to="/auth">
+              <Link to="/auth" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="relative text-lg px-8 py-6 bg-gradient-to-r from-[var(--gold-dark)] via-[var(--gold)] to-[var(--amber)] text-[var(--w3-void)] font-bold shadow-[0_0_30px_var(--gold-30)] hover:shadow-[0_0_50px_var(--gold-30)] transition-shadow">
+                  className="glow-pulse-gold w-full sm:w-auto relative text-lg px-8 py-6 bg-gradient-to-r from-[var(--gold-dark)] via-[var(--gold)] to-[var(--amber)] text-[var(--w3-void)] font-bold shadow-[0_0_30px_var(--gold-30)] hover:shadow-[0_0_50px_var(--gold-30)] transition-shadow">
                   
                   Start Creating Free <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>
-              <a href="#features">
-                <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-[var(--w3-border)] hover:border-[var(--gold-30)] hover:bg-[var(--gold-05)] transition-all">
+              <a href="#features" className="w-full sm:w-auto">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg px-8 py-6 border-[var(--w3-border)] hover:border-[var(--gold-30)] hover:bg-[var(--gold-05)] transition-all">
                   See Features
                 </Button>
               </a>
