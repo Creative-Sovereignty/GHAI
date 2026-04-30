@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform, AnimatePresence, type Variants } from "framer-motion";
+import { motion, useScroll, useTransform, AnimatePresence, useMotionValue, useSpring, useReducedMotion, type Variants } from "framer-motion";
 import { forwardRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -162,6 +162,36 @@ const Landing = () => {
   const orb2Y = useTransform(scrollYProgress, [0, 1], [0, -40]);
   const orb3Y = useTransform(scrollYProgress, [0, 1], [0, -120]);
 
+  /* ─── Hero logo cursor-follow parallax ───
+     Layered onto the entrance animation via CSS transform composition,
+     so Framer Motion's variants for opacity/scale/y/rotate stay untouched. */
+  const prefersReducedMotion = useReducedMotion();
+  const pointerX = useMotionValue(0);
+  const pointerY = useMotionValue(0);
+  const logoTiltX = useSpring(pointerY, { stiffness: 80, damping: 18, mass: 0.6 });
+  const logoTiltY = useSpring(pointerX, { stiffness: 80, damping: 18, mass: 0.6 });
+  const logoOffsetX = useSpring(pointerX, { stiffness: 60, damping: 20, mass: 0.8 });
+  const logoOffsetY = useSpring(pointerY, { stiffness: 60, damping: 20, mass: 0.8 });
+  // Map normalized pointer (-1 → 1) to subtle tilt (deg) and translate (px)
+  const rotateX = useTransform(logoTiltX, [-1, 1], [6, -6]);
+  const rotateY = useTransform(logoTiltY, [-1, 1], [-8, 8]);
+  const translateX = useTransform(logoOffsetX, [-1, 1], [-10, 10]);
+  const translateY = useTransform(logoOffsetY, [-1, 1], [-6, 6]);
+
+  const handleHeroPointerMove = (e: React.PointerEvent<HTMLElement>) => {
+    if (prefersReducedMotion) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const nx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    const ny = ((e.clientY - rect.top) / rect.height) * 2 - 1;
+    pointerX.set(Math.max(-1, Math.min(1, nx)));
+    pointerY.set(Math.max(-1, Math.min(1, ny)));
+  };
+
+  const handleHeroPointerLeave = () => {
+    pointerX.set(0);
+    pointerY.set(0);
+  };
+
   const navLinks = [
   { href: "#features", label: "Features" },
   { href: "#pricing", label: "Pricing" },
@@ -254,7 +284,12 @@ const Landing = () => {
       </nav>
 
       {/* ══════════ HERO ══════════ */}
-      <section ref={heroRef} className="relative min-h-[100vh] flex items-center justify-center px-6 pt-24 sm:pt-20 pb-12 overflow-hidden">
+      <section
+        ref={heroRef}
+        onPointerMove={handleHeroPointerMove}
+        onPointerLeave={handleHeroPointerLeave}
+        className="relative min-h-[100vh] flex items-center justify-center px-6 pt-24 sm:pt-20 pb-12 overflow-hidden"
+      >
         {/* Ambient orbs */}
         <motion.div style={{ y: orb1Y }} className="absolute -top-32 -left-40 pointer-events-none">
           <Orb className="w-[500px] h-[500px] bg-[var(--gold)]/15" delay={0} />
@@ -309,23 +344,37 @@ const Landing = () => {
                   </motion.span>
                 </div>
 
-                {/* Hero logo — decorative; the H1 above conveys the brand for SEO & SR */}
-                <motion.img
-                  src={logoImg}
-                  alt=""
-                  role="presentation"
-                  aria-hidden="true"
-                  width={208}
-                  height={208}
-                  loading="eager"
-                  // @ts-expect-error: fetchpriority is a valid HTML attribute, not yet typed in React
-                  fetchpriority="high"
-                  decoding="async"
-                  className="block w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 mx-auto mt-6 sm:mt-8 mb-2 object-contain logo-gold-ring drop-shadow-[0_0_40px_var(--gold-30)]"
-                  variants={heroLogoVariants}
-                  whileHover={{ scale: 1.04, rotate: 1.5, transition: { type: "spring", stiffness: 220, damping: 14 } }}
-                  style={{ willChange: "transform, opacity" }}
-                />
+                {/* Hero logo — decorative; the H1 above conveys the brand for SEO & SR.
+                    Outer wrapper owns the cursor-follow parallax (rotate/x/y).
+                    Inner motion.img owns the entrance variants — they never collide. */}
+                <motion.div
+                  className="mx-auto mt-6 sm:mt-8 mb-2 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40"
+                  style={{
+                    transformPerspective: 700,
+                    rotateX,
+                    rotateY,
+                    x: translateX,
+                    y: translateY,
+                    willChange: "transform",
+                  }}
+                >
+                  <motion.img
+                    src={logoImg}
+                    alt=""
+                    role="presentation"
+                    aria-hidden="true"
+                    width={208}
+                    height={208}
+                    loading="eager"
+                    // @ts-expect-error: fetchpriority is a valid HTML attribute, not yet typed in React
+                    fetchpriority="high"
+                    decoding="async"
+                    className="block w-full h-full object-contain logo-gold-ring drop-shadow-[0_0_40px_var(--gold-30)]"
+                    variants={heroLogoVariants}
+                    whileHover={{ scale: 1.04, rotate: 1.5, transition: { type: "spring", stiffness: 220, damping: 14 } }}
+                    style={{ willChange: "transform, opacity" }}
+                  />
+                </motion.div>
               </motion.div>
             </motion.div>
 
