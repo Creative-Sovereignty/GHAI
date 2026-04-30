@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Film, FileText, Music, Video, Image, ListChecks, Star, ArrowRight, Check, Sparkles, Zap, Shield, Menu, X } from "lucide-react";
 import logoImg from "@/assets/logo-circle.png";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import { useSubscription, TIERS } from "@/hooks/useSubscription";
 import { useAuth } from "@/contexts/AuthContext";
