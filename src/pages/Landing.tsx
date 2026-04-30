@@ -252,6 +252,15 @@ const Landing = () => {
     pointerY.set(0);
   };
 
+  /* Reduced-motion-aware variants — rebuilt only when the preference flips. */
+  const reduced = !!prefersReducedMotion;
+  const heroStackVariants = useMemo(() => buildHeroStackVariants(reduced), [reduced]);
+  const heroBadgeVariants = useMemo(() => buildHeroBadgeVariants(reduced), [reduced]);
+  const heroLogoVariants = useMemo(() => buildHeroLogoVariants(reduced), [reduced]);
+  const heroSubtitleVariants = useMemo(() => buildHeroSubtitleVariants(reduced), [reduced]);
+  const heroCtasVariants = useMemo(() => buildHeroCtasVariants(reduced), [reduced]);
+  const heroCtaItemVariants = useMemo(() => buildHeroCtaItemVariants(reduced), [reduced]);
+
   const navLinks = [
   { href: "#features", label: "Features" },
   { href: "#pricing", label: "Pricing" },
