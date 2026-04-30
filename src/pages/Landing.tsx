@@ -284,7 +284,12 @@ const Landing = () => {
       </nav>
 
       {/* ══════════ HERO ══════════ */}
-      <section ref={heroRef} className="relative min-h-[100vh] flex items-center justify-center px-6 pt-24 sm:pt-20 pb-12 overflow-hidden">
+      <section
+        ref={heroRef}
+        onPointerMove={handleHeroPointerMove}
+        onPointerLeave={handleHeroPointerLeave}
+        className="relative min-h-[100vh] flex items-center justify-center px-6 pt-24 sm:pt-20 pb-12 overflow-hidden"
+      >
         {/* Ambient orbs */}
         <motion.div style={{ y: orb1Y }} className="absolute -top-32 -left-40 pointer-events-none">
           <Orb className="w-[500px] h-[500px] bg-[var(--gold)]/15" delay={0} />
@@ -354,7 +359,14 @@ const Landing = () => {
                   className="block w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 mx-auto mt-6 sm:mt-8 mb-2 object-contain logo-gold-ring drop-shadow-[0_0_40px_var(--gold-30)]"
                   variants={heroLogoVariants}
                   whileHover={{ scale: 1.04, rotate: 1.5, transition: { type: "spring", stiffness: 220, damping: 14 } }}
-                  style={{ willChange: "transform, opacity" }}
+                  style={{
+                    willChange: "transform, opacity",
+                    transformPerspective: 700,
+                    rotateX,
+                    rotateY,
+                    x: translateX,
+                    y: translateY,
+                  }}
                 />
               </motion.div>
             </motion.div>
