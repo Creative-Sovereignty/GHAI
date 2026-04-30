@@ -162,6 +162,36 @@ const Landing = () => {
   const orb2Y = useTransform(scrollYProgress, [0, 1], [0, -40]);
   const orb3Y = useTransform(scrollYProgress, [0, 1], [0, -120]);
 
+  /* ─── Hero logo cursor-follow parallax ───
+     Layered onto the entrance animation via CSS transform composition,
+     so Framer Motion's variants for opacity/scale/y/rotate stay untouched. */
+  const prefersReducedMotion = useReducedMotion();
+  const pointerX = useMotionValue(0);
+  const pointerY = useMotionValue(0);
+  const logoTiltX = useSpring(pointerY, { stiffness: 80, damping: 18, mass: 0.6 });
+  const logoTiltY = useSpring(pointerX, { stiffness: 80, damping: 18, mass: 0.6 });
+  const logoOffsetX = useSpring(pointerX, { stiffness: 60, damping: 20, mass: 0.8 });
+  const logoOffsetY = useSpring(pointerY, { stiffness: 60, damping: 20, mass: 0.8 });
+  // Map normalized pointer (-1 → 1) to subtle tilt (deg) and translate (px)
+  const rotateX = useTransform(logoTiltX, [-1, 1], [6, -6]);
+  const rotateY = useTransform(logoTiltY, [-1, 1], [-8, 8]);
+  const translateX = useTransform(logoOffsetX, [-1, 1], [-10, 10]);
+  const translateY = useTransform(logoOffsetY, [-1, 1], [-6, 6]);
+
+  const handleHeroPointerMove = (e: React.PointerEvent<HTMLElement>) => {
+    if (prefersReducedMotion) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const nx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    const ny = ((e.clientY - rect.top) / rect.height) * 2 - 1;
+    pointerX.set(Math.max(-1, Math.min(1, nx)));
+    pointerY.set(Math.max(-1, Math.min(1, ny)));
+  };
+
+  const handleHeroPointerLeave = () => {
+    pointerX.set(0);
+    pointerY.set(0);
+  };
+
   const navLinks = [
   { href: "#features", label: "Features" },
   { href: "#pricing", label: "Pricing" },
