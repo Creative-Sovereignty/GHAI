@@ -41,79 +41,106 @@ const neonColors: Record<string, string> = {
 /* ─── Shared hero entrance timeline ───
    One source of truth for badge + logo so they stay synced
    across re-renders, route transitions, and prop changes. */
-const heroStackVariants: Variants = {
+/* Reduced-motion-aware variant factories.
+   When prefers-reduced-motion is enabled we drop translate/scale/rotate
+   and use a quick opacity fade — keeping the same orchestration order. */
+const buildHeroStackVariants = (reduced: boolean): Variants => ({
   hidden: {},
   visible: {
     transition: {
-      delayChildren: 0.55,
-      staggerChildren: 0.12,
+      delayChildren: reduced ? 0 : 0.55,
+      staggerChildren: reduced ? 0.05 : 0.12,
       when: "beforeChildren",
     },
   },
-};
+});
 
-const heroBadgeVariants: Variants = {
-  hidden: { opacity: 0, scale: 0.92, y: 8 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    y: 0,
-    transition: {
-      opacity: { duration: 0.45, ease: "easeOut" },
-      y: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
-      scale: { type: "spring", stiffness: 220, damping: 18 },
-    },
-  },
-};
+const buildHeroBadgeVariants = (reduced: boolean): Variants =>
+  reduced
+    ? {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1, transition: { duration: 0.2, ease: "linear" } },
+      }
+    : {
+        hidden: { opacity: 0, scale: 0.92, y: 8 },
+        visible: {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          transition: {
+            opacity: { duration: 0.45, ease: "easeOut" },
+            y: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+            scale: { type: "spring", stiffness: 220, damping: 18 },
+          },
+        },
+      };
 
-const heroLogoVariants: Variants = {
-  hidden: { opacity: 0, scale: 0.75, y: 16, rotate: -4 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    y: 0,
-    rotate: 0,
-    transition: {
-      opacity: { duration: 0.45, ease: "easeOut" },
-      y: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
-      rotate: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
-      scale: { type: "spring", stiffness: 220, damping: 16 },
-    },
-  },
-};
+const buildHeroLogoVariants = (reduced: boolean): Variants =>
+  reduced
+    ? {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1, transition: { duration: 0.25, ease: "linear" } },
+      }
+    : {
+        hidden: { opacity: 0, scale: 0.75, y: 16, rotate: -4 },
+        visible: {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          rotate: 0,
+          transition: {
+            opacity: { duration: 0.45, ease: "easeOut" },
+            y: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+            rotate: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+            scale: { type: "spring", stiffness: 220, damping: 16 },
+          },
+        },
+      };
 
-const heroSubtitleVariants: Variants = {
-  hidden: { opacity: 0, y: 14 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      opacity: { duration: 0.5, ease: "easeOut" },
-      y: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
-    },
-  },
-};
+const buildHeroSubtitleVariants = (reduced: boolean): Variants =>
+  reduced
+    ? {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1, transition: { duration: 0.2, ease: "linear" } },
+      }
+    : {
+        hidden: { opacity: 0, y: 14 },
+        visible: {
+          opacity: 1,
+          y: 0,
+          transition: {
+            opacity: { duration: 0.5, ease: "easeOut" },
+            y: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+          },
+        },
+      };
 
-const heroCtasVariants: Variants = {
+const buildHeroCtasVariants = (reduced: boolean): Variants => ({
   hidden: {},
   visible: {
-    transition: { staggerChildren: 0.1, when: "beforeChildren" },
+    transition: { staggerChildren: reduced ? 0.04 : 0.1, when: "beforeChildren" },
   },
-};
+});
 
-const heroCtaItemVariants: Variants = {
-  hidden: { opacity: 0, y: 16, scale: 0.96 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: {
-      opacity: { duration: 0.45, ease: "easeOut" },
-      y: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
-      scale: { type: "spring", stiffness: 220, damping: 18 },
-    },
-  },
-};
+const buildHeroCtaItemVariants = (reduced: boolean): Variants =>
+  reduced
+    ? {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1, transition: { duration: 0.2, ease: "linear" } },
+      }
+    : {
+        hidden: { opacity: 0, y: 16, scale: 0.96 },
+        visible: {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          transition: {
+            opacity: { duration: 0.45, ease: "easeOut" },
+            y: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+            scale: { type: "spring", stiffness: 220, damping: 18 },
+          },
+        },
+      };
 
 /* Floating orb component */
 const Orb = forwardRef<HTMLDivElement, {className: string;delay?: number;}>(
