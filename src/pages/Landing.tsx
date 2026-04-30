@@ -82,6 +82,39 @@ const heroLogoVariants: Variants = {
   },
 };
 
+const heroSubtitleVariants: Variants = {
+  hidden: { opacity: 0, y: 14 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      opacity: { duration: 0.5, ease: "easeOut" },
+      y: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+    },
+  },
+};
+
+const heroCtasVariants: Variants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.1, when: "beforeChildren" },
+  },
+};
+
+const heroCtaItemVariants: Variants = {
+  hidden: { opacity: 0, y: 16, scale: 0.96 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      opacity: { duration: 0.45, ease: "easeOut" },
+      y: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+      scale: { type: "spring", stiffness: 220, damping: 18 },
+    },
+  },
+};
+
 /* Floating orb component */
 const Orb = forwardRef<HTMLDivElement, {className: string;delay?: number;}>(
   ({ className, delay = 0 }, ref) =>
@@ -375,39 +408,40 @@ const Landing = () => {
                     style={{ willChange: "transform, opacity" }}
                   />
                 </motion.div>
-              </motion.div>
-            </motion.div>
 
-            <motion.p
-              className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-xl md:max-w-2xl mx-auto mt-5 sm:mt-6 mb-8 sm:mb-10 leading-snug sm:leading-relaxed"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.5 }}>
-              
-              From script to screen — write, storyboard, and visualize your films
-              with AI tools that actually work, all in one place.
-            </motion.p>
-
-            {/* CTA buttons — centered directly under the hero stack */}
-            <motion.div
-              className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-12 sm:mb-14"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.9 }}>
-              
-              <Link to="/auth" className="w-full sm:w-auto">
-                <Button
-                  size="lg"
-                  className="glow-pulse-gold w-full sm:w-auto relative text-lg px-8 py-6 bg-gradient-to-r from-[var(--gold-dark)] via-[var(--gold)] to-[var(--amber)] text-[var(--w3-void)] font-bold shadow-[0_0_30px_var(--gold-30)] hover:shadow-[0_0_50px_var(--gold-30)] transition-shadow">
+                {/* Subtitle — next beat in the synchronized timeline */}
+                <motion.p
+                  variants={heroSubtitleVariants}
+                  className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-xl md:max-w-2xl mx-auto mt-5 sm:mt-6 mb-8 sm:mb-10 leading-snug sm:leading-relaxed">
                   
-                  Start Creating Free <ArrowRight className="w-5 h-5 ml-2" />
-                </Button>
-              </Link>
-              <a href="#features" className="w-full sm:w-auto">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg px-8 py-6 border-[var(--w3-border)] hover:border-[var(--gold-30)] hover:bg-[var(--gold-05)] transition-all">
-                  See Features
-                </Button>
-              </a>
+                  From script to screen — write, storyboard, and visualize your films
+                  with AI tools that actually work, all in one place.
+                </motion.p>
+
+                {/* CTA buttons — final beat, staggered after subtitle */}
+                <motion.div
+                  variants={heroCtasVariants}
+                  className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-12 sm:mb-14">
+                  
+                  <motion.div variants={heroCtaItemVariants} className="w-full sm:w-auto">
+                    <Link to="/auth" className="block w-full sm:w-auto">
+                      <Button
+                        size="lg"
+                        className="glow-pulse-gold w-full sm:w-auto relative text-lg px-8 py-6 bg-gradient-to-r from-[var(--gold-dark)] via-[var(--gold)] to-[var(--amber)] text-[var(--w3-void)] font-bold shadow-[0_0_30px_var(--gold-30)] hover:shadow-[0_0_50px_var(--gold-30)] transition-shadow">
+                        
+                        Start Creating Free <ArrowRight className="w-5 h-5 ml-2" />
+                      </Button>
+                    </Link>
+                  </motion.div>
+                  <motion.div variants={heroCtaItemVariants} className="w-full sm:w-auto">
+                    <a href="#features" className="block w-full sm:w-auto">
+                      <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg px-8 py-6 border-[var(--w3-border)] hover:border-[var(--gold-30)] hover:bg-[var(--gold-05)] transition-all">
+                        See Features
+                      </Button>
+                    </a>
+                  </motion.div>
+                </motion.div>
+              </motion.div>
             </motion.div>
           </motion.div>
 
