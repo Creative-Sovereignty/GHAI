@@ -273,13 +273,14 @@ const Landing = () => {
                 fetchpriority="high"
                 decoding="async"
                 className="block w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 mx-auto mt-6 sm:mt-8 mb-2 object-contain logo-gold-ring drop-shadow-[0_0_40px_var(--gold-30)]"
-                initial={{ opacity: 0, scale: 0.6, y: 24, rotate: -6 }}
-                animate={{ opacity: 1, scale: 1, y: [24, -6, 0], rotate: 0 }}
+                initial={{ opacity: 0, scale: 0.75, y: 16, rotate: -4 }}
+                animate={{ opacity: 1, scale: 1, y: 0, rotate: 0 }}
                 transition={{
-                  duration: 1.1,
-                  delay: 0.85,
-                  ease: [0.22, 1, 0.36, 1],
-                  scale: { type: "spring", stiffness: 140, damping: 12, delay: 0.85 },
+                  delay: 0.65,
+                  opacity: { duration: 0.45, delay: 0.65, ease: "easeOut" },
+                  y: { duration: 0.55, delay: 0.65, ease: [0.22, 1, 0.36, 1] },
+                  rotate: { duration: 0.6, delay: 0.65, ease: [0.22, 1, 0.36, 1] },
+                  scale: { type: "spring", stiffness: 220, damping: 16, delay: 0.65 },
                 }}
                 whileHover={{ scale: 1.04, rotate: 1.5, transition: { type: "spring", stiffness: 220, damping: 14 } }}
                 style={{ willChange: "transform, opacity" }}
