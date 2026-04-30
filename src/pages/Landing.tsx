@@ -131,8 +131,14 @@ const Landing = () => {
       {/* Nav */}
       <nav className="fixed top-0 w-full z-50 border-b border-border/30 bg-background/60 backdrop-blur-2xl">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <img src={logoImg} alt="Golden Hour AI" className="h-10 object-contain logo-gold-ring" />
+          <Link to="/" className="flex items-center gap-2" aria-label="Golden Hour AI — home">
+            <img
+              src={logoImg}
+              alt="Golden Hour AI logo"
+              width={40}
+              height={40}
+              className="h-10 w-10 object-contain logo-gold-ring"
+            />
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
             {navLinks.map((link) =>
@@ -254,10 +260,18 @@ const Landing = () => {
                 </motion.span>
               </div>
 
-              {/* Hero logo (centered below Movie Studio) */}
+              {/* Hero logo — decorative; the H1 below conveys the brand for SEO & SR */}
               <motion.img
                 src={logoImg}
-                alt="Golden Hour AI"
+                alt=""
+                role="presentation"
+                aria-hidden="true"
+                width={208}
+                height={208}
+                loading="eager"
+                // @ts-expect-error: fetchpriority is a valid HTML attribute, not yet typed in React
+                fetchpriority="high"
+                decoding="async"
                 className="block w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 mx-auto mt-6 sm:mt-8 mb-2 object-contain logo-gold-ring drop-shadow-[0_0_40px_var(--gold-30)]"
                 initial={{ opacity: 0, scale: 0.7 }}
                 animate={{ opacity: 1, scale: 1 }}
