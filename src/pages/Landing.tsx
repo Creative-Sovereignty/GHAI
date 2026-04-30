@@ -240,7 +240,7 @@ const Landing = () => {
               <h1 className="text-4xl sm:text-5xl md:text-7xl font-display font-bold tracking-tight leading-[1.1] mb-4 text-gold-blue-shimmer">
                 Your AI-Powered
               </h1>
-              <div className="relative inline-block mb-6">
+              <div className="relative inline-block mb-2 sm:mb-3">
                 <motion.span
                   className="inline-block px-6 py-3 rounded-xl bg-gradient-to-r from-[var(--gold-dark)] via-[var(--gold)] to-[var(--gold-bright)] text-[var(--w3-void)] font-display font-black text-4xl sm:text-5xl md:text-7xl tracking-wide"
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -254,14 +254,14 @@ const Landing = () => {
                 </motion.span>
               </div>
 
-              {/* Hero logo (moved below Movie Studio) */}
+              {/* Hero logo (centered below Movie Studio) */}
               <motion.img
                 src={logoImg}
                 alt="Golden Hour AI"
-                className="w-32 h-32 sm:w-40 sm:h-40 md:w-52 md:h-52 mx-auto mb-6 object-contain logo-gold-ring drop-shadow-[0_0_40px_var(--gold-30)]"
+                className="block w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 mx-auto mt-6 sm:mt-8 mb-2 object-contain logo-gold-ring drop-shadow-[0_0_40px_var(--gold-30)]"
                 initial={{ opacity: 0, scale: 0.7 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
+                transition={{ duration: 0.8, delay: 0.8 }}
               />
             </motion.div>
 
