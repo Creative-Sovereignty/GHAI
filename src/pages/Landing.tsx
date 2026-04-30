@@ -38,6 +38,50 @@ const neonColors: Record<string, string> = {
   purple: "text-[var(--deep-blue-bright)]"
 };
 
+/* ─── Shared hero entrance timeline ───
+   One source of truth for badge + logo so they stay synced
+   across re-renders, route transitions, and prop changes. */
+const heroStackVariants: Variants = {
+  hidden: {},
+  visible: {
+    transition: {
+      delayChildren: 0.55,
+      staggerChildren: 0.12,
+      when: "beforeChildren",
+    },
+  },
+};
+
+const heroBadgeVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.92, y: 8 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      opacity: { duration: 0.45, ease: "easeOut" },
+      y: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+      scale: { type: "spring", stiffness: 220, damping: 18 },
+    },
+  },
+};
+
+const heroLogoVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.75, y: 16, rotate: -4 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    rotate: 0,
+    transition: {
+      opacity: { duration: 0.45, ease: "easeOut" },
+      y: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+      rotate: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+      scale: { type: "spring", stiffness: 220, damping: 16 },
+    },
+  },
+};
+
 /* Floating orb component */
 const Orb = forwardRef<HTMLDivElement, {className: string;delay?: number;}>(
   ({ className, delay = 0 }, ref) =>
