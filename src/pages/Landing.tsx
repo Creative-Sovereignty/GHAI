@@ -290,45 +290,43 @@ const Landing = () => {
               <h1 className="text-4xl sm:text-5xl md:text-7xl font-display font-bold tracking-tight leading-[1.05] sm:leading-[1.02] mb-3 sm:mb-4 md:mb-5 text-gold-blue-shimmer">
                 Your AI-Powered
               </h1>
-              <div className="relative inline-block mt-1 mb-3 sm:mb-4 md:mb-5">
-                <motion.span
-                  className="inline-block px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-[var(--gold-dark)] via-[var(--gold)] to-[var(--gold-bright)] text-[var(--w3-void)] font-display font-black text-4xl sm:text-5xl md:text-7xl leading-[1] tracking-wide"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.6, delay: 0.6 }}
-                  style={{
-                    boxShadow: "0 0 40px var(--gold-30), 0 0 80px rgba(212, 148, 10, 0.1), inset 0 1px 0 rgba(255,255,255,0.2)"
-                  }}>
-                  
-                  Movie Studio
-                </motion.span>
-              </div>
+              {/* Shared timeline: badge + hero logo animate from one orchestrator
+                  so they stay synchronized across re-renders & route transitions */}
+              <motion.div
+                variants={heroStackVariants}
+                initial="hidden"
+                animate="visible"
+                className="contents">
+                <div className="relative inline-block mt-1 mb-3 sm:mb-4 md:mb-5">
+                  <motion.span
+                    variants={heroBadgeVariants}
+                    className="inline-block px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-[var(--gold-dark)] via-[var(--gold)] to-[var(--gold-bright)] text-[var(--w3-void)] font-display font-black text-4xl sm:text-5xl md:text-7xl leading-[1] tracking-wide"
+                    style={{
+                      boxShadow: "0 0 40px var(--gold-30), 0 0 80px rgba(212, 148, 10, 0.1), inset 0 1px 0 rgba(255,255,255,0.2)"
+                    }}>
+                    
+                    Movie Studio
+                  </motion.span>
+                </div>
 
-              {/* Hero logo — decorative; the H1 below conveys the brand for SEO & SR */}
-              <motion.img
-                src={logoImg}
-                alt=""
-                role="presentation"
-                aria-hidden="true"
-                width={208}
-                height={208}
-                loading="eager"
-                // @ts-expect-error: fetchpriority is a valid HTML attribute, not yet typed in React
-                fetchpriority="high"
-                decoding="async"
-                className="block w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 mx-auto mt-6 sm:mt-8 mb-2 object-contain logo-gold-ring drop-shadow-[0_0_40px_var(--gold-30)]"
-                initial={{ opacity: 0, scale: 0.75, y: 16, rotate: -4 }}
-                animate={{ opacity: 1, scale: 1, y: 0, rotate: 0 }}
-                transition={{
-                  delay: 0.65,
-                  opacity: { duration: 0.45, delay: 0.65, ease: "easeOut" },
-                  y: { duration: 0.55, delay: 0.65, ease: [0.22, 1, 0.36, 1] },
-                  rotate: { duration: 0.6, delay: 0.65, ease: [0.22, 1, 0.36, 1] },
-                  scale: { type: "spring", stiffness: 220, damping: 16, delay: 0.65 },
-                }}
-                whileHover={{ scale: 1.04, rotate: 1.5, transition: { type: "spring", stiffness: 220, damping: 14 } }}
-                style={{ willChange: "transform, opacity" }}
-              />
+                {/* Hero logo — decorative; the H1 above conveys the brand for SEO & SR */}
+                <motion.img
+                  src={logoImg}
+                  alt=""
+                  role="presentation"
+                  aria-hidden="true"
+                  width={208}
+                  height={208}
+                  loading="eager"
+                  // @ts-expect-error: fetchpriority is a valid HTML attribute, not yet typed in React
+                  fetchpriority="high"
+                  decoding="async"
+                  className="block w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 mx-auto mt-6 sm:mt-8 mb-2 object-contain logo-gold-ring drop-shadow-[0_0_40px_var(--gold-30)]"
+                  variants={heroLogoVariants}
+                  whileHover={{ scale: 1.04, rotate: 1.5, transition: { type: "spring", stiffness: 220, damping: 14 } }}
+                  style={{ willChange: "transform, opacity" }}
+                />
+              </motion.div>
             </motion.div>
 
             <motion.p
