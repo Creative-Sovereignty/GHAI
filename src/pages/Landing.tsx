@@ -344,30 +344,37 @@ const Landing = () => {
                   </motion.span>
                 </div>
 
-                {/* Hero logo — decorative; the H1 above conveys the brand for SEO & SR */}
-                <motion.img
-                  src={logoImg}
-                  alt=""
-                  role="presentation"
-                  aria-hidden="true"
-                  width={208}
-                  height={208}
-                  loading="eager"
-                  // @ts-expect-error: fetchpriority is a valid HTML attribute, not yet typed in React
-                  fetchpriority="high"
-                  decoding="async"
-                  className="block w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 mx-auto mt-6 sm:mt-8 mb-2 object-contain logo-gold-ring drop-shadow-[0_0_40px_var(--gold-30)]"
-                  variants={heroLogoVariants}
-                  whileHover={{ scale: 1.04, rotate: 1.5, transition: { type: "spring", stiffness: 220, damping: 14 } }}
+                {/* Hero logo — decorative; the H1 above conveys the brand for SEO & SR.
+                    Outer wrapper owns the cursor-follow parallax (rotate/x/y).
+                    Inner motion.img owns the entrance variants — they never collide. */}
+                <motion.div
+                  className="mx-auto mt-6 sm:mt-8 mb-2 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40"
                   style={{
-                    willChange: "transform, opacity",
                     transformPerspective: 700,
                     rotateX,
                     rotateY,
                     x: translateX,
                     y: translateY,
+                    willChange: "transform",
                   }}
-                />
+                >
+                  <motion.img
+                    src={logoImg}
+                    alt=""
+                    role="presentation"
+                    aria-hidden="true"
+                    width={208}
+                    height={208}
+                    loading="eager"
+                    // @ts-expect-error: fetchpriority is a valid HTML attribute, not yet typed in React
+                    fetchpriority="high"
+                    decoding="async"
+                    className="block w-full h-full object-contain logo-gold-ring drop-shadow-[0_0_40px_var(--gold-30)]"
+                    variants={heroLogoVariants}
+                    whileHover={{ scale: 1.04, rotate: 1.5, transition: { type: "spring", stiffness: 220, damping: 14 } }}
+                    style={{ willChange: "transform, opacity" }}
+                  />
+                </motion.div>
               </motion.div>
             </motion.div>
 
