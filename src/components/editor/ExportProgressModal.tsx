@@ -1,8 +1,10 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Download, Loader2, CheckCircle2, XCircle, Film, HardDrive, Cpu } from "lucide-react";
+import { Download, Loader2, CheckCircle2, XCircle, Film, HardDrive, Cpu, Share2 } from "lucide-react";
 import type { ExportStage } from "@/hooks/useTimelineExport";
+import { shareFile } from "@/lib/nativeShare";
+import { toast } from "sonner";
 
 interface ExportProgressModalProps {
   open: boolean;
@@ -35,8 +37,24 @@ const ExportProgressModal = ({
     if (!downloadUrl) return;
     const a = document.createElement("a");
     a.href = downloadUrl;
-    a.download = `golden-hour-export-${Date.now()}.mp4`;
+    a.download = `aifilmz-export-${Date.now()}.mp4`;
     a.click();
+  };
+
+  const handleShare = async () => {
+    if (!downloadUrl) return;
+    try {
+      const result = await shareFile({
+        url: downloadUrl,
+        filename: `aifilmz-export-${Date.now()}.mp4`,
+        mimeType: "video/mp4",
+        title: "My AIFilmz Export",
+        text: "Made with AIFilmz",
+      });
+      if (result === "download") toast.success("Video downloaded");
+    } catch (err: any) {
+      if (err?.name !== "AbortError") toast.error("Couldn't open share sheet");
+    }
   };
 
   return (
@@ -104,13 +122,17 @@ const ExportProgressModal = ({
 
         <DialogFooter>
           {stage === "complete" && downloadUrl ? (
-            <div className="flex gap-2 w-full">
+            <div className="flex flex-col sm:flex-row gap-2 w-full">
               <Button variant="outline" onClick={() => { onReset(); onOpenChange(false); }} className="flex-1">
                 Close
               </Button>
+              <Button variant="outline" onClick={handleShare} className="flex-1">
+                <Share2 className="w-4 h-4 mr-1" />
+                Share
+              </Button>
               <Button variant="glow" onClick={handleDownload} className="flex-1">
                 <Download className="w-4 h-4 mr-1" />
-                Download MP4
+                Download
               </Button>
             </div>
           ) : stage === "error" ? (

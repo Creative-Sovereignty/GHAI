@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Music, Play, Pause, Download, Wand2, Clock, RefreshCw, Volume2, Sparkles, Loader2, Square, BookmarkPlus, Check } from "lucide-react";
+import { Music, Play, Pause, Download, Wand2, Clock, RefreshCw, Volume2, Sparkles, Loader2, Square, BookmarkPlus, Check, Share2 } from "lucide-react";
+import { shareFile } from "@/lib/nativeShare";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
 import { Badge } from "@/components/ui/badge";
@@ -112,6 +113,22 @@ const AIMusic = () => {
     a.href = track.audioUrl;
     a.download = `${track.name.replace(/\s+/g, "_")}.mp3`;
     a.click();
+  };
+
+  const handleShare = async (track: GeneratedTrack) => {
+    try {
+      const filename = `${track.name.replace(/\s+/g, "_")}.mp3`;
+      const result = await shareFile({
+        url: track.audioUrl,
+        filename,
+        mimeType: "audio/mpeg",
+        title: track.name,
+        text: `${track.genre} · ${track.mood} · made with AIFilmz`,
+      });
+      if (result === "download") toast.success("Track downloaded");
+    } catch (err: any) {
+      if (err?.name !== "AbortError") toast.error("Couldn't open share sheet");
+    }
   };
 
   const handleSaveToLibrary = (track: GeneratedTrack) => {
@@ -293,8 +310,16 @@ const AIMusic = () => {
                       {savedIds.has(track.id) ? <Check className="w-4 h-4" /> : <BookmarkPlus className="w-4 h-4" />}
                     </button>
                     <button
+                      onClick={() => handleShare(track)}
+                      className="p-2 rounded-lg hover:bg-[var(--neon-cyan-10)] text-muted-foreground hover:text-foreground transition-colors"
+                      title="Share / Export"
+                    >
+                      <Share2 className="w-4 h-4" />
+                    </button>
+                    <button
                       onClick={() => handleDownload(track)}
                       className="p-2 rounded-lg hover:bg-[var(--neon-purple-10)] text-muted-foreground hover:text-foreground transition-colors"
+                      title="Download"
                     >
                       <Download className="w-4 h-4" />
                     </button>

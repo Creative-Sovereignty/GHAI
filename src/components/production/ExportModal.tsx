@@ -94,9 +94,8 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
         }
       }
 
-      // Download the shot's video if available
+      // Download / share the shot's video if available
       if (selectedShotId) {
-        const shot = shots.find((s) => s.id === selectedShotId);
         const { data: shotData } = await supabase
           .from("shots")
           .select("video_url, shot_code, scene_number")
@@ -105,19 +104,19 @@ const ExportModal = ({ open, onOpenChange, shotId }: ExportModalProps) => {
 
         if (shotData?.video_url) {
           try {
-            const resp = await fetch(shotData.video_url);
-            const blob = await resp.blob();
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = `S${shotData.scene_number}-${shotData.shot_code}.mp4`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            toast.success("Video exported successfully!");
+            const { shareFile } = await import("@/lib/nativeShare");
+            const filename = `S${shotData.scene_number}-${shotData.shot_code}.mp4`;
+            const result = await shareFile({
+              url: shotData.video_url,
+              filename,
+              mimeType: "video/mp4",
+              title: filename,
+              text: "Made with AIFilmz",
+            });
+            if (result === "native" || result === "web") toast.success("Share sheet opened");
+            else toast.success("Video exported successfully!");
           } catch {
-            toast.error("Failed to download video file.");
+            toast.error("Failed to export video file.");
           }
         } else {
           toast.info("No rendered video found for this shot. Generate a video first.");
