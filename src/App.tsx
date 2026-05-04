@@ -65,7 +65,7 @@ const App = () => (
               <RouteTransition>
                 <Routes>
                   <Route path="/" element={<Landing />} />
-                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/auth" element={<AuthGate><Auth /></AuthGate>} />
                   <Route path="/reset-password" element={<ResetPassword />} />
                   <Route path="/install" element={<Install />} />
                   <Route path="/faq" element={<FAQ />} />
