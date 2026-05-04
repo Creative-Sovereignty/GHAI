@@ -33,6 +33,7 @@ import ChatWidget from "./components/ChatWidget";
 import ScrollToTop from "./components/ScrollToTop";
 import PWAInstallBanner from "./components/PWAInstallBanner";
 import RouteTransition from "./components/RouteTransition";
+import DeepLinkHandler from "./components/DeepLinkHandler";
 
 const queryClient = new QueryClient();
 
