@@ -44,6 +44,13 @@ function AnalyticsTracker() {
   return null;
 }
 
+/** Defers a child until Supabase has restored the session — prevents iOS flash of "logged out" state. */
+function AuthGate({ children }: { children: React.ReactNode }) {
+  const { initialized } = useAuth();
+  if (!initialized) return <AuthLoadingScreen />;
+  return <>{children}</>;
+}
+
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
