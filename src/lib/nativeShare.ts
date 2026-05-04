@@ -81,14 +81,12 @@ export async function shareFile(opts: ShareFileOptions): Promise<"native" | "web
       const resp = await fetch(url);
       const blob = await resp.blob();
       const file = new File([blob], filename, { type: mimeType });
-      // @ts-expect-error - canShare may not exist in all TS lib targets
-      if (!navigator.canShare || navigator.canShare({ files: [file] })) {
-        await (navigator as Navigator & { share: (data: ShareData) => Promise<void> }).share({
-          title,
-          text,
-          // @ts-expect-error - files is part of the spec
-          files: [file],
-        });
+      const nav = navigator as Navigator & {
+        canShare?: (data: { files?: File[] }) => boolean;
+        share: (data: { title?: string; text?: string; files?: File[] }) => Promise<void>;
+      };
+      if (!nav.canShare || nav.canShare({ files: [file] })) {
+        await nav.share({ title, text, files: [file] });
         return "web";
       }
     }
