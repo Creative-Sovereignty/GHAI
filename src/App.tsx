@@ -34,6 +34,8 @@ import ScrollToTop from "./components/ScrollToTop";
 import PWAInstallBanner from "./components/PWAInstallBanner";
 import RouteTransition from "./components/RouteTransition";
 import DeepLinkHandler from "./components/DeepLinkHandler";
+import AuthLoadingScreen from "./components/AuthLoadingScreen";
+import { useAuth } from "@/contexts/AuthContext";
 
 const queryClient = new QueryClient();
 
