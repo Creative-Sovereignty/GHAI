@@ -5,8 +5,9 @@ import {
   Body, Button, Container, Head, Heading, Html, Img, Link, Preview, Section, Text,
 } from 'npm:@react-email/components@0.0.22'
 import {
-  LOGO_URL, SITE_URL, main, container, logo, h1, text, button, buttonWrap, footer, footerLink,
+  LOGO_URL, main, container, logo, h1, text, button, buttonWrap, footer,
 } from './_styles.ts'
+import { LegalFooter } from './_legal-footer.tsx'
 
 interface RecoveryEmailProps {
   siteName: string
@@ -29,9 +30,9 @@ export const RecoveryEmail = ({ confirmationUrl }: RecoveryEmailProps) => (
           <Button style={button} href={confirmationUrl}>Reset Password →</Button>
         </Section>
         <Text style={footer}>
-          If you didn't request this, you can safely ignore this email — your password won't change.<br />
-          <Link href={SITE_URL} style={footerLink}>aifilmz.app</Link>
+          If you didn't request this, you can safely ignore this email — your password won't change.
         </Text>
+        <LegalFooter />
       </Container>
     </Body>
   </Html>

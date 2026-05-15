@@ -5,8 +5,9 @@ import {
   Body, Button, Container, Head, Heading, Html, Img, Link, Preview, Section, Text,
 } from 'npm:@react-email/components@0.0.22'
 import {
-  LOGO_URL, SITE_URL, main, container, logo, h1, text, link, button, buttonWrap, footer, footerLink,
+  LOGO_URL, main, container, logo, h1, text, link, button, buttonWrap, footer,
 } from './_styles.ts'
+import { LegalFooter } from './_legal-footer.tsx'
 
 interface EmailChangeEmailProps {
   siteName: string
@@ -32,9 +33,9 @@ export const EmailChangeEmail = ({ email, newEmail, confirmationUrl }: EmailChan
           <Button style={button} href={confirmationUrl}>Confirm Email Change →</Button>
         </Section>
         <Text style={footer}>
-          If you didn't request this, please secure your account immediately.<br />
-          <Link href={SITE_URL} style={footerLink}>aifilmz.app</Link>
+          If you didn't request this, please secure your account immediately.
         </Text>
+        <LegalFooter />
       </Container>
     </Body>
   </Html>
