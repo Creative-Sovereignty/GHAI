@@ -29,6 +29,8 @@ const Learn = lazy(() => import("./pages/Learn"));
 const DirectorAI = lazy(() => import("./pages/DirectorAI"));
 const FestivalGallery = lazy(() => import("./pages/FestivalGallery"));
 const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Terms = lazy(() => import("./pages/Terms"));
 import ChatWidget from "./components/ChatWidget";
 import ScrollToTop from "./components/ScrollToTop";
 import PWAInstallBanner from "./components/PWAInstallBanner";
